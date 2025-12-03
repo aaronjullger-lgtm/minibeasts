@@ -2,9 +2,9 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# Mini Beasts: The All-In Meal
 
-This contains everything you need to run your app locally.
+A dynasty mode life simulator for a chaotic group chat of football-obsessed degenerates in their 20s. Manage your grit, survive the season, and don't let your girl find out about your parlay addiction.
 
 View your app in AI Studio: https://ai.studio/apps/drive/1i7O9l_AhRO61_x4FelQ7mzIniBDM9a7f
 
@@ -12,9 +12,128 @@ View your app in AI Studio: https://ai.studio/apps/drive/1i7O9l_AhRO61_x4FelQ7mz
 
 **Prerequisites:**  Node.js
 
-
 1. Install dependencies:
    `npm install`
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+---
+
+## Future Game Ideas for the Group Chat
+
+### 1. "Sunday Scaries: The Parlay Revenge Game"
+**Concept:** A high-stakes betting simulator where you make increasingly dumb parlays throughout the NFL season. Every loss makes Colin roast you harder, and every win makes Elie claim he "called it."
+
+**Why it fits:** The group is already degenerate gamblers. This leans into the parlay addiction meta and gives everyone a chance to watch their friends spiral into financial ruin in real-time.
+
+**Features:**
+- Real-time roast generation based on how badly your bet is losing
+- "Hater's Parlay" mode where you bet against everyone's favorite teams
+- Special Colin event: "Liberal GF finds your betting history" - costs 200 grit to smooth over
+- Elie's "Actually I'm Smart" multiplier that makes his losses hurt twice as much
+
+---
+
+### 2. "Commish Chaos: Spencer's Power Trip Simulator"
+**Concept:** A fantasy football commissioner management game where you abuse your power, make terrible rule changes mid-season, and desperately try to maintain control as the league revolts.
+
+**Why it fits:** Spencer gets clowned for being a "powerless commish" - this lets players experience his pain or become the tyrant he never could be.
+
+**Features:**
+- Veto trades for no reason and watch the group chat explode
+- Make up new scoring rules to help your team
+- "The Joint Chiropractic" ad mini-game to earn emergency commish powers
+- Final boss: The entire league voting you out and starting a new league without you
+
+---
+
+### 3. "The Ty Window: A Rare Event Collector"
+**Concept:** A clicker/idle game where you wait for Ty to actually text something. When he does (The Ty Window), you have 30 seconds to screenshot it before he disappears for another week.
+
+**Why it fits:** Ty is the phantom of the group. This turns his silence into an actual gameplay mechanic.
+
+**Features:**
+- Wait times range from 3 hours to 3 days between Ty messages
+- Bonus points if his message is longer than one word
+- "Ty Window Alert" notification system
+- Compete with other players to see who can catch the most Ty Windows in a season
+- Secret ending: Get Ty to send a paragraph (difficulty: impossible)
+
+---
+
+### 4. "The Bitchless Chronicles: Elie & Craif's Dating Sim"
+**Concept:** A dating simulator where you play as either Elie or Craif trying to not get friend-zoned. Spoiler: You will get friend-zoned.
+
+**Why it fits:** The entire group roasts these two for being perpetually single. Might as well make a game about their suffering.
+
+**Features:**
+- Play as Elie: Fall for another lesbian while claiming you're "the main character"
+- Play as Craif: Send the perfect text, get "you're such a good friend!" back
+- Defensive Response System: Type increasingly desperate explanations when the group roasts you
+- Bad ending guaranteed, but you can unlock different flavors of rejection
+- Aaron randomly shows up to say "skill issue" no matter what you do
+
+---
+
+### 5. "All-In Arena: Eric's Grit Battle Royale"
+**Concept:** A combat game where players fight using "grit" and "that dog in them" as stats. Eric provides real-time commentary on who's got the most heart.
+
+**Why it fits:** Eric is obsessed with "ALL-IN" culture. This turns his football philosophy into actual gameplay.
+
+**Features:**
+- Characters ranked by their "dawg" rating
+- Special moves based on NFL player archetypes (e.g., "Micah Parsons Rush", "Kelce Rage")
+- Eric's commentary intensifies as battles get closer
+- Lose badly enough and Eric kicks you from the group for "not being all-in"
+- Jerry Jones appears as a villain that Eric has to reluctantly defend
+
+---
+
+### 6. "The Eagles Bloc: A Tower Defense Game"
+**Concept:** Alex, Nick, and Justin defend Philadelphia from haters. Deploy Eagles players and defend Jalen Hurts' honor at all costs.
+
+**Why it fits:** These three are die-hard Eagles fans who get weirdly defensive. Perfect for a "defend the base" style game.
+
+**Features:**
+- Waves of haters attack with anti-Eagles takes
+- Deploy "Jalen Hurts is MVP" arguments as defensive towers
+- Justin uses 🤓 emoji attacks to mock incoming haters
+- Nick's acapella group shows up as a distraction (it hurts your team)
+- Boss battle: Someone says "The Eagles got lucky" and all three players enter rage mode
+
+---
+
+### 7. "UConn Hype Generator: Wyatt's Randomizer"
+**Concept:** A mini-game where Wyatt texts completely random, out-of-context messages to the group chat. Your job is to guess what he's talking about.
+
+**Why it fits:** Wyatt drops bizarre texts like "BLM✊🏾" with zero context. This captures his chaotic energy.
+
+**Features:**
+- Random message generator with increasing absurdity
+- Group tries to figure out what Wyatt means
+- Occasionally he's talking about UConn basketball (bonus points for guessing correctly)
+- Prayer mode: Wyatt blesses the chat but no one knows why
+- Multiplayer: Everyone votes on what they think Wyatt's message means
+
+---
+
+### 8. "Screenshot Warfare: Justin's Evidence Vault"
+**Concept:** A stealth game where you try to say something dumb without Justin screenshotting it. He's always watching. He's always ready.
+
+**Why it fits:** Justin screenshots everything, especially Elie's bad takes. This is his superpower.
+
+**Features:**
+- Type messages in the group chat simulator
+- Justin's screenshot counter appears at the top (tracks your mistakes)
+- Say something stupid? It's in the vault forever
+- Elie mode (hard difficulty): Everything you say gets screenshotted
+- End goal: Survive a full season without being in Justin's "Top 5 Worst Takes"
+
+---
+
+## Current Game Status
+
+This repository contains the **Dynasty Mode** life simulator - the OG Mini Beasts experience. Pick your character, manage your stats, survive the NFL season, and try not to get roasted into oblivion by your friends.
+
+Good luck. You're gonna need it.
