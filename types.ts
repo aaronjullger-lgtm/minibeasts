@@ -126,3 +126,13 @@ export interface Achievement {
     name: string;
     description: string;
 }
+
+export interface GameEvent {
+    id: string;
+    name: string;
+    description: string;
+    effects: Array<{
+        targetStat: 'loveLife' | 'fandom' | 'uniqueStatValue' | 'energy' | 'cringeMeter' | 'entertainmentMeter' | 'grit';
+        value: number;
+    }>;
+}
