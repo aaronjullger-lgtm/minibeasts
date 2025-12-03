@@ -54,8 +54,8 @@ export const gameEvents: GameEvent[] = [
         name: 'Power Nap Success',
         description: 'You managed to squeeze in a perfect power nap. You feel refreshed!',
         effects: [
-            { targetStat: 'energy', value: 1 },
-            { targetStat: 'uniqueStatValue', value: 5 }
+            { targetStat: 'energy', value: 15 },
+            { targetStat: 'uniqueStatValue', value: 10 }
         ]
     },
     {

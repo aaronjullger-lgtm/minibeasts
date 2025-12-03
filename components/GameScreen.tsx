@@ -1096,10 +1096,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
           [effect.targetStat]: Math.max(0, Math.min(100, prev[effect.targetStat] + effect.value))
         }));
       } else if (effect.targetStat === 'grit') {
-        // Apply grit to player
+        // Apply grit to player (unbounded accumulation, but prevent negative values)
         setRanking(prev => prev.map(p => p.id === playerState.id ? {
           ...p,
-          grit: p.grit + effect.value
+          grit: Math.max(0, p.grit + effect.value)
         } : p));
       } else if (effect.targetStat === 'loveLife' || effect.targetStat === 'fandom' || 
                  effect.targetStat === 'uniqueStatValue' || effect.targetStat === 'energy') {
