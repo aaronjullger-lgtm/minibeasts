@@ -1,4 +1,4 @@
-import { CharacterData, StoreItem, SeasonGoal, ManageLifeAction, PlayerState, RandomEvent, Message, Achievement } from './types';
+import { CharacterData, StoreItem, SeasonGoal, ManageLifeAction, PlayerState, RandomEvent, Message, Achievement, CharacterDef, Item } from './types';
 
 export const MAX_YARDS = 100;
 export const SEASON_LENGTH = 17;
@@ -6,6 +6,277 @@ export const DAYS_PER_WEEK = 7;
 export const GF_COST_Bitchless = 500;
 export const GF_COST_Normal = 150;
 export const RANK_MODIFIER_SCALE = 0.05;
+
+// Dynasty Mode: Character definitions with unique stat names
+export const characterDefinitions: CharacterDef[] = [
+  { characterId: 'aaron', uniqueStatName: 'Grades' },
+  { characterId: 'alex', uniqueStatName: 'Eagles Loyalty' },
+  { characterId: 'andrew', uniqueStatName: 'Truck Condition' },
+  { characterId: 'colin', uniqueStatName: 'GF Suspicion' },
+  { characterId: 'craif', uniqueStatName: 'Insecurity Level' },
+  { characterId: 'dj', uniqueStatName: 'Party Energy' },
+  { characterId: 'elie', uniqueStatName: 'Audit Risk' },
+  { characterId: 'eric', uniqueStatName: 'ALL-IN Meter' },
+  { characterId: 'justin', uniqueStatName: 'Screenshot Count' },
+  { characterId: 'luke', uniqueStatName: 'Controversy Level' },
+  { characterId: 'max', uniqueStatName: 'Liberal Points' },
+  { characterId: 'nick', uniqueStatName: 'Acapella Cred' },
+  { characterId: 'pace', uniqueStatName: 'Clout Level' },
+  { characterId: 'seth', uniqueStatName: 'Faith Meter' },
+  { characterId: 'spencer', uniqueStatName: 'Commish Power' },
+  { characterId: 'ty', uniqueStatName: 'Ty Window Timer' },
+  { characterId: 'tj', uniqueStatName: 'NPC Status' },
+  { characterId: 'wyatt', uniqueStatName: 'UConn Hype' },
+];
+
+// Dynasty Mode: Shop items (General + Character-Specific)
+export const shopItems: Item[] = [
+  // General Items
+  { 
+    id: 'flowers', 
+    name: 'Flowers', 
+    cost: 50, 
+    desc: 'A bouquet to improve your love life. Classic move.', 
+    targetStat: 'loveLife', 
+    statEffect: 15, 
+    type: 'consumable' 
+  },
+  { 
+    id: 'grit_boost', 
+    name: 'Grit Boost', 
+    cost: 75, 
+    desc: 'Pure concentrated grit. Increases your resilience.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 20, 
+    type: 'consumable' 
+  },
+  { 
+    id: 'haters_parlay', 
+    name: "Hater's Parlay", 
+    cost: 100, 
+    desc: 'A risky bet that either pays off big or crashes hard.', 
+    targetStat: 'fandom', 
+    statEffect: Math.random() > 0.5 ? 30 : -20, 
+    type: 'consumable' 
+  },
+  
+  // Character-Specific Items
+  // Aaron
+  { 
+    id: 'aarons_menorah', 
+    name: "Aaron's Menorah", 
+    cost: 125, 
+    desc: 'A reminder of faith and family. Reduces PA school stress.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 25, 
+    isCharacterSpecific: 'aaron', 
+    type: 'consumable' 
+  },
+  
+  // Alex
+  { 
+    id: 'eagles_jersey', 
+    name: 'Eagles Super Bowl Jersey', 
+    cost: 150, 
+    desc: 'Represent the Birds. Boosts Eagles loyalty and fandom.', 
+    targetStat: 'fandom', 
+    statEffect: 20, 
+    isCharacterSpecific: 'alex', 
+    type: 'permanent' 
+  },
+  
+  // Andrew
+  { 
+    id: 'truck_parts', 
+    name: 'Premium Truck Parts', 
+    cost: 200, 
+    desc: 'High-quality parts to keep your truck running smooth.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 30, 
+    isCharacterSpecific: 'andrew', 
+    type: 'consumable' 
+  },
+  
+  // Colin
+  { 
+    id: 'parlay_insurance', 
+    name: 'Parlay Insurance', 
+    cost: 150, 
+    desc: 'Reduces the risk of your next parlay. Still risky though.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 15, 
+    isCharacterSpecific: 'colin', 
+    type: 'consumable' 
+  },
+  
+  // Craif
+  { 
+    id: 'dating_coach', 
+    name: 'Dating Coach Session', 
+    cost: 175, 
+    desc: 'Professional help for your love life. Reduces insecurity.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 25, 
+    isCharacterSpecific: 'craif', 
+    type: 'consumable' 
+  },
+  
+  // DJ
+  { 
+    id: 'party_supplies', 
+    name: 'Premium Party Supplies', 
+    cost: 100, 
+    desc: 'Everything you need to throw an epic rager. Ferda!', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 20, 
+    isCharacterSpecific: 'dj', 
+    type: 'consumable' 
+  },
+  
+  // Elie
+  { 
+    id: 'shady_tax_accountant', 
+    name: 'Shady Tax Accountant', 
+    cost: 250, 
+    desc: 'Creative accounting to reduce your audit risk. Totally legal.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 35, 
+    isCharacterSpecific: 'elie', 
+    type: 'consumable' 
+  },
+  
+  // Eric
+  { 
+    id: 'all_in_cookbook', 
+    name: 'ALL-IN Cookbook', 
+    cost: 125, 
+    desc: 'Recipes with that dog in them. Boosts your ALL-IN meter.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 20, 
+    isCharacterSpecific: 'eric', 
+    type: 'permanent' 
+  },
+  
+  // Justin
+  { 
+    id: 'screenshot_app', 
+    name: 'Premium Screenshot App', 
+    cost: 75, 
+    desc: 'Professional tools for documenting bad takes. 🤓', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 15, 
+    isCharacterSpecific: 'justin', 
+    type: 'permanent' 
+  },
+  
+  // Luke
+  { 
+    id: 'pr_consultant', 
+    name: 'PR Consultant', 
+    cost: 200, 
+    desc: 'Helps manage your controversial takes. Damage control.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 20, 
+    isCharacterSpecific: 'luke', 
+    type: 'consumable' 
+  },
+  
+  // Max
+  { 
+    id: 'political_podcast', 
+    name: 'Liberal Podcast Subscription', 
+    cost: 100, 
+    desc: 'Fuel for political debates. Increases liberal points.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 25, 
+    isCharacterSpecific: 'max', 
+    type: 'permanent' 
+  },
+  
+  // Nick
+  { 
+    id: 'acapella_lessons', 
+    name: 'Advanced Acapella Lessons', 
+    cost: 150, 
+    desc: 'Improve your harmonies and defend against roasts.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 20, 
+    isCharacterSpecific: 'nick', 
+    type: 'consumable' 
+  },
+  
+  // Pace
+  { 
+    id: 'designer_outfit', 
+    name: 'Designer Outfit', 
+    cost: 300, 
+    desc: 'Drip that boosts your clout level significantly.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 30, 
+    isCharacterSpecific: 'pace', 
+    type: 'permanent' 
+  },
+  
+  // Seth
+  { 
+    id: 'terry_mclaurin_jersey', 
+    name: 'Terry McLaurin Jersey', 
+    cost: 175, 
+    desc: 'Scary Terry! Increases faith meter and fandom.', 
+    targetStat: 'fandom', 
+    statEffect: 25, 
+    isCharacterSpecific: 'seth', 
+    type: 'permanent' 
+  },
+  
+  // Spencer
+  { 
+    id: 'commissioner_whistle', 
+    name: 'Commissioner Whistle', 
+    cost: 125, 
+    desc: 'Assert your authority. Boosts commish power.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 30, 
+    isCharacterSpecific: 'spencer', 
+    type: 'permanent' 
+  },
+  
+  // Ty
+  { 
+    id: 'message_reminder', 
+    name: 'Message Reminder Bot', 
+    cost: 50, 
+    desc: 'Helps you remember to actually text in the chat.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 10, 
+    isCharacterSpecific: 'ty', 
+    type: 'consumable' 
+  },
+  
+  // TJ
+  { 
+    id: 'personality_guide', 
+    name: 'Personality Development Guide', 
+    cost: 100, 
+    desc: 'Helps you stand out from the NPC crowd.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 20, 
+    isCharacterSpecific: 'tj', 
+    type: 'consumable' 
+  },
+  
+  // Wyatt
+  { 
+    id: 'uconn_gear', 
+    name: 'UConn Championship Gear', 
+    cost: 150, 
+    desc: 'Rep the Huskies. Maximum UConn hype.', 
+    targetStat: 'uniqueStatValue', 
+    statEffect: 25, 
+    isCharacterSpecific: 'wyatt', 
+    type: 'permanent' 
+  },
+];
 
 export const characterData: { [key: string]: CharacterData } = {
   pace: { id: 'pace', name: 'Pace', rank: 1, girlfriend: true, nflTeamColor: '#008E97', bio: "The Pretty Boy.\nProbably dumber than he looks. Claims his cousin is an NFL kicker.\nPace South" },

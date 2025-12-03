@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { PlayerState, EndGameReport, Message, StoreItem, MinigameType, SeasonGoal, ManageLifeAction, RandomEvent, PropBet, Achievement } from '../types';
+import { PlayerState, EndGameReport, Message, StoreItem, MinigameType, SeasonGoal, ManageLifeAction, RandomEvent, PropBet, Achievement, GlobalState } from '../types';
 import { generateNpcResponse, initiateNpcConversation, generateRoastAndReactions, generateNpcMinigameReactions } from '../services/geminiService';
-import { characterData, allStoreItems, SEASON_LENGTH, DAYS_PER_WEEK, getSeasonGoalsForPlayer, manageLifeActions, randomEvents, commentaryBattleData, fantasyDraftPlayers, triviaData, allAchievements, propBetTemplates } from '../constants';
+import { characterData, allStoreItems, SEASON_LENGTH, DAYS_PER_WEEK, getSeasonGoalsForPlayer, manageLifeActions, randomEvents, commentaryBattleData, fantasyDraftPlayers, triviaData, allAchievements, propBetTemplates, characterDefinitions } from '../constants';
 import { HUD } from './Dashboard';
 import { MessageBubble, Spinner } from './ChatUI';
 import { soundService } from '../services/soundService';
@@ -904,6 +904,15 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
   const [seasonGoals, setSeasonGoals] = useState<SeasonGoal[]>(() => initialData.seasonGoals || []);
   const [isSending, setIsSending] = useState(false);
   const [propBets, setPropBets] = useState<PropBet[]>(() => initialData.propBets || []);
+  
+  // Dynasty Mode: Global State
+  const [globalState, setGlobalState] = useState<GlobalState>(() => initialData.globalState || {
+    cringeMeter: 0,
+    entertainmentMeter: 50,
+    season: 1,
+    week: 1,
+    day: 1
+  });
 
   const feedEndRef = useRef<HTMLDivElement>(null);
   const isInitialized = useRef(false);
@@ -972,10 +981,99 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
       }
   }, [playerState, day, week, addSystemMessage]);
 
+  // Dynasty Mode: Advance Day Function
+  const advanceDay = useCallback(() => {
+    // Reset energy
+    setRanking(prev => prev.map(p => ({
+      ...p,
+      energy: 3,
+    })));
+    
+    // Decay entertainment meter
+    setGlobalState(prev => ({
+      ...prev,
+      entertainmentMeter: Math.max(0, prev.entertainmentMeter - 5),
+    }));
+    
+    // Decay player's unique stat value
+    setRanking(prev => prev.map(p => p.id === playerState.id ? {
+      ...p,
+      uniqueStatValue: Math.max(0, p.uniqueStatValue - 3),
+    } : p));
+    
+    // Check win/loss conditions
+    const currentPlayer = ranking.find(p => p.id === playerState.id);
+    if (currentPlayer) {
+      if (globalState.cringeMeter >= 100) {
+        onGameEnd({
+          title: "Dead Chat",
+          message: "The cringe meter hit 100. The chat has died from too much cringe.",
+          isEnd: true
+        }, ranking);
+        return;
+      }
+      
+      if (globalState.entertainmentMeter <= 0) {
+        onGameEnd({
+          title: "Dead Chat",
+          message: "The entertainment meter hit 0. Everyone left because the chat became boring.",
+          isEnd: true
+        }, ranking);
+        return;
+      }
+      
+      if (currentPlayer.uniqueStatValue <= 0) {
+        const charDef = characterDefinitions.find(c => c.characterId === playerState.id);
+        const statName = charDef?.uniqueStatName || 'unique stat';
+        onGameEnd({
+          title: "Kicked",
+          message: `Your ${statName} dropped to 0. You've been kicked from the chat.`,
+          isEnd: true
+        }, ranking);
+        return;
+      }
+    }
+  }, [playerState.id, globalState, ranking, onGameEnd]);
+
+  // Dynasty Mode: Sunday Resolution (NFL Simulation)
+  const resolveWeek = useCallback(() => {
+    const nflWin = Math.random() > 0.5;
+    
+    if (nflWin) {
+      addSystemMessage("🏈 NFL SUNDAY: Your team WON! [+10 Fandom, +10 Entertainment]");
+      setRanking(prev => prev.map(p => p.id === playerState.id ? {
+        ...p,
+        fandom: Math.min(100, p.fandom + 10),
+      } : p));
+      setGlobalState(prev => ({
+        ...prev,
+        entertainmentMeter: Math.min(100, prev.entertainmentMeter + 10),
+      }));
+    } else {
+      addSystemMessage("🏈 NFL SUNDAY: Your team LOST. [-20 Fandom, +10 Cringe]");
+      
+      // Character-specific logic: Alex and Eagles
+      let fandomLoss = -20;
+      if (playerState.id === 'alex') {
+        fandomLoss = -40; // Double penalty for Alex
+        addSystemMessage("As an Eagles fan, this loss hurts twice as much...");
+      }
+      
+      setRanking(prev => prev.map(p => p.id === playerState.id ? {
+        ...p,
+        fandom: Math.max(0, p.fandom + fandomLoss),
+      } : p));
+      setGlobalState(prev => ({
+        ...prev,
+        cringeMeter: Math.min(100, prev.cringeMeter + 10),
+      }));
+    }
+  }, [playerState.id, addSystemMessage]);
+
   useEffect(() => {
-      const allState = { playerState, ranking, day, week, weeklyGritGoal, inventory, storyFeed, timeOfDay, nextMinigame, seasonGoals, propBets };
+      const allState = { playerState, ranking, day, week, weeklyGritGoal, inventory, storyFeed, timeOfDay, nextMinigame, seasonGoals, propBets, globalState };
       localStorage.setItem('miniBeastsSave', JSON.stringify(allState));
-  }, [playerState, ranking, day, week, weeklyGritGoal, inventory, storyFeed, timeOfDay, nextMinigame, seasonGoals, propBets]);
+  }, [playerState, ranking, day, week, weeklyGritGoal, inventory, storyFeed, timeOfDay, nextMinigame, seasonGoals, propBets, globalState]);
 
   // Game Loop Timers
   useEffect(() => {
@@ -986,6 +1084,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
               if (newDay > DAYS_PER_WEEK) {
                   setWeek(w => {
                       const newWeek = w + 1;
+                      
+                      // Dynasty Mode: Call resolveWeek for Sunday NFL simulation
+                      resolveWeek();
+                      
                       if (playerState.grit >= weeklyGritGoal) {
                           addSystemMessage(`WEEKLY GOAL MET! You feel accomplished. [+15 Happiness, +25 Energy]`);
                           setRanking(prev => prev.map(p => p.id === playerState.id ? {...p, happiness: Math.min(100, p.happiness + 15), energy: Math.min(100, p.energy + 25)} : p));
@@ -1005,6 +1107,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
               }
               addSystemMessage(`--- Day ${newDay} ---`);
               setTimeOfDay(0);
+              
+              // Dynasty Mode: Call advanceDay
+              advanceDay();
+              
               setRanking(prev => prev.map(p => ({ ...p, energy: Math.min(100, p.energy + 20), happiness: p.happiness - 2 })));
               return newDay;
           });
@@ -1013,7 +1119,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
     const eventTimer = setInterval(runRandomEvent, 20 * 1000);
 
     return () => { clearInterval(timeTimer); clearInterval(dayTimer); clearInterval(chatTimer); clearInterval(eventTimer); };
-  }, [week, playerState, weeklyGritGoal, addSystemMessage, DAY_DURATION_MS, typingCharacter, activeModal, handleNpcConversation, runRandomEvent, onGameEnd, ranking]);
+  }, [week, playerState, weeklyGritGoal, addSystemMessage, DAY_DURATION_MS, typingCharacter, activeModal, handleNpcConversation, runRandomEvent, onGameEnd, ranking, advanceDay, resolveWeek]);
 
 
   useEffect(() => { feedEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [storyFeed]);
