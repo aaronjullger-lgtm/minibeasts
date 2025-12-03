@@ -120,8 +120,8 @@ export const CharacterSelectScreen: React.FC<{ onSelect: (char: CharacterData) =
         <NavButton direction="left" onClick={handlePrev} />
         
         <div key={focusedChar.id} className="w-full max-w-2xl glass rounded-3xl p-8 shadow-2xl border-2 border-blue-500/30 flex flex-col md:flex-row items-center gap-8 min-h-[280px] message-bubble neon-blue">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full flex-shrink-0 border-4 border-gradient-to-br from-blue-500 to-purple-600 bg-gradient-to-br from-gray-800 to-gray-900 relative shadow-2xl neon-purple p-1">
-                <div className="w-full h-full rounded-full overflow-hidden">
+            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full flex-shrink-0 relative shadow-2xl neon-purple p-1 bg-gradient-to-br from-blue-500 to-purple-600">
+                <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
                   <MiniBeastIcon characterId={focusedChar.id} isTalking={false} />
                 </div>
             </div>

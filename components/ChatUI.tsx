@@ -87,7 +87,7 @@ export const MessageBubble: React.FC<{ msg: Message; playerId: string }> = ({ ms
   return (
     <div className={`w-full flex ${isYou ? 'justify-end' : 'justify-start'} message-bubble`}>
       <div className={`flex max-w-xs md:max-w-md ${isYou ? 'flex-row-reverse' : 'flex-row'}`}>
-        <div className={`w-12 h-12 rounded-full flex-shrink-0 ${isYou ? 'ml-3' : 'mr-3'} border-3 shadow-lg p-0.5 ${isYou ? 'border-gradient-to-br from-blue-500 to-purple-600 neon-blue' : 'border-gradient-to-br from-cyan-500 to-purple-500'}`}>
+        <div className={`w-12 h-12 rounded-full flex-shrink-0 ${isYou ? 'ml-3' : 'mr-3'} shadow-lg p-0.5 ${isYou ? 'bg-gradient-to-br from-blue-500 to-purple-600 neon-blue' : 'bg-gradient-to-br from-cyan-500 to-purple-500'}`}>
           <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
             <MiniBeastIcon characterId={speaker} isTalking={!isYou} />
           </div>

@@ -129,7 +129,7 @@ const BeerDieChallengeMinigame: React.FC<{ onGameEnd: (grit: number) => void }> 
                                     style={{filter: 'drop-shadow(0 0 10px cyan)'}}
                                 />
                             </svg>
-                            <span className="absolute inset-0 flex items-center justify-center drop-shadow-lg">🎲</span>
+                            <span className="absolute inset-0 flex items-center justify-center" style={{filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))'}}>🎲</span>
                         </div>
                     </button>
                 )}
@@ -854,7 +854,7 @@ const ManageLifeModal: React.FC<{ player: PlayerState, onExit: () => void, onAct
 
 const RoastModal: React.FC<{ characters: PlayerState[], onRoast: (targetId: string) => void, onExit: () => void }> = ({ characters, onRoast, onExit }) => (
     <ModalWrapper>
-        <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-2xl border-2 border-orange-500/30" style={{boxShadow: '0 0 40px rgba(249, 115, 22, 0.4)'}}>
+        <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-2xl border-2 border-orange-500/30 neon-orange">
             <h2 className="text-5xl font-orbitron text-center mb-8 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">🔥 Who Are You Roasting? 🔥</h2>
             <div className="grid grid-cols-3 gap-4">
                 {characters.map(char => (

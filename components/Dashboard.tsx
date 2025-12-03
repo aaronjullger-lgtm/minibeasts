@@ -193,7 +193,7 @@ export const HUD: React.FC<HUDProps> = ({ player, day, week, weeklyGritGoal, onA
     <div className="w-full glass-dark backdrop-blur-xl p-4 shadow-2xl z-20 flex flex-col gap-4 text-white border-b-2 border-blue-500/30">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
         <div className="flex items-center gap-4 md:gap-5">
-          <div className="w-14 h-14 md:w-16 md:h-16 rounded-full border-3 border-gradient-to-br from-blue-500 to-purple-600 flex-shrink-0 shadow-lg neon-blue p-0.5">
+          <div className="w-14 h-14 md:w-16 md:h-16 rounded-full flex-shrink-0 shadow-lg neon-blue p-0.5 bg-gradient-to-br from-blue-500 to-purple-600">
             <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
               <MiniBeastIcon characterId={player.id} isTalking={false} />
             </div>
@@ -231,7 +231,7 @@ export const HUD: React.FC<HUDProps> = ({ player, day, week, weeklyGritGoal, onA
       <div className="flex items-center gap-2">
         <div className="w-full md:hidden"><TimeOfDay time={timeOfDay} /></div>
         <button onClick={() => onActionClick('store')} className="btn-modern bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 font-bold py-3 px-4 text-sm md:text-base md:px-5 rounded-xl transition-transform transform hover:scale-105 shadow-lg border border-purple-400/30 neon-purple font-orbitron">Store</button>
-        <button onClick={() => onActionClick('minigame')} className="btn-modern bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 font-bold py-3 px-4 text-sm md:text-base md:px-5 rounded-xl transition-transform transform hover:scale-105 flex items-center gap-2 shadow-lg border border-yellow-400/30 font-orbitron" style={{boxShadow: '0 0 20px rgba(251, 191, 36, 0.5)'}}>
+        <button onClick={() => onActionClick('minigame')} className="btn-modern bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 font-bold py-3 px-4 text-sm md:text-base md:px-5 rounded-xl transition-transform transform hover:scale-105 flex items-center gap-2 shadow-lg border border-yellow-400/30 font-orbitron neon-yellow">
           Game <MinigameIcon game={nextMinigame} />
         </button>
         <button onClick={() => onActionClick('manage')} className="btn-modern bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 font-bold py-3 px-4 text-sm md:text-base md:px-5 rounded-xl transition-transform transform hover:scale-105 shadow-lg border border-red-400/30 neon-pink font-orbitron">Manage</button>
@@ -246,7 +246,7 @@ export const HUD: React.FC<HUDProps> = ({ player, day, week, weeklyGritGoal, onA
             <span className="text-sm font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent font-orbitron">{player.grit} / {weeklyGritGoal}</span>
             </div>
             <div className="w-full bg-gray-800/50 rounded-full h-3 border border-blue-500/30 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 h-full rounded-full animate-gradient shadow-lg" style={{ width: `${gritProgress}%`, transition: 'width 0.5s ease-in-out', boxShadow: '0 0 10px rgba(59, 130, 246, 0.8)' }}></div>
+            <div className="bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 h-full rounded-full animate-gradient shadow-lg neon-blue" style={{ width: `${gritProgress}%`, transition: 'width 0.5s ease-in-out' }}></div>
             </div>
         </div>
         <div className="w-48 flex-shrink-0 hidden md:block">
