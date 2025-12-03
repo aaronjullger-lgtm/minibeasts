@@ -8,8 +8,11 @@ const initialMasterRanking = (): PlayerState[] =>
   Object.values(characterData).map(c => ({
     ...c,
     grit: 0,
+    loveLife: 50, // 0-100
+    fandom: 50, // 0-100
+    uniqueStatValue: 50, // 0-100
     happiness: 100,
-    energy: 100,
+    energy: 3, // Daily Action Points, max 3
     paSchoolStress: 50, // Aaron
     insecurity: 50, // Craif
     liberalGfSuspicion: 0, // Colin
