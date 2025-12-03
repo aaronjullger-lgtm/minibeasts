@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { sundayScariesTeams, sundayScariesRoasts, commishActions, tyWindowMessages, datingScenarios, ParlayLeg, CommishAction, DatingScenario } from '../constants';
 
 // --- SUNDAY SCARIES: THE PARLAY REVENGE GAME ---
@@ -7,7 +7,6 @@ export const SundayScariesMinigame: React.FC<{
     playerName: string;
 }> = ({ onGameEnd, playerName }) => {
     const [parlayLegs, setParlayLegs] = useState<ParlayLeg[]>([]);
-    const [currentLeg, setCurrentLeg] = useState(0);
     const [grit, setGrit] = useState(0);
     const [isHatersMode, setIsHatersMode] = useState(false);
     const [gamePhase, setGamePhase] = useState<'building' | 'watching' | 'resolved'>('building');
@@ -41,12 +40,14 @@ export const SundayScariesMinigame: React.FC<{
         
         // Simulate games resolving
         let delay = 1000;
+        let finalLegs: ParlayLeg[] = [...parlayLegs];
         parlayLegs.forEach((leg, index) => {
             setTimeout(() => {
                 const success = Math.random() > 0.5;
                 setParlayLegs(prev => {
                     const updated = [...prev];
                     updated[index] = { ...updated[index], success };
+                    finalLegs = updated;
                     return updated;
                 });
                 
@@ -56,13 +57,18 @@ export const SundayScariesMinigame: React.FC<{
                 }
                 
                 if (index === parlayLegs.length - 1) {
-                    setTimeout(() => resolveParlay(parlayLegs, success), 1000);
+                    setTimeout(() => {
+                        setParlayLegs(currentLegs => {
+                            resolveParlay(currentLegs);
+                            return currentLegs;
+                        });
+                    }, 1000);
                 }
             }, delay * (index + 1));
         });
     };
 
-    const resolveParlay = (legs: ParlayLeg[], lastSuccess: boolean) => {
+    const resolveParlay = (legs: ParlayLeg[]) => {
         const allSuccess = legs.every(leg => leg.success === true);
         
         if (allSuccess) {
@@ -470,6 +476,7 @@ export const BitchlessChroniclesMinigame: React.FC<{
     const [showDefense, setShowDefense] = useState(false);
     const [rejectionCount, setRejectionCount] = useState(0);
     const [gamePhase, setGamePhase] = useState<'select' | 'playing' | 'defense' | 'ended'>('select');
+    const [aaronMessage, setAaronMessage] = useState('');
 
     const scenarios = character ? datingScenarios.filter(s => s.character === character) : [];
     const currentScenario = scenarios[scenarioIndex];
@@ -485,9 +492,8 @@ export const BitchlessChroniclesMinigame: React.FC<{
         
         // Aaron randomly shows up
         if (Math.random() > 0.5) {
-            setTimeout(() => {
-                alert("aaron: skill issue");
-            }, 1000);
+            setAaronMessage("aaron: skill issue");
+            setTimeout(() => setAaronMessage(''), 3000);
         }
         
         if (scenarioIndex < scenarios.length - 1) {
@@ -621,6 +627,12 @@ export const BitchlessChroniclesMinigame: React.FC<{
                     <p className="text-xl">Insecurity: {insecurity}/100</p>
                 </div>
             </div>
+            
+            {aaronMessage && (
+                <div className="mb-4 p-4 bg-blue-900 rounded-lg border-2 border-blue-500 animate-pulse">
+                    <p className="text-xl italic text-blue-300">{aaronMessage}</p>
+                </div>
+            )}
             
             {currentScenario && (
                 <>

@@ -690,6 +690,10 @@ export const allAchievements: Achievement[] = [
     { id: 'DRAFT_GURU', name: "Fantasy Expert", description: "Draft a team with a total projection over 75 in the Fantasy Draft." },
     { id: 'TRIVIA_PERFECT', name: "Brainiac", description: "Answer every question correctly in Trivia Night." },
     { id: 'DIE_GOD', name: "Die Is Life", description: "Score over 100 Grit in the Beer Die Challenge." },
+    { id: 'SUNDAY_SCARIES_WIN', name: "Parlay God", description: "Win big in Sunday Scaries with a 5-leg parlay." },
+    { id: 'COMMISH_CHAOS_REVOLT', name: "Absolute Power", description: "Cause a league revolt in Commish Chaos." },
+    { id: 'TY_WINDOW_PERFECT', name: "Ty Whisperer", description: "Catch all 3 Ty Windows in one game." },
+    { id: 'BITCHLESS_SURVIVOR', name: "Friend Zone Escape Artist", description: "Complete The Bitchless Chronicles with minimal insecurity gain." },
 
     // Store & Economy
     { id: 'HIT_PARLAY', name: "All-In Gambler", description: "Successfully hit a risky parlay action." },
