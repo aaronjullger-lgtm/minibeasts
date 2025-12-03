@@ -1082,9 +1082,8 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
     }
   }, [playerState.id, isKicked, tyWindowOpen, addSystemMessage]);
 
-  // Dynasty Mode: Advance Day Function
-  const advanceDay = useCallback(() => {
-    // Select and apply a random event
+  // Dynasty Mode: Trigger Daily Event
+  const triggerDailyEvent = useCallback(() => {
     const randomEvent = gameEvents[Math.floor(Math.random() * gameEvents.length)];
     setCurrentDailyEvent(randomEvent);
     
@@ -1096,16 +1095,27 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
           ...prev,
           [effect.targetStat]: Math.max(0, Math.min(100, prev[effect.targetStat] + effect.value))
         }));
-      } else {
-        // Apply to player state
+      } else if (effect.targetStat === 'grit') {
+        // Apply grit to player
         setRanking(prev => prev.map(p => p.id === playerState.id ? {
           ...p,
-          [effect.targetStat]: effect.targetStat === 'grit' 
-            ? p.grit + effect.value
-            : Math.max(0, Math.min(100, (p[effect.targetStat] as number) + effect.value))
+          grit: p.grit + effect.value
+        } : p));
+      } else if (effect.targetStat === 'loveLife' || effect.targetStat === 'fandom' || 
+                 effect.targetStat === 'uniqueStatValue' || effect.targetStat === 'energy') {
+        // Apply to player stats with bounds
+        setRanking(prev => prev.map(p => p.id === playerState.id ? {
+          ...p,
+          [effect.targetStat]: Math.max(0, Math.min(100, p[effect.targetStat] + effect.value))
         } : p));
       }
     });
+  }, [playerState.id]);
+
+  // Dynasty Mode: Advance Day Function
+  const advanceDay = useCallback(() => {
+    // Trigger daily event
+    triggerDailyEvent();
     
     // Reset energy
     setRanking(prev => prev.map(p => ({
@@ -1157,7 +1167,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
         return;
       }
     }
-  }, [playerState.id, globalState, ranking, onGameEnd]);
+  }, [playerState.id, globalState, ranking, onGameEnd, triggerDailyEvent]);
 
   // Dynasty Mode: Sunday Resolution (NFL Simulation)
   const resolveWeek = useCallback(() => {
