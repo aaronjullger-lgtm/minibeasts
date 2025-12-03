@@ -51,13 +51,17 @@ export interface StoreItem {
 }
 
 // Item interface for Dynasty Mode
+// Items can affect either player-specific stats or global meters
 export interface Item {
   id: string;
   name: string;
   cost: number; // Cost in grit
   desc: string;
-  targetStat: 'loveLife' | 'fandom' | 'uniqueStatValue' | 'energy' | 'cringeMeter' | 'entertainmentMeter'; // Which bar/meter it affects
-  statEffect: number; // How much it affects the target stat
+  // Target stat can be:
+  // - Player stats: loveLife, fandom, uniqueStatValue, energy
+  // - Global stats: cringeMeter, entertainmentMeter
+  targetStat: 'loveLife' | 'fandom' | 'uniqueStatValue' | 'energy' | 'cringeMeter' | 'entertainmentMeter';
+  statEffect: number; // How much it affects the target stat (positive or negative)
   isCharacterSpecific?: string; // Optional character ID if item is specific to a character
   type?: 'consumable' | 'permanent';
 }
