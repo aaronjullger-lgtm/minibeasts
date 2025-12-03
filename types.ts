@@ -81,7 +81,7 @@ export interface EndGameReport {
 
 export type GameState = 'intro' | 'select' | 'playing' | 'ended';
 
-export type MinigameType = 'kicking' | 'quarterback' | 'play_calling' | 'running_back' | 'fantasy_draft' | 'commentary_battle' | 'trivia_night' | 'beer_die';
+export type MinigameType = 'kicking' | 'quarterback' | 'play_calling' | 'running_back' | 'fantasy_draft' | 'commentary_battle' | 'trivia_night' | 'beer_die' | 'sunday_scaries' | 'commish_chaos' | 'ty_window' | 'bitchless_chronicles';
 
 export interface SeasonGoal {
   id: string;

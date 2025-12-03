@@ -6,6 +6,7 @@ import { HUD } from './Dashboard';
 import { MessageBubble, Spinner } from './ChatUI';
 import { soundService } from '../services/soundService';
 import { gameEvents } from '../events';
+import { SundayScariesMinigame, CommishChaosMinigame, TyWindowMinigame, BitchlessChroniclesMinigame } from './NewMinigames';
 
 // --- MODAL COMPONENTS ---
 const ModalWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -782,7 +783,7 @@ const RunningBackMinigame: React.FC<{ onGameEnd: (grit: number) => void }> = ({ 
 };
 
 
-const MinigameModal: React.FC<{ onGameEnd: (grit: number) => void; gameType: MinigameType }> = ({ onGameEnd, gameType }) => {
+const MinigameModal: React.FC<{ onGameEnd: (grit: number) => void; gameType: MinigameType; player: PlayerState }> = ({ onGameEnd, gameType, player }) => {
     let gameComponent;
     switch (gameType) {
         case 'kicking': gameComponent = <KickingMinigame onGameEnd={onGameEnd} />; break;
@@ -793,6 +794,10 @@ const MinigameModal: React.FC<{ onGameEnd: (grit: number) => void; gameType: Min
         case 'commentary_battle': gameComponent = <CommentaryBattleMinigame onGameEnd={onGameEnd} />; break;
         case 'trivia_night': gameComponent = <TriviaNightMinigame onGameEnd={onGameEnd} />; break;
         case 'beer_die': gameComponent = <BeerDieChallengeMinigame onGameEnd={onGameEnd} />; break;
+        case 'sunday_scaries': gameComponent = <SundayScariesMinigame onGameEnd={onGameEnd} playerName={player.name} />; break;
+        case 'commish_chaos': gameComponent = <CommishChaosMinigame onGameEnd={onGameEnd} />; break;
+        case 'ty_window': gameComponent = <TyWindowMinigame onGameEnd={onGameEnd} />; break;
+        case 'bitchless_chronicles': gameComponent = <BitchlessChroniclesMinigame onGameEnd={onGameEnd} playerName={player.name} />; break;
         default: gameComponent = <p>No game selected.</p>;
     }
     return <ModalWrapper>{gameComponent}</ModalWrapper>;
@@ -959,7 +964,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
   const feedEndRef = useRef<HTMLDivElement>(null);
   const isInitialized = useRef(false);
 
-  const MINIGAMES: MinigameType[] = ['kicking', 'quarterback', 'play_calling', 'running_back', 'fantasy_draft', 'commentary_battle', 'trivia_night', 'beer_die'];
+  const MINIGAMES: MinigameType[] = ['kicking', 'quarterback', 'play_calling', 'running_back', 'fantasy_draft', 'commentary_battle', 'trivia_night', 'beer_die', 'sunday_scaries', 'commish_chaos', 'ty_window', 'bitchless_chronicles'];
   const DAY_DURATION_MS = 90 * 1000;
 
   const addSystemMessage = useCallback((text: string) => {
@@ -1666,7 +1671,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
 
   return (
     <div className="w-full h-screen flex max-w-7xl mx-auto game-container">
-      {activeModal === 'minigame' && <MinigameModal gameType={nextMinigame} onGameEnd={handleMinigameEnd} />}
+      {activeModal === 'minigame' && <MinigameModal gameType={nextMinigame} onGameEnd={handleMinigameEnd} player={playerState} />}
       {activeModal === 'store' && <StoreModal onExit={() => setActiveModal(null)} onPurchase={handlePurchase} grit={playerState.grit} inventory={inventory} />}
       {activeModal === 'manage' && <ManageLifeModal player={playerState} onExit={() => setActiveModal(null)} onAction={handleAction} />}
       {activeModal === 'roast' && <RoastModal characters={ranking.filter(c=>c.id !== playerState.id)} onRoast={handleRoast} onExit={() => setActiveModal(null)} />}
