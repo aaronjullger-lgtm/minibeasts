@@ -77,7 +77,7 @@ export const MessageBubble: React.FC<{ msg: Message; playerId: string }> = ({ ms
   if (isSystem) {
     return (
       <div className="w-full flex flex-col items-center message-bubble">
-        <div className="px-4 py-3 rounded-2xl bg-gray-900 text-gray-400 text-center self-center text-sm italic w-full max-w-full">
+        <div className="px-5 py-3 rounded-full glass-dark text-cyan-300 text-center self-center text-sm italic w-full max-w-full border border-blue-500/30 shadow-lg font-semibold">
           {text}
         </div>
       </div>
@@ -87,13 +87,15 @@ export const MessageBubble: React.FC<{ msg: Message; playerId: string }> = ({ ms
   return (
     <div className={`w-full flex ${isYou ? 'justify-end' : 'justify-start'} message-bubble`}>
       <div className={`flex max-w-xs md:max-w-md ${isYou ? 'flex-row-reverse' : 'flex-row'}`}>
-        <div className={`w-10 h-10 rounded-full flex-shrink-0 ${isYou ? 'ml-3' : 'mr-3'} border-2 border-gray-900 shadow-md`}>
-          <MiniBeastIcon characterId={speaker} isTalking={!isYou} />
+        <div className={`w-12 h-12 rounded-full flex-shrink-0 ${isYou ? 'ml-3' : 'mr-3'} border-3 shadow-lg p-0.5 ${isYou ? 'border-gradient-to-br from-blue-500 to-purple-600 neon-blue' : 'border-gradient-to-br from-cyan-500 to-purple-500'}`}>
+          <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
+            <MiniBeastIcon characterId={speaker} isTalking={!isYou} />
+          </div>
         </div>
         <div className="flex flex-col">
-          {!isYou && (<span className={`font-semibold text-sm ${nameColors[speaker] || 'text-gray-400'}`}>{name}</span>)}
-          <div className={`px-4 py-3 rounded-2xl ${isYou ? 'bg-blue-600 self-end rounded-br-lg' : 'bg-gray-700 self-start rounded-bl-lg'}`}>
-            {text}
+          {!isYou && (<span className={`font-bold text-sm mb-1 ${nameColors[speaker] || 'text-gray-400'} drop-shadow`}>{name}</span>)}
+          <div className={`px-5 py-3 rounded-2xl shadow-lg ${isYou ? 'bg-gradient-to-br from-blue-600 to-purple-600 self-end rounded-br-md border border-blue-400/30 neon-blue' : 'glass-dark self-start rounded-bl-md border border-gray-500/30'}`}>
+            <p className="text-white font-medium">{text}</p>
           </div>
         </div>
       </div>

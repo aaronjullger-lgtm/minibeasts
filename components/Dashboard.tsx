@@ -190,32 +190,34 @@ export const HUD: React.FC<HUDProps> = ({ player, day, week, weeklyGritGoal, onA
   const gritProgress = Math.min(100, (player.grit / weeklyGritGoal) * 100);
 
   return (
-    <div className="w-full bg-gray-900/80 backdrop-blur-sm p-3 shadow-lg z-20 flex flex-col gap-3 text-white border-b-2 border-gray-700">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-3 md:gap-0">
-        <div className="flex items-center gap-3 md:gap-4">
-          <div className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-gray-600 flex-shrink-0">
-            <MiniBeastIcon characterId={player.id} isTalking={false} />
+    <div className="w-full glass-dark backdrop-blur-xl p-4 shadow-2xl z-20 flex flex-col gap-4 text-white border-b-2 border-blue-500/30">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
+        <div className="flex items-center gap-4 md:gap-5">
+          <div className="w-14 h-14 md:w-16 md:h-16 rounded-full border-3 border-gradient-to-br from-blue-500 to-purple-600 flex-shrink-0 shadow-lg neon-blue p-0.5">
+            <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
+              <MiniBeastIcon characterId={player.id} isTalking={false} />
+            </div>
           </div>
           <div className="flex-grow">
-            <h2 className="font-graduate text-xl md:text-2xl">{player.name}</h2>
-            <p className="text-xs md:text-sm text-gray-400 italic">"{statusMessage}"</p>
+            <h2 className="font-orbitron text-2xl md:text-3xl bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent font-bold">{player.name}</h2>
+            <p className="text-sm md:text-base text-cyan-300 italic font-semibold">"{statusMessage}"</p>
           </div>
         </div>
-        <div className="hidden md:block w-px h-10 bg-gray-600" />
+        <div className="hidden md:block w-px h-14 bg-gradient-to-b from-transparent via-blue-500/50 to-transparent" />
         <CharacterStats player={player} />
-        <div className="hidden md:block w-px h-10 bg-gray-600" />
+        <div className="hidden md:block w-px h-14 bg-gradient-to-b from-transparent via-blue-500/50 to-transparent" />
         <div className="flex items-center gap-4">
            <div className="relative">
-              <button onClick={() => setShowGoals(!showGoals)} onBlur={() => setShowGoals(false)} className="text-right hover:text-yellow-300 transition-colors">
-                <h3 className="font-graduate text-lg md:text-xl">Week {week}</h3>
-                <p className="text-xs md:text-sm text-gray-400">Day {day}</p>
+              <button onClick={() => setShowGoals(!showGoals)} onBlur={() => setShowGoals(false)} className="text-right hover:text-cyan-300 transition-colors glass rounded-xl p-3 border border-blue-500/30">
+                <h3 className="font-orbitron text-xl md:text-2xl bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent font-bold">Week {week}</h3>
+                <p className="text-xs md:text-sm text-gray-400 font-semibold">Day {day}</p>
               </button>
               {showGoals && (
-                <div className="absolute top-full right-0 mt-2 w-72 bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-lg z-10">
-                    <h4 className="font-bold text-lg mb-2 text-yellow-300">Season Goals</h4>
+                <div className="absolute top-full right-0 mt-2 w-80 glass-dark border-2 border-blue-500/30 rounded-xl p-4 shadow-2xl z-10 neon-blue">
+                    <h4 className="font-bold text-xl mb-3 text-cyan-300 font-orbitron">Season Goals</h4>
                     <ul className="space-y-2">
                         {seasonGoals.map(goal => (
-                            <li key={goal.id} className={`text-sm ${goal.isCompleted ? 'text-green-400 line-through' : 'text-gray-300'}`}>
+                            <li key={goal.id} className={`text-sm font-semibold ${goal.isCompleted ? 'text-green-400 line-through' : 'text-gray-200'}`}>
                                 {goal.description}
                             </li>
                         ))}
@@ -228,23 +230,23 @@ export const HUD: React.FC<HUDProps> = ({ player, day, week, weeklyGritGoal, onA
 
       <div className="flex items-center gap-2">
         <div className="w-full md:hidden"><TimeOfDay time={timeOfDay} /></div>
-        <button onClick={() => onActionClick('store')} className="bg-purple-600 hover:bg-purple-700 font-bold py-2 px-3 text-sm md:text-base md:px-4 rounded-lg transition-transform transform hover:scale-105">Store</button>
-        <button onClick={() => onActionClick('minigame')} className="bg-yellow-600 hover:bg-yellow-700 font-bold py-2 px-3 text-sm md:text-base md:px-4 rounded-lg transition-transform transform hover:scale-105 flex items-center gap-2">
+        <button onClick={() => onActionClick('store')} className="btn-modern bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 font-bold py-3 px-4 text-sm md:text-base md:px-5 rounded-xl transition-transform transform hover:scale-105 shadow-lg border border-purple-400/30 neon-purple font-orbitron">Store</button>
+        <button onClick={() => onActionClick('minigame')} className="btn-modern bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 font-bold py-3 px-4 text-sm md:text-base md:px-5 rounded-xl transition-transform transform hover:scale-105 flex items-center gap-2 shadow-lg border border-yellow-400/30 font-orbitron" style={{boxShadow: '0 0 20px rgba(251, 191, 36, 0.5)'}}>
           Game <MinigameIcon game={nextMinigame} />
         </button>
-        <button onClick={() => onActionClick('manage')} className="bg-red-600 hover:bg-red-700 font-bold py-2 px-3 text-sm md:text-base md:px-4 rounded-lg transition-transform transform hover:scale-105">Manage</button>
-        <button onClick={() => onActionClick('achievements')} className="bg-green-600 hover:bg-green-700 font-bold py-2 px-3 text-sm md:text-base md:px-4 rounded-lg transition-transform transform hover:scale-105">🏆</button>
+        <button onClick={() => onActionClick('manage')} className="btn-modern bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 font-bold py-3 px-4 text-sm md:text-base md:px-5 rounded-xl transition-transform transform hover:scale-105 shadow-lg border border-red-400/30 neon-pink font-orbitron">Manage</button>
+        <button onClick={() => onActionClick('achievements')} className="btn-modern bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 font-bold py-3 px-4 text-sm md:text-base md:px-5 rounded-xl transition-transform transform hover:scale-105 shadow-lg border border-green-400/30 neon-green font-orbitron">🏆</button>
 
       </div>
       
       <div className="flex items-center gap-4">
         <div className="flex-grow">
-            <div className="flex justify-between items-center mb-1">
-            <span className="text-xs font-bold text-blue-300">WEEKLY GRIT GOAL</span>
-            <span className="text-xs font-bold">{player.grit} / {weeklyGritGoal}</span>
+            <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-bold text-cyan-300 font-orbitron">WEEKLY GRIT GOAL</span>
+            <span className="text-sm font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent font-orbitron">{player.grit} / {weeklyGritGoal}</span>
             </div>
-            <div className="w-full bg-gray-700 rounded-full h-2.5">
-            <div className="bg-blue-500 h-2.5 rounded-full" style={{ width: `${gritProgress}%`, transition: 'width 0.5s ease-in-out' }}></div>
+            <div className="w-full bg-gray-800/50 rounded-full h-3 border border-blue-500/30 overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 h-full rounded-full animate-gradient shadow-lg" style={{ width: `${gritProgress}%`, transition: 'width 0.5s ease-in-out', boxShadow: '0 0 10px rgba(59, 130, 246, 0.8)' }}></div>
             </div>
         </div>
         <div className="w-48 flex-shrink-0 hidden md:block">
