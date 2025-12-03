@@ -73,7 +73,12 @@ export const MiniBeastIcon: React.FC<{ characterId: string; isTalking: boolean }
         <rect x="10" y="7" width="20" height="7" fill="#212121" rx="1" />
         <ellipse cx="20" cy="7" rx="10" ry="2" fill="#424242" />
       </>);
-      accessory = <text x="20" y="9" fontSize="4" fill="#FFF" textAnchor="middle">🤓</text>;
+      accessory = (
+        <g>
+          <circle cx="20" cy="9" r="2" fill="#FFD700" opacity="0.3" />
+          <text x="20" y="9.5" fontSize="2.5" fill="#000" textAnchor="middle" fontWeight="bold">👓</text>
+        </g>
+      );
       break;
     case 'luke': 
       hair = "#5D4037"; hairHighlight = "#6D4C41";
@@ -90,7 +95,9 @@ export const MiniBeastIcon: React.FC<{ characterId: string; isTalking: boolean }
       hair = "#FFF176"; hairHighlight = "#FFF59D";
       accessory = (<>
         <circle cx="32" cy="10" r="2.5" fill="#FFD700" opacity="0.8" />
-        <text x="32" y="11" fontSize="2" fill="#FFF" textAnchor="middle">✨</text>
+        <circle cx="31.5" cy="9.5" r="0.5" fill="#FFF" />
+        <circle cx="32.5" cy="10.5" r="0.5" fill="#FFF" />
+        <circle cx="32" cy="11" r="0.3" fill="#FFF" />
       </>); // Pretty boy sparkle
       break;
     case 'seth': 
@@ -157,7 +164,7 @@ export const MiniBeastIcon: React.FC<{ characterId: string; isTalking: boolean }
           {/* Shirt gradient */}
           <linearGradient id={`shirtGrad-${characterId}`} x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" style={{stopColor: shirt}} />
-            <stop offset="100%" style={{stopColor: shirtShadow}} opacity="0.8" />
+            <stop offset="100%" style={{stopColor: shirtShadow, stopOpacity: 0.8}} />
           </linearGradient>
         </defs>
         
@@ -189,8 +196,8 @@ export const MiniBeastIcon: React.FC<{ characterId: string; isTalking: boolean }
             <ellipse cx="24" cy="19" rx="2.5" ry="2.8" fill="#FFFFFF" />
             
             {/* Pupils with animation */}
-            <ellipse cx={isTalking ? "16.3" : "16"} cy={isTalking ? "19.3" : "19"} rx="1.3" ry="1.5" fill="#2C3E50" />
-            <ellipse cx={isTalking ? "24.3" : "24"} cy={isTalking ? "19.3" : "19"} rx="1.3" ry="1.5" fill="#2C3E50" />
+            <ellipse cx={isTalking ? 16.3 : 16} cy={isTalking ? 19.3 : 19} rx="1.3" ry="1.5" fill="#2C3E50" />
+            <ellipse cx={isTalking ? 24.3 : 24} cy={isTalking ? 19.3 : 19} rx="1.3" ry="1.5" fill="#2C3E50" />
             
             {/* Eye shine */}
             <ellipse cx="15.5" cy="18.5" rx="0.8" ry="1" fill="#FFFFFF" opacity="0.9" />
