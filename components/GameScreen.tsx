@@ -1356,13 +1356,34 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
   };
 
   const handlePurchase = (item: StoreItem) => {
-      if (playerState.grit >= item.cost) {
+      // Apply Ty Window discount if active
+      const finalCost = tyWindowOpen ? Math.floor(item.cost * 0.5) : item.cost;
+      
+      if (playerState.grit >= finalCost) {
           soundService.playPurchase();
-          setRanking(prev => prev.map(p => p.id === playerState.id ? { ...p, grit: p.grit - item.cost } : p));
+          setRanking(prev => prev.map(p => p.id === playerState.id ? { ...p, grit: p.grit - finalCost } : p));
           if (item.type === 'permanent' || (item.type === 'consumable' && !inventory.includes(item.id))) {
               setInventory(prev => [...prev, item.id]);
           }
-          addSystemMessage(`You bought the ${item.name}!`);
+          
+          if (tyWindowOpen) {
+              addSystemMessage(`You bought the ${item.name} at 50% off! [${finalCost} Grit]`);
+          } else {
+              addSystemMessage(`You bought the ${item.name}!`);
+          }
+          
+          // Handle special items
+          if (item.id === 'haters_parlay') {
+              const isSuccess = Math.random() > 0.5;
+              const effect = isSuccess ? 30 : -20;
+              setRanking(prev => prev.map(p => p.id === playerState.id ? { 
+                  ...p, 
+                  fandom: Math.max(0, Math.min(100, p.fandom + effect)) 
+              } : p));
+              addSystemMessage(isSuccess ? 
+                  "Hater's Parlay HIT! [+30 Fandom]" : 
+                  "Hater's Parlay MISSED. [-20 Fandom]");
+          }
       }
   };
 
@@ -1579,7 +1600,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
   return (
     <div className="w-full h-screen flex max-w-7xl mx-auto game-container">
       {activeModal === 'minigame' && <MinigameModal gameType={nextMinigame} onGameEnd={handleMinigameEnd} />}
-      {activeModal === 'store' && <StoreModal onExit={() => setActiveModal(null)} onPurchase={handlePurchase} grit={tyWindowOpen ? Math.floor(playerState.grit * 0.5) : playerState.grit} inventory={inventory} />}
+      {activeModal === 'store' && <StoreModal onExit={() => setActiveModal(null)} onPurchase={handlePurchase} grit={playerState.grit} inventory={inventory} />}
       {activeModal === 'manage' && <ManageLifeModal player={playerState} onExit={() => setActiveModal(null)} onAction={handleAction} />}
       {activeModal === 'roast' && <RoastModal characters={ranking.filter(c=>c.id !== playerState.id)} onRoast={handleRoast} onExit={() => setActiveModal(null)} />}
       {activeModal === 'achievements' && <AchievementModal onExit={() => setActiveModal(null)} unlocked={playerState.unlockedAchievements} />}

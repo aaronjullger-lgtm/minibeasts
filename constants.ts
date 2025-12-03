@@ -54,9 +54,9 @@ export const shopItems: Item[] = [
     id: 'haters_parlay', 
     name: "Hater's Parlay", 
     cost: 100, 
-    desc: 'A risky bet that either pays off big or crashes hard.', 
+    desc: 'A risky bet that either pays off big or crashes hard. Effect is random each use.', 
     targetStat: 'fandom', 
-    statEffect: Math.random() > 0.5 ? 30 : -20, 
+    statEffect: 0, // This is a special item - effect calculated on use
     type: 'consumable' 
   },
   
@@ -117,6 +117,16 @@ export const shopItems: Item[] = [
     desc: 'Professional help for your love life. Reduces insecurity.', 
     targetStat: 'uniqueStatValue', 
     statEffect: 25, 
+    isCharacterSpecific: 'craif', 
+    type: 'consumable' 
+  },
+  { 
+    id: 'tinder', 
+    name: 'Tinder Gold', 
+    cost: 150, 
+    desc: 'Premium dating app features. Can be used to lower reliability in betting.', 
+    targetStat: 'loveLife', 
+    statEffect: 10, 
     isCharacterSpecific: 'craif', 
     type: 'consumable' 
   },
