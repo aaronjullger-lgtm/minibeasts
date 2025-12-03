@@ -104,35 +104,36 @@ const BeerDieChallengeMinigame: React.FC<{ onGameEnd: (grit: number) => void }> 
     const progress = die ? Math.min(1, (performance.now() - die.startTime) / die.duration) : 0;
 
     return (
-        <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-2xl text-center border-4 border-white">
-            <h2 className="text-3xl font-graduate mb-2">Beer Die Challenge</h2>
-            <div className="flex justify-between items-center mb-4 text-lg">
-                <p>Grit: <span className="font-bold">{score}</span></p>
-                <p>Lives: <span className="font-bold text-red-500">{'❤️'.repeat(misses)}</span></p>
+        <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-2xl text-center border-4 border-cyan-500/50 neon-blue">
+            <h2 className="text-5xl font-orbitron mb-4 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">🎲 Beer Die Challenge</h2>
+            <div className="flex justify-between items-center mb-6 text-2xl">
+                <p className="font-orbitron">Grit: <span className="font-bold text-yellow-400">{score}</span></p>
+                <p className="font-orbitron">Lives: <span className="font-bold text-red-500 text-3xl">{'❤️'.repeat(misses)}</span></p>
             </div>
-            <div className="bg-gray-900 w-full h-80 rounded-lg relative cursor-crosshair">
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 w-full h-80 rounded-2xl relative cursor-crosshair border-2 border-cyan-500/30 shadow-inner">
                 {die && (
                     <button
                         onClick={handleClickDie}
-                        className="absolute text-4xl"
+                        className="absolute text-4xl transition-transform hover:scale-110"
                         style={{ left: `${die.x}%`, top: `${die.y}%`, transform: 'translate(-50%, -50%)' }}
                     >
                         <div className="relative">
                             <svg width="60" height="60" viewBox="0 0 100 100">
-                                <circle cx="50" cy="50" r="45" fill="none" stroke="#555" strokeWidth="10" />
+                                <circle cx="50" cy="50" r="45" fill="none" stroke="#1f2937" strokeWidth="10" />
                                 <circle 
                                     cx="50" cy="50" r="45" 
                                     fill="none" stroke="cyan" strokeWidth="10"
                                     strokeDasharray="282.7"
                                     strokeDashoffset={282.7 * progress}
                                     transform="rotate(-90 50 50)"
+                                    style={{filter: 'drop-shadow(0 0 10px cyan)'}}
                                 />
                             </svg>
-                            <span className="absolute inset-0 flex items-center justify-center">🎲</span>
+                            <span className="absolute inset-0 flex items-center justify-center" style={{filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))'}}>🎲</span>
                         </div>
                     </button>
                 )}
-                 {misses <= 0 && <div className="absolute inset-0 flex items-center justify-center text-4xl font-graduate text-red-500">GAME OVER</div>}
+                 {misses <= 0 && <div className="absolute inset-0 flex items-center justify-center text-5xl font-orbitron text-red-500 bg-black/50 rounded-2xl backdrop-blur-sm">GAME OVER</div>}
             </div>
         </div>
     );
@@ -807,19 +808,21 @@ const StoreModal: React.FC<{ onExit: () => void; onPurchase: (item: StoreItem) =
 
     return (
         <ModalWrapper>
-            <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-lg">
-                <h2 className="text-3xl font-graduate text-center mb-4">The Store</h2>
-                <p className="text-center text-2xl font-bold text-blue-400 mb-6">Your Grit: {grit}</p>
+            <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-2xl border-2 border-purple-500/30 neon-purple">
+                <h2 className="text-5xl font-orbitron text-center mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">The Store</h2>
+                <p className="text-center text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-8 font-orbitron">Your Grit: {grit}</p>
                 <div className="space-y-4 max-h-96 overflow-y-auto custom-scrollbar pr-2">
                     {currentItems.map(item => (
-                        <button key={item.id} onClick={() => onPurchase(item)} disabled={grit < item.cost} className="w-full bg-gray-700 hover:bg-blue-600 p-4 rounded-lg text-left disabled:opacity-50 disabled:hover:bg-gray-700 transition-all">
-                            <h3 className="text-xl font-bold text-white">{item.name}</h3>
-                            <p className="text-gray-300">{item.desc}</p>
-                            <p className="text-yellow-400 font-bold text-lg mt-1">{item.cost} Grit</p>
+                        <button key={item.id} onClick={() => onPurchase(item)} disabled={grit < item.cost} className="btn-modern w-full glass hover:bg-white/10 p-5 rounded-2xl text-left disabled:opacity-50 disabled:hover:bg-transparent transition-all border-2 border-purple-500/20 hover:border-purple-500/50">
+                            <h3 className="text-2xl font-bold text-white mb-2 font-orbitron">{item.name}</h3>
+                            <p className="text-gray-200 mb-3 text-base">{item.desc}</p>
+                            <p className="text-yellow-400 font-bold text-xl font-orbitron flex items-center gap-2">
+                                <span className="text-2xl">💎</span> {item.cost} Grit
+                            </p>
                         </button>
                     ))}
                 </div>
-                <button onClick={onExit} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-xl mt-8">Exit Store</button>
+                <button onClick={onExit} className="btn-modern w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white font-bold py-4 px-5 rounded-2xl mt-8 text-xl font-orbitron shadow-lg border border-red-400/30 neon-pink">Exit Store</button>
             </div>
         </ModalWrapper>
     );
@@ -830,18 +833,20 @@ const ManageLifeModal: React.FC<{ player: PlayerState, onExit: () => void, onAct
 
     return (
         <ModalWrapper>
-            <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-lg">
-                <h2 className="text-3xl font-graduate text-center mb-6">Manage Your Life</h2>
+            <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-2xl border-2 border-red-500/30 neon-pink">
+                <h2 className="text-5xl font-orbitron text-center mb-8 bg-gradient-to-r from-red-400 via-pink-500 to-rose-600 bg-clip-text text-transparent">Manage Your Life</h2>
                 <div className="space-y-4 max-h-96 overflow-y-auto custom-scrollbar pr-2">
                     {playerActions.map(action => (
-                        <button key={action.name} onClick={() => onAction(action)} disabled={player.energy < action.cost} className="w-full bg-gray-700 hover:bg-red-600 p-4 rounded-lg text-left disabled:opacity-50 disabled:hover:bg-gray-700 transition-all">
-                            <h3 className="text-xl font-bold text-white">{action.name}</h3>
-                            <p className="text-gray-300">{action.message.split('.')[0]}.</p>
-                            <p className="text-yellow-400 font-bold text-lg mt-1">{action.cost} Energy</p>
+                        <button key={action.name} onClick={() => onAction(action)} disabled={player.energy < action.cost} className="btn-modern w-full glass hover:bg-white/10 p-5 rounded-2xl text-left disabled:opacity-50 disabled:hover:bg-transparent transition-all border-2 border-red-500/20 hover:border-red-500/50">
+                            <h3 className="text-2xl font-bold text-white mb-2 font-orbitron">{action.name}</h3>
+                            <p className="text-gray-200 text-base mb-3">{action.message.split('.')[0]}.</p>
+                            <p className="text-yellow-400 font-bold text-xl font-orbitron flex items-center gap-2">
+                                <span className="text-2xl">⚡</span> {action.cost} Energy
+                            </p>
                         </button>
                     ))}
                 </div>
-                <button onClick={onExit} className="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-5 rounded-xl mt-8">Close</button>
+                <button onClick={onExit} className="btn-modern w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-4 px-5 rounded-2xl mt-8 text-xl font-orbitron shadow-lg border border-gray-500/30">Close</button>
             </div>
         </ModalWrapper>
     );
@@ -849,33 +854,36 @@ const ManageLifeModal: React.FC<{ player: PlayerState, onExit: () => void, onAct
 
 const RoastModal: React.FC<{ characters: PlayerState[], onRoast: (targetId: string) => void, onExit: () => void }> = ({ characters, onRoast, onExit }) => (
     <ModalWrapper>
-        <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
-            <h2 className="text-3xl font-graduate text-center mb-6">Who Are You Roasting?</h2>
+        <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-2xl border-2 border-orange-500/30 neon-orange">
+            <h2 className="text-5xl font-orbitron text-center mb-8 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">🔥 Who Are You Roasting? 🔥</h2>
             <div className="grid grid-cols-3 gap-4">
                 {characters.map(char => (
-                    <button key={char.id} onClick={() => onRoast(char.id)} className="bg-gray-700 hover:bg-red-600 p-3 rounded-lg text-center font-bold">
+                    <button key={char.id} onClick={() => onRoast(char.id)} className="btn-modern glass hover:bg-white/10 p-4 rounded-2xl text-center font-bold border-2 border-red-500/30 hover:border-red-500/70 transition-all neon-pink font-orbitron text-white">
                         {char.name}
                     </button>
                 ))}
             </div>
-            <button onClick={onExit} className="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-5 rounded-xl mt-8">Cancel</button>
+            <button onClick={onExit} className="btn-modern w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-4 px-5 rounded-2xl mt-8 text-xl font-orbitron shadow-lg border border-gray-500/30">Cancel</button>
         </div>
     </ModalWrapper>
 );
 
 const AchievementModal: React.FC<{ onExit: () => void, unlocked: string[] }> = ({ onExit, unlocked }) => (
     <ModalWrapper>
-        <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-lg">
-            <h2 className="text-3xl font-graduate text-center mb-6">Achievements</h2>
-            <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar pr-2">
+        <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-2xl border-2 border-yellow-500/30 neon-green">
+            <h2 className="text-5xl font-orbitron text-center mb-8 bg-gradient-to-r from-yellow-400 via-green-500 to-emerald-600 bg-clip-text text-transparent">🏆 Achievements 🏆</h2>
+            <div className="space-y-4 max-h-96 overflow-y-auto custom-scrollbar pr-2">
                 {allAchievements.map(ach => (
-                    <div key={ach.id} className={`p-3 rounded-lg ${unlocked.includes(ach.id) ? 'bg-green-800/50 border-l-4 border-green-400' : 'bg-gray-700/50 opacity-60'}`}>
-                        <h3 className="font-bold text-lg text-white">🏆 {ach.name}</h3>
-                        <p className="text-sm text-gray-300">{ach.description}</p>
+                    <div key={ach.id} className={`p-5 rounded-2xl transition-all ${unlocked.includes(ach.id) ? 'glass border-2 border-green-500/50 neon-green' : 'bg-gray-800/30 border-2 border-gray-600/30 opacity-50'}`}>
+                        <h3 className="font-bold text-2xl text-white mb-2 font-orbitron flex items-center gap-2">
+                            <span className="text-3xl">{unlocked.includes(ach.id) ? '✅' : '🔒'}</span>
+                            {ach.name}
+                        </h3>
+                        <p className="text-base text-gray-200">{ach.description}</p>
                     </div>
                 ))}
             </div>
-            <button onClick={onExit} className="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-5 rounded-xl mt-8">Close</button>
+            <button onClick={onExit} className="btn-modern w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-4 px-5 rounded-2xl mt-8 text-xl font-orbitron shadow-lg border border-gray-500/30">Close</button>
         </div>
     </ModalWrapper>
 );
@@ -1608,13 +1616,13 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
       {/* Dynasty Mode: The Joke Kick Event */}
       {isKicked && (
         <ModalWrapper>
-          <div className="bg-black p-8 rounded-lg shadow-xl w-full max-w-md text-center border-4 border-red-600">
-            <h2 className="text-4xl font-graduate mb-6 text-red-500">YOU'VE BEEN KICKED</h2>
-            <p className="text-xl mb-8">Click "Let me in" 10 times to return...</p>
-            <p className="text-gray-400 mb-4">Clicks: {kickClickCount}/10</p>
+          <div className="glass-dark p-10 rounded-3xl shadow-2xl w-full max-w-md text-center border-4 border-red-600 neon-pink">
+            <h2 className="text-6xl font-orbitron mb-8 bg-gradient-to-r from-red-500 to-pink-600 bg-clip-text text-transparent">🚪 YOU'VE BEEN KICKED</h2>
+            <p className="text-2xl mb-8 text-white font-semibold">Click "Let me in" 10 times to return...</p>
+            <p className="text-gray-300 mb-6 text-xl font-orbitron">Clicks: <span className="text-cyan-400 font-bold">{kickClickCount}/10</span></p>
             <button
               onClick={handleLetMeIn}
-              className="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg text-xl"
+              className="btn-modern bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white font-bold py-5 px-12 rounded-2xl text-2xl font-orbitron shadow-2xl border border-red-400/30"
             >
               LET ME IN
             </button>
@@ -1624,23 +1632,23 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
       
       {/* Dynasty Mode: Newbie Actions */}
       {newbiePresent && !isKicked && (
-        <div className="fixed bottom-20 right-4 bg-gray-800 p-4 rounded-lg shadow-xl border-2 border-yellow-500 z-30">
-          <h3 className="font-graduate text-lg mb-2">🆕 {newbieName}</h3>
-          <p className="text-sm text-gray-400 mb-3">A newbie is in the chat</p>
+        <div className="fixed bottom-24 right-6 glass-dark p-5 rounded-2xl shadow-2xl border-2 border-yellow-500/50 z-30 neon-green">
+          <h3 className="font-orbitron text-xl mb-3 bg-gradient-to-r from-yellow-400 to-green-500 bg-clip-text text-transparent font-bold">🆕 {newbieName}</h3>
+          <p className="text-sm text-gray-300 mb-4 font-semibold">A newbie is in the chat</p>
           <div className="flex gap-2">
             <button
               onClick={handleHazeNewbie}
               disabled={playerState.energy < 20}
-              className="bg-red-600 hover:bg-red-700 disabled:opacity-50 px-3 py-2 rounded font-bold text-sm"
+              className="btn-modern bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 disabled:opacity-50 px-4 py-3 rounded-xl font-bold text-sm border border-red-400/30 font-orbitron"
             >
-              Haze (20 Energy)
+              Haze (20 ⚡)
             </button>
             <button
               onClick={handleMentorNewbie}
               disabled={playerState.energy < 20}
-              className="bg-green-600 hover:bg-green-700 disabled:opacity-50 px-3 py-2 rounded font-bold text-sm"
+              className="btn-modern bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 disabled:opacity-50 px-4 py-3 rounded-xl font-bold text-sm border border-green-400/30 font-orbitron"
             >
-              Mentor (20 Energy)
+              Mentor (20 ⚡)
             </button>
           </div>
         </div>
@@ -1658,45 +1666,45 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
           seasonGoals={seasonGoals}
         />
         
-        <div className="flex-1 overflow-y-auto pr-2 p-4 space-y-4 custom-scrollbar bg-gray-800/50">
+        <div className="flex-1 overflow-y-auto pr-2 p-4 space-y-4 custom-scrollbar glass-dark border-l border-r border-blue-500/10">
           {storyFeed.map((msg, i) => <MessageBubble key={i} msg={msg} playerId={playerState.id} />)}
-          {typingCharacter && <div className="flex justify-start text-gray-400 italic text-sm ml-14">{typingCharacter} is typing...</div>}
+          {typingCharacter && <div className="flex justify-start text-cyan-400 italic text-sm ml-14 font-semibold animate-pulse">💬 {typingCharacter} is typing...</div>}
           <div ref={feedEndRef} />
         </div>
 
-        <form onSubmit={handleSendMessage} className="p-2 md:p-4 bg-gray-900 border-t-2 border-gray-700">
-          <div className="flex items-center gap-2">
+        <form onSubmit={handleSendMessage} className="p-3 md:p-5 glass-dark border-t-2 border-blue-500/30 shadow-2xl">
+          <div className="flex items-center gap-3">
             <input
               type="text"
               value={playerInput}
               onChange={(e) => setPlayerInput(e.target.value)}
               placeholder="Type your message..."
-              className="w-full bg-gray-700 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 glass text-white p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 border border-blue-500/30 placeholder-gray-400 font-medium"
             />
-            <button type="button" onClick={() => setActiveModal('roast')} className="bg-red-700 hover:bg-red-800 text-white font-bold py-3 px-3 md:px-4 rounded-lg disabled:opacity-50" disabled={isSending || playerState.energy < 35}>
-              Roast
+            <button type="button" onClick={() => setActiveModal('roast')} className="btn-modern bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white font-bold py-4 px-5 rounded-2xl disabled:opacity-50 border border-red-400/30 neon-pink font-orbitron" disabled={isSending || playerState.energy < 35}>
+              🔥
             </button>
-            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 md:px-6 rounded-lg disabled:opacity-50" disabled={isSending || !playerInput.trim()}>
+            <button type="submit" className="btn-modern bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-4 px-6 rounded-2xl disabled:opacity-50 border border-blue-400/30 neon-blue font-orbitron" disabled={isSending || !playerInput.trim()}>
               {isSending ? <Spinner /> : 'Send'}
             </button>
           </div>
         </form>
       </div>
-      <div className="hidden lg:block w-72 flex-shrink-0 bg-gray-900/80 p-4 border-l-2 border-gray-700 overflow-y-auto custom-scrollbar">
-          <h3 className="font-graduate text-xl text-yellow-400 mb-4 text-center">Prop Bets</h3>
-          <div className="space-y-3">
-              {propBets.filter(b => !b.isResolved).length === 0 && <p className="text-gray-400 text-sm text-center">No active bets right now...</p>}
+      <div className="hidden lg:block w-80 flex-shrink-0 glass-dark p-5 border-l-2 border-purple-500/30 overflow-y-auto custom-scrollbar">
+          <h3 className="font-orbitron text-2xl bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent mb-5 text-center font-bold">💰 Prop Bets</h3>
+          <div className="space-y-4">
+              {propBets.filter(b => !b.isResolved).length === 0 && <p className="text-gray-400 text-sm text-center italic">No active bets right now...</p>}
               {propBets.filter(b => !b.isResolved).map(bet => (
-                  <div key={bet.id} className="bg-gray-800 p-3 rounded-lg border border-gray-600">
-                      <p className="text-sm text-gray-300 mb-2">{bet.text}</p>
+                  <div key={bet.id} className="glass p-4 rounded-2xl border-2 border-yellow-500/30 shadow-lg">
+                      <p className="text-sm text-white mb-3 font-semibold">{bet.text}</p>
                       {bet.isLocked ? (
-                          <div className="text-center font-bold">
-                              <p>Your Pick: <span className={bet.playerChoice === 'yes' ? 'text-green-400' : 'text-red-400'}>{bet.playerChoice?.toUpperCase()}</span></p>
+                          <div className="text-center font-bold font-orbitron">
+                              <p className="text-gray-300">Your Pick: <span className={bet.playerChoice === 'yes' ? 'text-green-400' : 'text-red-400'}>{bet.playerChoice?.toUpperCase()}</span></p>
                           </div>
                       ) : (
                           <div className="flex gap-2">
-                              <button onClick={() => handlePlaceBet(bet.id, 'yes')} className="w-1/2 bg-green-600 hover:bg-green-700 rounded p-1 text-sm font-bold">YES ({bet.wager} Grit)</button>
-                              <button onClick={() => handlePlaceBet(bet.id, 'no')} className="w-1/2 bg-red-600 hover:bg-red-700 rounded p-1 text-sm font-bold">NO ({bet.wager} Grit)</button>
+                              <button onClick={() => handlePlaceBet(bet.id, 'yes')} className="btn-modern w-1/2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 rounded-xl p-2 text-sm font-bold font-orbitron border border-green-400/30">YES ({bet.wager}💎)</button>
+                              <button onClick={() => handlePlaceBet(bet.id, 'no')} className="btn-modern w-1/2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 rounded-xl p-2 text-sm font-bold font-orbitron border border-red-400/30">NO ({bet.wager}💎)</button>
                           </div>
                       )}
                   </div>

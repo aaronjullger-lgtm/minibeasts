@@ -125,7 +125,7 @@ function App() {
   };
 
   return (
-    <div className="bg-game-gradient text-white min-h-screen font-inter">
+    <div className="bg-game-gradient text-white min-h-screen font-inter bg-particles">
       {renderGameState()}
     </div>
   );
