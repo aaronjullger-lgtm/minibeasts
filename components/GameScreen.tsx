@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { PlayerState, EndGameReport, Message, StoreItem, MinigameType, SeasonGoal, ManageLifeAction, RandomEvent, PropBet, Achievement, GlobalState } from '../types';
+import { PlayerState, EndGameReport, Message, StoreItem, MinigameType, SeasonGoal, ManageLifeAction, RandomEvent, PropBet, Achievement, GlobalState, GameEvent } from '../types';
 import { generateNpcResponse, initiateNpcConversation, generateRoastAndReactions, generateNpcMinigameReactions } from '../services/geminiService';
 import { characterData, allStoreItems, SEASON_LENGTH, DAYS_PER_WEEK, getSeasonGoalsForPlayer, manageLifeActions, randomEvents, commentaryBattleData, fantasyDraftPlayers, triviaData, allAchievements, propBetTemplates, characterDefinitions } from '../constants';
 import { HUD } from './Dashboard';
 import { MessageBubble, Spinner } from './ChatUI';
 import { soundService } from '../services/soundService';
+import { gameEvents } from '../events';
 
 // --- MODAL COMPONENTS ---
 const ModalWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -888,6 +889,30 @@ const AchievementModal: React.FC<{ onExit: () => void, unlocked: string[] }> = (
     </ModalWrapper>
 );
 
+const DailyEventModal: React.FC<{ event: GameEvent, onClose: () => void }> = ({ event, onClose }) => (
+    <ModalWrapper>
+        <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-2xl border-2 border-cyan-500/30 neon-blue">
+            <h2 className="text-5xl font-orbitron text-center mb-6 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">📅 Daily Event</h2>
+            <div className="glass p-6 rounded-2xl border-2 border-cyan-500/20 mb-6">
+                <h3 className="text-3xl font-bold text-white mb-4 font-orbitron">{event.name}</h3>
+                <p className="text-xl text-gray-200 mb-6">{event.description}</p>
+                <div className="space-y-2">
+                    <p className="text-lg font-semibold text-cyan-400 font-orbitron">Effects:</p>
+                    {event.effects.map((effect, index) => (
+                        <p key={index} className="text-base text-white ml-4">
+                            <span className={effect.value >= 0 ? 'text-green-400' : 'text-red-400'}>
+                                {effect.value >= 0 ? '+' : ''}{effect.value}
+                            </span>
+                            {' '}{effect.targetStat}
+                        </p>
+                    ))}
+                </div>
+            </div>
+            <button onClick={onClose} className="btn-modern w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 px-5 rounded-2xl text-xl font-orbitron shadow-lg border border-cyan-400/30 neon-blue">Continue</button>
+        </div>
+    </ModalWrapper>
+);
+
 
 // --- MAIN GAME SCREEN COMPONENT ---
 
@@ -912,6 +937,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
   const [seasonGoals, setSeasonGoals] = useState<SeasonGoal[]>(() => initialData.seasonGoals || []);
   const [isSending, setIsSending] = useState(false);
   const [propBets, setPropBets] = useState<PropBet[]>(() => initialData.propBets || []);
+  const [currentDailyEvent, setCurrentDailyEvent] = useState<GameEvent | null>(null);
   
   // Dynasty Mode: Global State
   const [globalState, setGlobalState] = useState<GlobalState>(() => initialData.globalState || {
@@ -1058,6 +1084,29 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
 
   // Dynasty Mode: Advance Day Function
   const advanceDay = useCallback(() => {
+    // Select and apply a random event
+    const randomEvent = gameEvents[Math.floor(Math.random() * gameEvents.length)];
+    setCurrentDailyEvent(randomEvent);
+    
+    // Apply event effects
+    randomEvent.effects.forEach(effect => {
+      if (effect.targetStat === 'cringeMeter' || effect.targetStat === 'entertainmentMeter') {
+        // Apply to global state
+        setGlobalState(prev => ({
+          ...prev,
+          [effect.targetStat]: Math.max(0, Math.min(100, prev[effect.targetStat] + effect.value))
+        }));
+      } else {
+        // Apply to player state
+        setRanking(prev => prev.map(p => p.id === playerState.id ? {
+          ...p,
+          [effect.targetStat]: effect.targetStat === 'grit' 
+            ? p.grit + effect.value
+            : Math.max(0, Math.min(100, (p[effect.targetStat] as number) + effect.value))
+        } : p));
+      }
+    });
+    
     // Reset energy
     setRanking(prev => prev.map(p => ({
       ...p,
@@ -1612,6 +1661,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
       {activeModal === 'manage' && <ManageLifeModal player={playerState} onExit={() => setActiveModal(null)} onAction={handleAction} />}
       {activeModal === 'roast' && <RoastModal characters={ranking.filter(c=>c.id !== playerState.id)} onRoast={handleRoast} onExit={() => setActiveModal(null)} />}
       {activeModal === 'achievements' && <AchievementModal onExit={() => setActiveModal(null)} unlocked={playerState.unlockedAchievements} />}
+      
+      {/* Daily Event Modal */}
+      {currentDailyEvent && <DailyEventModal event={currentDailyEvent} onClose={() => setCurrentDailyEvent(null)} />}
       
       {/* Dynasty Mode: The Joke Kick Event */}
       {isKicked && (
