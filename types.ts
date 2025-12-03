@@ -1,3 +1,18 @@
+// Global game state for Dynasty Mode
+export interface GlobalState {
+  cringeMeter: number; // 0-100
+  entertainmentMeter: number; // 0-100
+  season: number;
+  week: number; // 1-17
+  day: number; // 1-7
+}
+
+// Character definition mapping characterId to their unique stat name
+export interface CharacterDef {
+  characterId: string;
+  uniqueStatName: string; // e.g., 'Grades' for Aaron, 'Audit Risk' for Elie
+}
+
 export interface CharacterData {
   id: string;
   name: string;
@@ -9,10 +24,13 @@ export interface CharacterData {
 }
 
 export interface PlayerState extends CharacterData {
-  grit: number;
+  grit: number; // Currency
+  loveLife: number; // 0-100
+  fandom: number; // 0-100
+  uniqueStatValue: number; // 0-100, the value of their character-specific unique stat
+  energy: number; // Daily Action Points, max 3
   happiness: number;
-  energy: number;
-  // Character-specific stats
+  // Character-specific stats (legacy, kept for backwards compatibility)
   paSchoolStress: number; // Aaron
   insecurity: number; // Craif
   liberalGfSuspicion: number; // Colin
@@ -30,6 +48,18 @@ export interface StoreItem {
   cost: number;
   desc: string;
   type: 'consumable' | 'permanent';
+}
+
+// Item interface for Dynasty Mode
+export interface Item {
+  id: string;
+  name: string;
+  cost: number; // Cost in grit
+  desc: string;
+  targetStat: 'loveLife' | 'fandom' | 'uniqueStatValue' | 'energy' | 'cringeMeter' | 'entertainmentMeter'; // Which bar/meter it affects
+  statEffect: number; // How much it affects the target stat
+  isCharacterSpecific?: string; // Optional character ID if item is specific to a character
+  type?: 'consumable' | 'permanent';
 }
 
 export interface Message {
