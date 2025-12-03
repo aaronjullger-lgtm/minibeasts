@@ -913,6 +913,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
     week: 1,
     day: 1
   });
+  
+  // Dynasty Mode: Newbie system and special events
+  const [newbiePresent, setNewbiePresent] = useState(() => initialData.newbiePresent || false);
+  const [newbieName, setNewbieName] = useState(() => initialData.newbieName || 'The Spammer');
+  const [isKicked, setIsKicked] = useState(false);
+  const [kickClickCount, setKickClickCount] = useState(0);
+  const [tyWindowOpen, setTyWindowOpen] = useState(false);
+  const [tyWindowStartTime, setTyWindowStartTime] = useState<number | null>(null);
 
   const feedEndRef = useRef<HTMLDivElement>(null);
   const isInitialized = useRef(false);
@@ -940,6 +948,17 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
     }
   }, [playerState.id, storyFeed, typingCharacter, ranking]);
   
+  // Dynasty Mode: Check for newbie (Season 2+)
+  useEffect(() => {
+    if (globalState.season > 1 && !newbiePresent && Math.random() < 0.3) {
+      const newbieNames = ['The Spammer', 'The Lurker', 'The Try-Hard', 'The Random', 'Bot #1337'];
+      const selectedName = newbieNames[Math.floor(Math.random() * newbieNames.length)];
+      setNewbieName(selectedName);
+      setNewbiePresent(true);
+      addSystemMessage(`🆕 A newbie has joined the chat: ${selectedName}`);
+    }
+  }, [globalState.season, newbiePresent, addSystemMessage]);
+
   // Initialization
   useEffect(() => {
     if (isInitialized.current) return;
@@ -980,6 +999,54 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
           }
       }
   }, [playerState, day, week, addSystemMessage]);
+  
+  // Dynasty Mode: Trigger special events
+  const triggerDynastyEvent = useCallback(() => {
+    const rand = Math.random();
+    
+    // The Joke Kick (5% chance)
+    if (rand < 0.05 && !isKicked) {
+      addSystemMessage("🚪 THE JOKE KICK: You've been temporarily kicked from the chat!");
+      setIsKicked(true);
+      setKickClickCount(0);
+      return;
+    }
+    
+    // Pace South Coup (3% chance)
+    if (rand < 0.08 && rand >= 0.05) {
+      addSystemMessage("⚡ PACE SOUTH COUP: The Pace South faction is causing drama!");
+      const paceSouthMembers = ['pace', 'seth', 'justin'];
+      
+      // Reduce fandom for Eric North members
+      const ericNorthMembers = ['eric', 'aaron', 'colin'];
+      setRanking(prev => prev.map(p => {
+        if (ericNorthMembers.includes(p.id)) {
+          return { ...p, fandom: Math.max(0, p.fandom - 15) };
+        }
+        return p;
+      }));
+      
+      if (ericNorthMembers.includes(playerState.id)) {
+        addSystemMessage("You're part of Eric North - your fandom took a hit! [-15 Fandom]");
+      }
+      return;
+    }
+    
+    // Ty Window (2% chance)
+    if (rand < 0.10 && rand >= 0.08 && !tyWindowOpen) {
+      addSystemMessage("🪟 TY WINDOW IS OPEN! Shop prices reduced by 50% for 1 minute!");
+      setTyWindowOpen(true);
+      setTyWindowStartTime(Date.now());
+      
+      // Close after 60 seconds
+      setTimeout(() => {
+        setTyWindowOpen(false);
+        setTyWindowStartTime(null);
+        addSystemMessage("🪟 Ty Window closed. Prices back to normal.");
+      }, 60000);
+      return;
+    }
+  }, [playerState.id, isKicked, tyWindowOpen, addSystemMessage]);
 
   // Dynasty Mode: Advance Day Function
   const advanceDay = useCallback(() => {
@@ -1071,9 +1138,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
   }, [playerState.id, addSystemMessage]);
 
   useEffect(() => {
-      const allState = { playerState, ranking, day, week, weeklyGritGoal, inventory, storyFeed, timeOfDay, nextMinigame, seasonGoals, propBets, globalState };
+      const allState = { playerState, ranking, day, week, weeklyGritGoal, inventory, storyFeed, timeOfDay, nextMinigame, seasonGoals, propBets, globalState, newbiePresent, newbieName };
       localStorage.setItem('miniBeastsSave', JSON.stringify(allState));
-  }, [playerState, ranking, day, week, weeklyGritGoal, inventory, storyFeed, timeOfDay, nextMinigame, seasonGoals, propBets, globalState]);
+  }, [playerState, ranking, day, week, weeklyGritGoal, inventory, storyFeed, timeOfDay, nextMinigame, seasonGoals, propBets, globalState, newbiePresent, newbieName]);
 
   // Game Loop Timers
   useEffect(() => {
@@ -1117,9 +1184,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
       }, DAY_DURATION_MS);
     const chatTimer = setInterval(() => { if (Math.random() < 0.25 && !typingCharacter && !activeModal) { handleNpcConversation(); } }, 25 * 1000);
     const eventTimer = setInterval(runRandomEvent, 20 * 1000);
+    const dynastyEventTimer = setInterval(triggerDynastyEvent, 30 * 1000); // Dynasty events every 30 seconds
 
-    return () => { clearInterval(timeTimer); clearInterval(dayTimer); clearInterval(chatTimer); clearInterval(eventTimer); };
-  }, [week, playerState, weeklyGritGoal, addSystemMessage, DAY_DURATION_MS, typingCharacter, activeModal, handleNpcConversation, runRandomEvent, onGameEnd, ranking, advanceDay, resolveWeek]);
+    return () => { clearInterval(timeTimer); clearInterval(dayTimer); clearInterval(chatTimer); clearInterval(eventTimer); clearInterval(dynastyEventTimer); };
+  }, [week, playerState, weeklyGritGoal, addSystemMessage, DAY_DURATION_MS, typingCharacter, activeModal, handleNpcConversation, runRandomEvent, onGameEnd, ranking, advanceDay, resolveWeek, triggerDynastyEvent]);
 
 
   useEffect(() => { feedEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [storyFeed]);
@@ -1367,6 +1435,55 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
         addSystemMessage(`You bet 25 Grit that the answer to "${propBetTemplates.find(t=>t.id === betId)?.text}" is ${choice.toUpperCase()}.`);
     };
 
+  // Dynasty Mode: Newbie action handlers
+  const handleHazeNewbie = useCallback(() => {
+    if (playerState.energy < 20) {
+      addSystemMessage("Not enough energy to haze the newbie.");
+      return;
+    }
+    
+    setRanking(prev => prev.map(p => p.id === playerState.id ? {
+      ...p,
+      energy: p.energy - 20,
+      grit: p.grit + 15
+    } : p));
+    
+    addSystemMessage(`You hazed ${newbieName}. Not cool, but you gained some grit. [+15 Grit, -20 Energy]`);
+    setGlobalState(prev => ({
+      ...prev,
+      cringeMeter: Math.min(100, prev.cringeMeter + 5)
+    }));
+  }, [playerState.id, playerState.energy, newbieName, addSystemMessage]);
+
+  const handleMentorNewbie = useCallback(() => {
+    if (playerState.energy < 20) {
+      addSystemMessage("Not enough energy to mentor the newbie.");
+      return;
+    }
+    
+    setRanking(prev => prev.map(p => p.id === playerState.id ? {
+      ...p,
+      energy: p.energy - 20,
+    } : p));
+    
+    addSystemMessage(`You mentored ${newbieName}. Good vibes. [-20 Energy]`);
+    setGlobalState(prev => ({
+      ...prev,
+      entertainmentMeter: Math.min(100, prev.entertainmentMeter + 10)
+    }));
+  }, [playerState.id, playerState.energy, newbieName, addSystemMessage]);
+
+  // Dynasty Mode: Handle "The Joke Kick" event
+  const handleLetMeIn = useCallback(() => {
+    setKickClickCount(prev => prev + 1);
+    
+    if (kickClickCount + 1 >= 10) {
+      setIsKicked(false);
+      setKickClickCount(0);
+      addSystemMessage("You've been let back in! It was just a joke... or was it?");
+    }
+  }, [kickClickCount, addSystemMessage]);
+
   // Effect for checking and completing goals
   useEffect(() => {
     const updatedGoals = seasonGoals.map(goal => {
@@ -1462,10 +1579,51 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
   return (
     <div className="w-full h-screen flex max-w-7xl mx-auto game-container">
       {activeModal === 'minigame' && <MinigameModal gameType={nextMinigame} onGameEnd={handleMinigameEnd} />}
-      {activeModal === 'store' && <StoreModal onExit={() => setActiveModal(null)} onPurchase={handlePurchase} grit={playerState.grit} inventory={inventory} />}
+      {activeModal === 'store' && <StoreModal onExit={() => setActiveModal(null)} onPurchase={handlePurchase} grit={tyWindowOpen ? Math.floor(playerState.grit * 0.5) : playerState.grit} inventory={inventory} />}
       {activeModal === 'manage' && <ManageLifeModal player={playerState} onExit={() => setActiveModal(null)} onAction={handleAction} />}
       {activeModal === 'roast' && <RoastModal characters={ranking.filter(c=>c.id !== playerState.id)} onRoast={handleRoast} onExit={() => setActiveModal(null)} />}
       {activeModal === 'achievements' && <AchievementModal onExit={() => setActiveModal(null)} unlocked={playerState.unlockedAchievements} />}
+      
+      {/* Dynasty Mode: The Joke Kick Event */}
+      {isKicked && (
+        <ModalWrapper>
+          <div className="bg-black p-8 rounded-lg shadow-xl w-full max-w-md text-center border-4 border-red-600">
+            <h2 className="text-4xl font-graduate mb-6 text-red-500">YOU'VE BEEN KICKED</h2>
+            <p className="text-xl mb-8">Click "Let me in" 10 times to return...</p>
+            <p className="text-gray-400 mb-4">Clicks: {kickClickCount}/10</p>
+            <button
+              onClick={handleLetMeIn}
+              className="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg text-xl"
+            >
+              LET ME IN
+            </button>
+          </div>
+        </ModalWrapper>
+      )}
+      
+      {/* Dynasty Mode: Newbie Actions */}
+      {newbiePresent && !isKicked && (
+        <div className="fixed bottom-20 right-4 bg-gray-800 p-4 rounded-lg shadow-xl border-2 border-yellow-500 z-30">
+          <h3 className="font-graduate text-lg mb-2">🆕 {newbieName}</h3>
+          <p className="text-sm text-gray-400 mb-3">A newbie is in the chat</p>
+          <div className="flex gap-2">
+            <button
+              onClick={handleHazeNewbie}
+              disabled={playerState.energy < 20}
+              className="bg-red-600 hover:bg-red-700 disabled:opacity-50 px-3 py-2 rounded font-bold text-sm"
+            >
+              Haze (20 Energy)
+            </button>
+            <button
+              onClick={handleMentorNewbie}
+              disabled={playerState.energy < 20}
+              className="bg-green-600 hover:bg-green-700 disabled:opacity-50 px-3 py-2 rounded font-bold text-sm"
+            >
+              Mentor (20 Energy)
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="flex-grow flex flex-col">
         <HUD 
