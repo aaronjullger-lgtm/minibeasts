@@ -980,17 +980,23 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
 
   const handleNpcConversation = useCallback(async () => {
     if (typingCharacter) return;
-    const newMessages = await initiateNpcConversation(storyFeed, ranking, playerState.id);
     
-    if (newMessages.length > 0) {
-        for (const msg of newMessages) {
-            const speakerName = characterData[msg.speaker]?.name;
-            setTypingCharacter(speakerName);
-            await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 1000));
-            setTypingCharacter(null);
-            setStoryFeed(prev => [...prev, msg]);
-            soundService.playMessageReceived();
-        }
+    try {
+      const newMessages = await initiateNpcConversation(storyFeed, ranking, playerState.id);
+      
+      if (newMessages.length > 0) {
+          for (const msg of newMessages) {
+              const speakerName = characterData[msg.speaker]?.name;
+              setTypingCharacter(speakerName);
+              await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 1000));
+              setTypingCharacter(null);
+              setStoryFeed(prev => [...prev, msg]);
+              soundService.playMessageReceived();
+          }
+      }
+    } catch (error) {
+      console.error('Error initiating NPC conversation:', error);
+      // Silently fail - don't interrupt gameplay
     }
   }, [playerState.id, storyFeed, typingCharacter, ranking]);
   
@@ -1314,11 +1320,26 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
     setTypingCharacter(responder.name);
     await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 1000));
     
-    const responseText = await generateNpcResponse(currentHistory, responder, playerState.id);
-    
-    if (responseText) {
-      setStoryFeed(prev => [...prev, { speaker: responder.id, text: responseText, role: 'model' }]);
-      soundService.playMessageReceived();
+    try {
+      const responseText = await generateNpcResponse(currentHistory, responder, playerState.id);
+      
+      if (responseText) {
+        setStoryFeed(prev => [...prev, { speaker: responder.id, text: responseText, role: 'model' }]);
+        soundService.playMessageReceived();
+      }
+    } catch (error) {
+      console.error('Error generating NPC response:', error);
+      // Fallback response if AI fails
+      const fallbackResponses = [
+        "...",
+        "lol",
+        "what",
+        "bruh",
+        "huh?"
+      ];
+      const fallback = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+      setStoryFeed(prev => [...prev, { speaker: responder.id, text: fallback, role: 'model' }]);
+      soundService.playError();
     }
     setTypingCharacter(null);
     setTimeout(() => setIsSending(false), 5000);
@@ -1389,36 +1410,43 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
 
       if (!roasterData || !targetData) return;
       
-      const roastData = await generateRoastAndReactions(storyFeed, roasterData, targetData, ranking);
+      try {
+        const roastData = await generateRoastAndReactions(storyFeed, roasterData, targetData, ranking);
 
-      if (!roastData) {
-          addSystemMessage("[SYSTEM: Your roast attempt failed. API issue.]");
-          return;
-      }
+        if (!roastData) {
+            addSystemMessage("[SYSTEM: Your roast attempt failed. API issue.]");
+            soundService.playError();
+            return;
+        }
 
-      const { roast, reactions, success } = roastData;
-      setStoryFeed(prev => [...prev, roast]);
-      soundService.playMessageSent();
-      await new Promise(resolve => setTimeout(resolve, 1000));
+        const { roast, reactions, success } = roastData;
+        setStoryFeed(prev => [...prev, roast]);
+        soundService.playMessageSent();
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-      for (const reaction of reactions) {
-          const reactorName = characterData[reaction.speaker]?.name || 'Someone';
-          setTypingCharacter(reactorName);
-          await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 800));
-          setTypingCharacter(null);
-          setStoryFeed(prev => [...prev, reaction]);
-          soundService.playMessageReceived();
-      }
-      
-      const targetName = characterData[targetId].name;
-      if (success) {
-          addSystemMessage(`Your roast on ${targetName} was legendary! [+20 Grit, +10 Happiness]`);
-          setRanking(prev => prev.map(p => p.id === playerState.id ? { ...p, grit: p.grit + 20, happiness: Math.min(100, p.happiness + 10) } : p));
-          soundService.playMinigameWin();
-      } else {
-          addSystemMessage(`Your roast on ${targetName} backfired horribly. [-20 Happiness]`);
-          setRanking(prev => prev.map(p => p.id === playerState.id ? { ...p, happiness: Math.max(0, p.happiness - 20) } : p));
-          soundService.playMinigameLoss();
+        for (const reaction of reactions) {
+            const reactorName = characterData[reaction.speaker]?.name || 'Someone';
+            setTypingCharacter(reactorName);
+            await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 800));
+            setTypingCharacter(null);
+            setStoryFeed(prev => [...prev, reaction]);
+            soundService.playMessageReceived();
+        }
+        
+        const targetName = characterData[targetId].name;
+        if (success) {
+            addSystemMessage(`Your roast on ${targetName} was legendary! [+20 Grit, +10 Happiness]`);
+            setRanking(prev => prev.map(p => p.id === playerState.id ? { ...p, grit: p.grit + 20, happiness: Math.min(100, p.happiness + 10) } : p));
+            soundService.playMinigameWin();
+        } else {
+            addSystemMessage(`Your roast on ${targetName} backfired horribly. [-20 Happiness]`);
+            setRanking(prev => prev.map(p => p.id === playerState.id ? { ...p, happiness: Math.max(0, p.happiness - 20) } : p));
+            soundService.playMinigameLoss();
+        }
+      } catch (error) {
+        console.error('Error generating roast:', error);
+        addSystemMessage("Your roast failed to send. Chat connection issue.");
+        soundService.playError();
       }
   };
 
@@ -1439,16 +1467,21 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
         addSystemMessage(`${npc.name} scored ${npc.score} in the ${gamePlayed} minigame.`);
     });
     
-    const reactions = await generateNpcMinigameReactions(storyFeed, participants, gamePlayed);
+    try {
+      const reactions = await generateNpcMinigameReactions(storyFeed, participants, gamePlayed);
 
-    for (const reaction of reactions) {
-        const speakerName = characterData[reaction.speaker]?.name;
-        if (speakerName) {
-            setTypingCharacter(speakerName);
-            await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 1000));
-            setTypingCharacter(null);
-            setStoryFeed(prev => [...prev, reaction]);
-        }
+      for (const reaction of reactions) {
+          const speakerName = characterData[reaction.speaker]?.name;
+          if (speakerName) {
+              setTypingCharacter(speakerName);
+              await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 1000));
+              setTypingCharacter(null);
+              setStoryFeed(prev => [...prev, reaction]);
+          }
+      }
+    } catch (error) {
+      console.error('Error generating minigame reactions:', error);
+      // Silently fail - scores are already shown
     }
   };
 
@@ -1479,7 +1512,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
     simulateNpcScores(gamePlayed, grit);
   };
 
-  const handlePurchase = (item: StoreItem) => {
+  const handlePurchase = useCallback((item: StoreItem) => {
       // Apply Ty Window discount if active
       const finalCost = tyWindowOpen ? Math.floor(item.cost * 0.5) : item.cost;
       
@@ -1509,7 +1542,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
                   "Hater's Parlay MISSED. [-20 Fandom]");
           }
       }
-  };
+  }, [tyWindowOpen, playerState.grit, inventory, addSystemMessage]);
 
   // --- PROP BET LOGIC ---
     useEffect(() => {
