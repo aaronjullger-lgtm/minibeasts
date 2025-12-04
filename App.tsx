@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GameScreen } from "./components/GameScreen";
 import { IntroScreen, CharacterSelectScreen } from "./components/CharacterScreens";
 import { ChatUI } from "./components/ChatUI";
 import { Dashboard } from "./components/Dashboard";
 import { NewMinigames } from "./components/NewMinigames";
+import { HistoryTab } from "./components/HistoryTab";
+import { SettingsPanel } from "./components/SettingsPanel";
+import { AchievementsPanel } from "./components/AchievementsPanel";
 import { CharacterData, GameState } from "./types";
 import { characterData } from "./constants";
+import { saveService } from "./services/saveService";
 
 type MainTab = "dynasty" | "minigames" | "roster" | "history";
 
@@ -13,6 +17,14 @@ const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>("intro");
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterData | null>(null);
   const [activeTab, setActiveTab] = useState<MainTab>("dynasty");
+  const [hasSavedGame, setHasSavedGame] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
+
+  // Check for saved game on mount
+  useEffect(() => {
+    setHasSavedGame(saveService.hasSavedGame());
+  }, []);
 
   // These would normally come from your game state / services:
   const currentWeek = 3;
@@ -62,23 +74,29 @@ const App: React.FC = () => {
   };
 
   const handleContinueSeason = () => {
-    setGameState("playing");
+    const savedGame = saveService.loadGame();
+    if (savedGame) {
+      // Load the saved character
+      setSelectedCharacter(savedGame.player);
+      setGameState("playing");
+    }
   };
 
   const handleQuickSave = () => {
-    // TODO: Implement save functionality
-    alert("Game saved! (Save functionality will be implemented)");
+    // This will be properly implemented when we have access to game state
+    // For now, just show a message
+    alert("Quick save will be available during gameplay!");
   };
 
   const handleAdvanceWeek = () => {
-    // TODO: Implement week advancement
-    alert("Advancing to next week! (This will be connected to Dynasty Mode)");
+    // This will be properly implemented in GameScreen
+    alert("Week advancement is available in Dynasty Mode gameplay!");
   };
 
   const [chatMessage, setChatMessage] = useState("");
   const handleSendMessage = () => {
     if (chatMessage.trim()) {
-      // TODO: Implement chat message handling
+      // Chat functionality is handled in GameScreen during actual gameplay
       console.log("Sending message:", chatMessage);
       setChatMessage("");
     }
@@ -89,7 +107,7 @@ const App: React.FC = () => {
     return (
       <IntroScreen 
         onStart={handleStartGame}
-        onContinue={selectedCharacter ? handleContinueSeason : undefined}
+        onContinue={hasSavedGame ? handleContinueSeason : undefined}
       />
     );
   }
@@ -202,6 +220,22 @@ const App: React.FC = () => {
             >
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               Auto-save on
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowAchievements(true)}
+              className="pill-muted gap-1.5 hover-lift"
+              title="Achievements"
+            >
+              🏆
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowSettings(true)}
+              className="pill-muted gap-1.5 hover-lift"
+              title="Settings"
+            >
+              ⚙️
             </button>
           </div>
         </header>
@@ -385,12 +419,8 @@ const App: React.FC = () => {
                 )}
 
                 {activeTab === "history" && (
-                  <div className="w-full h-full flex items-center justify-center text-xs md:text-sm text-slate-300/90">
-                    {/* Placeholder – wire to your actual history / log later */}
-                    <p className="max-w-sm text-center">
-                      Season recap, worst takes, and parlay obituaries will live here.
-                      For now, keep surviving the group chat.
-                    </p>
+                  <div className="w-full h-full">
+                    <HistoryTab />
                   </div>
                 )}
               </div>
@@ -490,6 +520,12 @@ const App: React.FC = () => {
           </aside>
         </div>
       </div>
+      
+      {/* Settings Panel */}
+      {showSettings && <SettingsPanel onClose={() => setShowSettings(false)} />}
+      
+      {/* Achievements Panel */}
+      {showAchievements && <AchievementsPanel onClose={() => setShowAchievements(false)} />}
     </div>
   );
 };
