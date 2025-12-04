@@ -9,6 +9,7 @@ import { gameEvents } from '../events';
 import { SundayScariesMinigame, CommishChaosMinigame, TyWindowMinigame, BitchlessChroniclesMinigame } from './NewMinigames';
 import { AchievementNotification } from './AchievementNotification';
 import { StatChangeNotification } from './StatChangeNotification';
+import { QuickTipsPanel, useFirstVisit } from './QuickTipsPanel';
 import { useKeyboardShortcut } from '../utils/hooks';
 
 // --- MODAL COMPONENTS ---
@@ -968,6 +969,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
   // Notification states for visual feedback
   const [achievementQueue, setAchievementQueue] = useState<Achievement[]>([]);
   const [statChangeQueue, setStatChangeQueue] = useState<Array<{ stat: string; change: number; id: string }>>([]);
+  
+  // First-time user experience
+  const { isFirstVisit, markVisited } = useFirstVisit();
+  const [showTips, setShowTips] = useState(false);
 
   const feedEndRef = useRef<HTMLDivElement>(null);
   const isInitialized = useRef(false);
@@ -1063,6 +1068,15 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
       soundService.playClick();
     }
   });
+  
+  // Show tips for first-time visitors
+  useEffect(() => {
+    if (isFirstVisit && isInitialized.current) {
+      // Wait a bit before showing tips
+      const timer = setTimeout(() => setShowTips(true), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isFirstVisit]);
 
   const runRandomEvent = useCallback(() => {
       for (const event of randomEvents) {
@@ -1923,6 +1937,16 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
         changes={statChangeQueue}
         onDismiss={(id) => setStatChangeQueue(prev => prev.filter(c => c.id !== id))}
       />
+      
+      {/* Quick Tips for First-Time Visitors */}
+      {showTips && (
+        <QuickTipsPanel
+          onDismiss={() => {
+            setShowTips(false);
+            markVisited();
+          }}
+        />
+      )}
     </div>
   );
 };
