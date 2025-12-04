@@ -6,8 +6,16 @@ const COMPLEX_API_MODEL = "gemini-2.5-flash";
 const FAST_API_MODEL = "gemini-2.5-flash-lite";
 const TTS_API_MODEL = "gemini-2.5-flash-preview-tts";
 
-// Use a single, shared AI instance
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+// Use a single, shared AI instance - only initialize if API key is available
+let ai: GoogleGenAI | null = null;
+try {
+  const apiKey = process.env.API_KEY || import.meta.env.VITE_GEMINI_API_KEY || '';
+  if (apiKey) {
+    ai = new GoogleGenAI({ apiKey });
+  }
+} catch (e) {
+  console.warn("Gemini API not initialized - AI features will be disabled");
+}
 
 const getCharacterStateString = (char: PlayerState): string => {
     let state = `(happiness: ${char.happiness}, energy: ${char.energy}`;
@@ -26,6 +34,7 @@ const getCharacterStateString = (char: PlayerState): string => {
  */
 export const generateSpeech = async (text: string): Promise<string | null> => {
     try {
+        if (!ai) return null;
         const response = await ai.models.generateContent({
             model: TTS_API_MODEL,
             contents: [{ parts: [{ text: text }] }],
@@ -56,6 +65,7 @@ export const generateSpeech = async (text: string): Promise<string | null> => {
  */
 export const generateNpcResponse = async (history: Message[], responder: PlayerState, playerId: string): Promise<string | null> => {
   try {
+    if (!ai) return null;
     const persona = getAiPersona(responder.id);
     const apiHistory = history.map(msg => ({
       role: msg.speaker === playerId ? 'user' : 'model',
@@ -88,6 +98,7 @@ export const generateNpcResponse = async (history: Message[], responder: PlayerS
  */
 export const initiateNpcConversation = async (history: Message[], ranking: PlayerState[], playerId: string): Promise<Message[]> => {
   try {
+    if (!ai) return [];
     const potentialSpeakers = ranking.filter(c => c.id !== playerId);
     if (potentialSpeakers.length < 2) return [];
 
@@ -161,6 +172,7 @@ export const generateRoastAndReactions = async (
   allCharacters: PlayerState[]
 ): Promise<{ roast: Message; reactions: Message[]; success: boolean } | null> => {
   try {
+    if (!ai) return null;
     const historyString = history.slice(-10).map(msg => `${msg.speaker}: ${msg.text}`).join('\n');
     const potentialReactors = allCharacters.filter(c => c.id !== roasterData.id && c.id !== targetData.id);
     const reactors = [...potentialReactors].sort(() => 0.5 - Math.random()).slice(0, 2);
@@ -234,6 +246,7 @@ export const generateNpcMinigameReactions = async (
   gameType: MinigameType
 ): Promise<Message[]> => {
   try {
+    if (!ai) return [];
     if (participants.length === 0) return [];
 
     const participantInfo = participants.map(p => 

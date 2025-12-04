@@ -2,98 +2,142 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mini Beasts: The All-In Meal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>mini beasts</title>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Graduate&family=Inter:wght@400;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap');
+      /* Using system fonts instead of external CDN to avoid blocking issues */
 
+      /* ========================================
+         iOS / iMessage Design System
+         ======================================== */
+      
+      * {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+      }
+      
       html, body, #root {
         height: 100%;
         margin: 0;
         padding: 0;
+        overscroll-behavior: none;
       }
 
       body {
-        font-family: 'Inter', sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
       }
 
-      .font-graduate {
-        font-family: 'Graduate', serif;
+      /* iOS Status Bar */
+      .ios-status-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 44px;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        color: white;
+        font-size: 14px;
+        font-weight: 600;
       }
 
-      .font-orbitron {
-        font-family: 'Orbitron', sans-serif;
+      /* iMessage Background Styles */
+      .bg-imessage-dark {
+        background: #000000;
       }
-
-      .bg-game-gradient {
-        background-color: #0a0e27;
-        background-image: 
-          radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-          radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-          radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%),
-          radial-gradient(at 0% 100%, rgba(34, 211, 238, 0.15) 0px, transparent 50%),
-          linear-gradient(180deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
-        background-attachment: fixed;
+      
+      .bg-imessage-light {
+        background: #ffffff;
+      }
+      
+      .bg-chat-pattern {
+        background: #000000;
         position: relative;
       }
-
-      /* Animated background particles */
-      @keyframes float {
-        0%, 100% { transform: translateY(0px) translateX(0px); }
-        33% { transform: translateY(-20px) translateX(10px); }
-        66% { transform: translateY(-10px) translateX(-10px); }
+      
+      /* iOS Dark mode gradient backgrounds */
+      .bg-ios-gradient {
+        background: linear-gradient(180deg, #1c1c1e 0%, #000000 100%);
+      }
+      
+      .bg-instagram-gradient {
+        background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
       }
 
-      @keyframes glow-pulse {
-        0%, 100% { opacity: 0.5; }
-        50% { opacity: 1; }
+      /* ========================================
+         iMessage Animations
+         ======================================== */
+      
+      @keyframes message-pop {
+        0% { 
+          opacity: 0; 
+          transform: scale(0.7) translateY(10px);
+        }
+        70% {
+          transform: scale(1.05) translateY(0);
+        }
+        100% { 
+          opacity: 1; 
+          transform: scale(1) translateY(0);
+        }
       }
-
-      .bg-particles::before,
-      .bg-particles::after {
-        content: '';
-        position: absolute;
-        width: 300px;
-        height: 300px;
-        border-radius: 50%;
-        filter: blur(100px);
-        opacity: 0.3;
-        animation: float 10s ease-in-out infinite;
-        pointer-events: none;
-      }
-
-      .bg-particles::before {
-        background: linear-gradient(45deg, #3b82f6, #8b5cf6);
-        top: 10%;
-        left: 10%;
-        animation-delay: 0s;
-      }
-
-      .bg-particles::after {
-        background: linear-gradient(45deg, #ec4899, #22d3ee);
-        bottom: 10%;
-        right: 10%;
-        animation-delay: 5s;
-      }
-
-      @keyframes jiggle {
-        0%, 100% { transform: rotate(-3deg); }
-        50% { transform: rotate(3deg); }
-      }
-      .animate-jiggle {
-        animation: jiggle 0.5s ease-in-out infinite;
-      }
-
-      @keyframes pop-in {
-        from { opacity: 0; transform: scale(0.8); }
-        to { opacity: 1; transform: scale(1); }
-      }
+      
       .message-bubble {
-        animation: pop-in 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        animation: message-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       }
 
-      @keyframes slide-in-right {
+      @keyframes typing-dots {
+        0%, 60%, 100% { opacity: 0.3; }
+        30% { opacity: 1; }
+      }
+
+      .typing-indicator {
+        display: inline-flex;
+        gap: 4px;
+        padding: 12px 16px;
+        background: rgba(142, 142, 147, 0.2);
+        border-radius: 18px;
+      }
+      
+      .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: rgba(142, 142, 147, 0.8);
+        border-radius: 50%;
+        animation: typing-dots 1.4s infinite;
+      }
+      
+      .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      
+      .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes slide-up {
+        from { 
+          opacity: 0; 
+          transform: translateY(20px);
+        }
+        to { 
+          opacity: 1; 
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes slide-in-from-right {
         from { 
           opacity: 0; 
           transform: translateX(50px);
@@ -104,162 +148,228 @@
         }
       }
 
-      @keyframes slide-in-left {
-        from { 
-          opacity: 0; 
-          transform: translateX(-50px);
-        }
-        to { 
-          opacity: 1; 
-          transform: translateX(0);
-        }
-      }
-
-      @keyframes shimmer {
-        0% { background-position: -1000px 0; }
-        100% { background-position: 1000px 0; }
-      }
-
-      .shimmer {
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-        background-size: 1000px 100%;
-        animation: shimmer 3s infinite;
-      }
-
-      @keyframes gradient-shift {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-      }
-
-      .animate-gradient {
-        background-size: 200% 200%;
-        animation: gradient-shift 5s ease infinite;
-      }
-
-      .custom-scrollbar::-webkit-scrollbar { width: 10px; }
-      .custom-scrollbar::-webkit-scrollbar-track { 
-        background: rgba(31, 41, 55, 0.5); 
-        border-radius: 10px; 
-        backdrop-filter: blur(10px);
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb { 
-        background: linear-gradient(180deg, #3b82f6, #8b5cf6); 
-        border-radius: 10px; 
-        border: 2px solid rgba(31, 41, 55, 0.5);
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
-        background: linear-gradient(180deg, #60a5fa, #a78bfa); 
+      @keyframes fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
       
-      .game-container {
-        height: 100vh;
-        height: 100dvh;
+      @keyframes pulse-glow {
+        0%, 100% { 
+          box-shadow: 0 0 0 0 rgba(0, 122, 255, 0.4);
+        }
+        50% { 
+          box-shadow: 0 0 0 8px rgba(0, 122, 255, 0);
+        }
       }
 
-      /* Glassmorphism effects */
-      .glass {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      }
-
-      .glass-dark {
-        background: rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-      }
-
-      /* Neon glow effects */
-      .neon-blue {
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.5),
-                    0 0 40px rgba(59, 130, 246, 0.3),
-                    inset 0 0 20px rgba(59, 130, 246, 0.1);
-      }
-
-      .neon-purple {
-        box-shadow: 0 0 20px rgba(139, 92, 246, 0.5),
-                    0 0 40px rgba(139, 92, 246, 0.3),
-                    inset 0 0 20px rgba(139, 92, 246, 0.1);
-      }
-
-      .neon-pink {
-        box-shadow: 0 0 20px rgba(236, 72, 153, 0.5),
-                    0 0 40px rgba(236, 72, 153, 0.3),
-                    inset 0 0 20px rgba(236, 72, 153, 0.1);
-      }
-
-      .neon-green {
-        box-shadow: 0 0 20px rgba(34, 197, 94, 0.5),
-                    0 0 40px rgba(34, 197, 94, 0.3),
-                    inset 0 0 20px rgba(34, 197, 94, 0.1);
-      }
-
-      .neon-yellow {
-        box-shadow: 0 0 20px rgba(251, 191, 36, 0.5),
-                    0 0 40px rgba(251, 191, 36, 0.3),
-                    inset 0 0 20px rgba(251, 191, 36, 0.1);
-      }
-
-      .neon-orange {
-        box-shadow: 0 0 20px rgba(249, 115, 22, 0.5),
-                    0 0 40px rgba(249, 115, 22, 0.3),
-                    inset 0 0 20px rgba(249, 115, 22, 0.1);
-      }
-
-      /* Button hover effects */
-      .btn-modern {
+      /* ========================================
+         iMessage Bubble Styles
+         ======================================== */
+      
+      .imessage-bubble {
+        max-width: 280px;
+        padding: 12px 16px;
+        border-radius: 20px;
+        font-size: 16px;
+        line-height: 1.4;
+        word-wrap: break-word;
         position: relative;
-        overflow: hidden;
-        transition: all 0.3s ease;
       }
-
-      .btn-modern::before {
+      
+      .imessage-blue {
+        background: #007AFF;
+        color: white;
+        border-bottom-right-radius: 4px;
+      }
+      
+      .imessage-gray {
+        background: rgba(142, 142, 147, 0.2);
+        color: white;
+        border-bottom-left-radius: 4px;
+      }
+      
+      .imessage-bubble::before {
         content: '';
         position: absolute;
+        bottom: 0;
+        width: 20px;
+        height: 20px;
+      }
+      
+      .imessage-blue::before {
+        right: -8px;
+        background: #007AFF;
+        border-bottom-left-radius: 16px;
+        clip-path: polygon(0 0, 100% 0, 100% 100%);
+      }
+      
+      .imessage-gray::before {
+        left: -8px;
+        background: rgba(142, 142, 147, 0.2);
+        border-bottom-right-radius: 16px;
+        clip-path: polygon(0 0, 0 100%, 100% 100%);
+      }
+
+      /* iOS Blurred Glass Effect */
+      .ios-glass {
+        background: rgba(28, 28, 30, 0.7);
+        backdrop-filter: blur(40px) saturate(180%);
+        -webkit-backdrop-filter: blur(40px) saturate(180%);
+        border: 0.5px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      .ios-glass-light {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(40px) saturate(180%);
+        -webkit-backdrop-filter: blur(40px) saturate(180%);
+        border: 0.5px solid rgba(0, 0, 0, 0.05);
+      }
+
+      /* iOS Button Styles */
+      .ios-button {
+        background: #007AFF;
+        color: white;
+        font-weight: 600;
+        border-radius: 12px;
+        padding: 14px 24px;
+        font-size: 17px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+      
+      .ios-button:active {
+        transform: scale(0.96);
+        opacity: 0.8;
+      }
+      
+      .ios-button-secondary {
+        background: rgba(142, 142, 147, 0.2);
+        color: #007AFF;
+      }
+
+      /* Scrollbar - iOS style (minimal) */
+      .ios-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      
+      .ios-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      .ios-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+      }
+      
+      .ios-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      
+      /* Chat Container */
+      .chat-container {
+        height: 100vh;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      
+      /* Group Chat Header */
+      .group-chat-header {
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+        padding: 8px 16px;
+        position: sticky;
         top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: left 0.5s ease;
+        z-index: 100;
       }
-
-      .btn-modern:hover::before {
-        left: 100%;
+      
+      /* Message timestamp */
+      .message-time {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 4px;
+        font-weight: 400;
       }
-
-      .btn-modern:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      
+      /* Instagram DM accent colors */
+      .ig-gradient {
+        background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
       }
-
-      .btn-modern:active {
-        transform: translateY(0px);
+      
+      /* Notification badge */
+      .notification-badge {
+        background: #FF3B30;
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 20px;
+        text-align: center;
       }
 
       /* Mobile responsiveness */
       @media (max-width: 768px) {
-        .game-container {
+        .chat-container {
           max-width: 100vw;
         }
-      }
-
-      /* Pulse animation for important elements */
-      @keyframes pulse-glow {
-        0%, 100% {
-          box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-        }
-        50% {
-          box-shadow: 0 0 30px rgba(59, 130, 246, 0.8), 0 0 50px rgba(59, 130, 246, 0.5);
+        
+        .imessage-bubble {
+          max-width: 75%;
         }
       }
-
-      .pulse-glow {
-        animation: pulse-glow 2s ease-in-out infinite;
+      
+      /* Safe area for iPhone notch */
+      @supports (padding: max(0px)) {
+        .safe-top {
+          padding-top: max(44px, env(safe-area-inset-top));
+        }
+        
+        .safe-bottom {
+          padding-bottom: max(20px, env(safe-area-inset-bottom));
+        }
       }
 
+      /* ========================================
+         Additional iOS Effects
+         ======================================== */
+      
+      .bounce-in {
+        animation: message-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      
+      .shimmer-effect {
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite;
+      }
+      
+      @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+      }
+      
+      /* Haptic-like visual feedback */
+      .haptic-press {
+        transition: all 0.1s ease;
+      }
+      
+      .haptic-press:active {
+        transform: scale(0.95);
+        opacity: 0.7;
+      }
+      
+      /* Read receipt indicator */
+      .read-receipt {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.4);
+        font-weight: 400;
+      }
     </style>
   <script type="importmap">
 {
@@ -272,7 +382,7 @@
 }
 </script>
 </head>
-  <body class="bg-game-gradient text-white font-inter">
+  <body class="bg-imessage-dark text-white">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

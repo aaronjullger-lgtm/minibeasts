@@ -5,63 +5,130 @@ import { MiniBeastIcon, Spinner } from './ChatUI';
 
 export const IntroScreen: React.FC<{ onStart: () => void; onContinue?: () => void }> = ({ onStart, onContinue }) => {
   const [step, setStep] = React.useState(0);
+  const [showTyping, setShowTyping] = React.useState(false);
+  
   const messages = [
-    { speaker: 'spencer', text: "Alright, I made the group chat for the league.", displayName: 'Spencer' },
-    { speaker: 'eric', text: 'why are there 18 people in here', displayName: 'Eric' },
-    { speaker: 'colin', text: 'this is gonna be a disaster', displayName: 'Colin' }
+    { speaker: 'spencer', text: "yo i made the group chat", displayName: 'Spencer', time: '9:41 AM' },
+    { speaker: 'eric', text: 'why are there 18 people in here lmao', displayName: 'Eric', time: '9:42 AM' },
+    { speaker: 'colin', text: 'this is about to be chaos', displayName: 'Colin', time: '9:43 AM' },
+    { speaker: 'justin', text: 'already screenshotting everything 📸', displayName: 'Justin', time: '9:43 AM' },
+    { speaker: 'elie', text: "i'm the main character of this group", displayName: 'Elie', time: '9:44 AM' }
   ];
 
-  const speakers: { [key: string]: React.ReactNode } = {
-      spencer: <MiniBeastIcon characterId='spencer' isTalking={false}/>,
-      eric: <MiniBeastIcon characterId='eric' isTalking={false}/>,
-      colin: <MiniBeastIcon characterId='colin' isTalking={false}/>
-  };
+  React.useEffect(() => {
+    if (step < messages.length - 1) {
+      setShowTyping(true);
+      const typingTimer = setTimeout(() => {
+        setShowTyping(false);
+      }, 800);
+      return () => clearTimeout(typingTimer);
+    }
+  }, [step]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center text-center p-4 bg-particles relative">
-      <div className="relative z-10">
-        <div className="mb-8 animate-[slide-in-right_0.8s_ease-out]">
-          <h1 className="text-5xl md:text-7xl font-bold mb-4 font-orbitron bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl">
-            MINI BEASTS
-          </h1>
-          <h2 className="text-6xl md:text-8xl font-bold mb-8 font-orbitron bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent animate-gradient neon-blue" style={{textShadow: '0 0 30px rgba(59, 130, 246, 0.5)'}}>
-            THE FANTASY LEAGUE
-          </h2>
+    <div className="min-h-screen flex flex-col bg-imessage-dark">
+      {/* iOS Status Bar */}
+      <div className="ios-status-bar safe-top">
+        <span>9:41</span>
+        <div className="flex items-center gap-1">
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+          </svg>
+          <span>100%</span>
         </div>
-        
-        <div className="w-full max-w-md mx-auto glass rounded-2xl p-6 space-y-4 shadow-2xl border-2 border-blue-500/30 mb-8 animate-[pop-in_0.5s_ease-out_0.3s_both]">
-          {messages.slice(0, step + 1).map((msg, i) => (
-            <div key={i} className="flex justify-start animate-[slide-in-left_0.3s_ease-out]">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg neon-blue">
-                  {speakers[msg.speaker]}
+      </div>
+
+      {/* iMessage Header */}
+      <div className="group-chat-header safe-top">
+        <div className="flex items-center justify-between">
+          <div className="flex-1"></div>
+          <div className="flex flex-col items-center">
+            <div className="flex items-center gap-1 mb-0.5">
+              {['spencer', 'eric', 'colin', 'justin'].map((id, i) => (
+                <div key={id} className="w-7 h-7 rounded-full overflow-hidden border border-white/20" style={{marginLeft: i > 0 ? '-8px' : '0', zIndex: 4 - i}}>
+                  <MiniBeastIcon characterId={id} isTalking={false} />
                 </div>
-                <div className="flex flex-col items-start">
-                  <span className="text-blue-300 text-sm font-bold mb-1">
-                    {msg.displayName}
-                  </span>
-                  <div className="px-5 py-3 rounded-2xl bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm text-left border border-blue-500/20 shadow-lg">
-                    <p className="text-white">{msg.text}</p>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
+            <span className="text-white font-semibold text-sm">mini beasts</span>
+            <span className="text-white/50 text-xs">{messages.length} members</span>
+          </div>
+          <div className="flex-1 flex justify-end">
+            <button className="w-8 h-8 flex items-center justify-center">
+              <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Chat Messages */}
+      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4 ios-scrollbar">
+        {/* Group creation notice */}
+        <div className="flex justify-center mb-6">
+          <div className="text-center">
+            <div className="text-white/50 text-xs mb-2">Today 9:41 AM</div>
+            <div className="ios-glass rounded-full px-4 py-2 text-sm text-white/70">
+              <span className="font-semibold">Spencer</span> named the group <span className="font-semibold">"mini beasts"</span>
+            </div>
+          </div>
         </div>
 
+        {messages.slice(0, step + 1).map((msg, i) => (
+          <div key={i} className="flex items-end gap-2 message-bubble">
+            <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-white/10">
+              <MiniBeastIcon characterId={msg.speaker} isTalking={false} />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-white/60 text-xs font-medium ml-3 mb-1">{msg.displayName}</span>
+              <div className="imessage-bubble imessage-gray">
+                {msg.text}
+              </div>
+              <span className="message-time ml-3">{msg.time}</span>
+            </div>
+          </div>
+        ))}
+
+        {showTyping && step < messages.length - 1 && (
+          <div className="flex items-end gap-2">
+            <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-white/10">
+              <MiniBeastIcon characterId={messages[step + 1].speaker} isTalking={true} />
+            </div>
+            <div className="typing-indicator">
+              <div className="typing-dot"></div>
+              <div className="typing-dot"></div>
+              <div className="typing-dot"></div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Action Bar */}
+      <div className="ios-glass border-t border-white/10 p-4 safe-bottom">
         {step < messages.length - 1 ? (
-          <button onClick={() => setStep(s => s + 1)} className="btn-modern bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-4 px-10 rounded-xl text-xl font-orbitron shadow-2xl neon-blue border border-blue-400/30">
-            Next
+          <button 
+            onClick={() => setStep(s => s + 1)} 
+            className="ios-button w-full haptic-press"
+          >
+            Continue
           </button>
         ) : (
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col gap-3">
             {onContinue && (
-                <button onClick={onContinue} className="btn-modern bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-4 px-10 rounded-xl text-xl font-orbitron pulse-glow shadow-2xl border border-green-400/30">
-                  Continue Season
-                </button>
+              <button 
+                onClick={onContinue} 
+                className="ios-button w-full haptic-press"
+                style={{background: '#34C759'}}
+              >
+                Continue Season
+              </button>
             )}
-            <button onClick={onStart} className="btn-modern bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-4 px-10 rounded-xl text-xl font-orbitron shadow-2xl neon-blue border border-blue-400/30">
-              {onContinue ? "Start New" : "Join the Chat"}
+            <button 
+              onClick={onStart} 
+              className="ios-button w-full haptic-press"
+            >
+              {onContinue ? "Start New Game" : "Join the Group"}
             </button>
           </div>
         )}
@@ -89,52 +156,107 @@ const BioDisplay: React.FC<{ character: CharacterData }> = ({ character }) => {
 
 export const CharacterSelectScreen: React.FC<{ onSelect: (char: CharacterData) => void }> = ({ onSelect }) => {
   const characters = Object.values(characterData);
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  
-  const focusedChar = characters[currentIndex];
+  const [selectedChar, setSelectedChar] = React.useState<CharacterData | null>(null);
 
-  const handleNext = () => {
-    setCurrentIndex(prevIndex => (prevIndex + 1) % characters.length);
+  const handleSelect = (char: CharacterData) => {
+    setSelectedChar(char);
   };
 
-  const handlePrev = () => {
-    setCurrentIndex(prevIndex => (prevIndex - 1 + characters.length) % characters.length);
+  const handleConfirm = () => {
+    if (selectedChar) {
+      onSelect(selectedChar);
+    }
   };
-  
-  const NavButton: React.FC<{ direction: 'left' | 'right', onClick: () => void }> = ({ direction, onClick }) => (
-    <button onClick={onClick} className="btn-modern glass hover:bg-white/10 text-white font-bold p-5 rounded-full transition-transform transform hover:scale-125 absolute top-1/2 -translate-y-1/2 z-10 border-2 border-blue-500/30 neon-blue" style={direction === 'left' ? { left: '-20px' } : { right: '-20px' }}>
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-        {direction === 'left' ? <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /> : <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />}
-      </svg>
-    </button>
-  );
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 bg-particles relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/5 to-purple-500/5"></div>
-      <h1 className="text-5xl md:text-7xl font-bold text-center mb-12 font-orbitron bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent animate-gradient relative z-10" style={{textShadow: '0 0 30px rgba(59, 130, 246, 0.5)'}}>
-        Choose Your Mini Beast
-      </h1>
-      
-      <div className="w-full max-w-3xl mx-auto relative flex items-center justify-center z-10">
-        <NavButton direction="left" onClick={handlePrev} />
-        
-        <div key={focusedChar.id} className="w-full max-w-2xl glass rounded-3xl p-8 shadow-2xl border-2 border-blue-500/30 flex flex-col md:flex-row items-center gap-8 min-h-[280px] message-bubble neon-blue">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full flex-shrink-0 relative shadow-2xl neon-purple p-1 bg-gradient-to-br from-blue-500 to-purple-600">
-                <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
-                  <MiniBeastIcon characterId={focusedChar.id} isTalking={false} />
-                </div>
-            </div>
-            <BioDisplay character={focusedChar} />
+    <div className="min-h-screen flex flex-col bg-imessage-dark">
+      {/* iOS Status Bar */}
+      <div className="ios-status-bar safe-top">
+        <span>9:41</span>
+        <div className="flex items-center gap-1">
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+          </svg>
+          <span>100%</span>
         </div>
-        
-        <NavButton direction="right" onClick={handleNext} />
       </div>
 
-      <div className="text-center mt-12 relative z-10">
-          <button onClick={() => onSelect(focusedChar)} className="btn-modern bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 hover:from-green-500 hover:to-teal-500 text-white font-bold py-5 px-16 rounded-2xl text-3xl font-orbitron transition transform hover:scale-105 shadow-2xl neon-green border border-green-400/30">
-              Select {focusedChar.name}
-          </button>
+      {/* Header */}
+      <div className="group-chat-header safe-top">
+        <div className="text-center">
+          <h1 className="text-white font-semibold text-lg">Choose Your Character</h1>
+          <p className="text-white/60 text-sm">Who are you in the group?</p>
+        </div>
+      </div>
+
+      {/* Character Grid */}
+      <div className="flex-1 overflow-y-auto px-4 py-6 ios-scrollbar">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {characters.map((char) => {
+            const bio = char.bio.split('\n');
+            const isSelected = selectedChar?.id === char.id;
+            
+            return (
+              <button
+                key={char.id}
+                onClick={() => handleSelect(char)}
+                className={`ios-glass rounded-2xl p-4 flex flex-col items-center gap-3 transition-all haptic-press ${
+                  isSelected 
+                    ? 'border-2 border-blue-500 bg-blue-500/10 scale-[1.02]' 
+                    : 'border border-white/10 hover:border-white/30'
+                }`}
+                style={{animation: 'slide-up 0.3s ease-out'}}
+              >
+                <div className={`w-20 h-20 rounded-full overflow-hidden border-2 transition-all ${
+                  isSelected ? 'border-blue-500' : 'border-white/20'
+                }`}>
+                  <MiniBeastIcon characterId={char.id} isTalking={false} />
+                </div>
+                <div className="text-center">
+                  <div className="text-white font-semibold text-sm">{char.name}</div>
+                  <div className="text-white/60 text-xs mt-1 line-clamp-2">{bio[0]}</div>
+                </div>
+                {isSelected && (
+                  <div className="absolute top-2 right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Selected Character Details */}
+        {selectedChar && (
+          <div className="mt-6 ios-glass rounded-2xl p-6 border border-blue-500/30" style={{animation: 'message-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'}}>
+            <div className="flex items-start gap-4">
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-500 flex-shrink-0">
+                <MiniBeastIcon characterId={selectedChar.id} isTalking={false} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-white font-semibold text-lg mb-1">{selectedChar.name}</h3>
+                {selectedChar.bio.split('\n').map((line, i) => (
+                  <p key={i} className="text-white/70 text-sm mb-1">{line}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Button */}
+      <div className="ios-glass border-t border-white/10 p-4 safe-bottom">
+        <button 
+          onClick={handleConfirm}
+          disabled={!selectedChar}
+          className={`ios-button w-full haptic-press ${
+            !selectedChar ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+        >
+          {selectedChar ? `Play as ${selectedChar.name}` : 'Select a Character'}
+        </button>
       </div>
     </div>
   );
@@ -142,18 +264,64 @@ export const CharacterSelectScreen: React.FC<{ onSelect: (char: CharacterData) =
 
 
 export const EndScreen: React.FC<{ report: EndGameReport; onRestart: () => void; onContinue: () => void; }> = ({ report, onRestart, onContinue }) => (
-  <div className="min-h-screen flex items-center justify-center text-center p-4 transition-opacity duration-500 bg-particles relative">
-    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/10 to-pink-500/10"></div>
-    <div className="relative z-10">
-      <h1 className="text-6xl md:text-8xl font-bold mb-8 font-orbitron bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent animate-gradient" style={{textShadow: '0 0 40px rgba(59, 130, 246, 0.6)'}}>{report.title}</h1>
-      <div className="glass rounded-3xl p-8 max-w-3xl mx-auto mb-12 shadow-2xl border-2 border-blue-500/30 neon-blue">
-        <p className="text-2xl md:text-3xl text-white font-semibold leading-relaxed">{report.message}</p>
+  <div className="min-h-screen flex flex-col bg-imessage-dark">
+    {/* iOS Status Bar */}
+    <div className="ios-status-bar safe-top">
+      <span>9:41</span>
+      <div className="flex items-center gap-1">
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+        </svg>
+        <span>100%</span>
       </div>
-      {report.isEnd ? (
-        <button onClick={onRestart} className="btn-modern bg-gradient-to-r from-red-600 via-pink-600 to-purple-600 hover:from-red-500 hover:to-purple-500 text-white font-bold py-6 px-16 rounded-2xl text-3xl transition duration-300 transform hover:scale-105 shadow-2xl font-orbitron neon-pink border border-red-400/30">Start Over</button>
-      ) : (
-        <button onClick={onContinue} className="btn-modern bg-gradient-to-r from-blue-600 via-cyan-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-6 px-16 rounded-2xl text-3xl transition duration-300 transform hover:scale-105 shadow-2xl font-orbitron neon-blue border border-blue-400/30">Start Next Season</button>
-      )}
+    </div>
+
+    {/* Header */}
+    <div className="group-chat-header safe-top">
+      <div className="text-center">
+        <h1 className="text-white font-semibold text-lg">mini beasts</h1>
+      </div>
+    </div>
+
+    {/* Content */}
+    <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md">
+        {/* Season End Message */}
+        <div className="ios-glass rounded-3xl p-8 mb-6 text-center border border-blue-500/30" style={{animation: 'message-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'}}>
+          <div className="text-4xl mb-4">
+            {report.isEnd ? '🏆' : '📊'}
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-3">{report.title}</h2>
+          <p className="text-white/80 text-lg leading-relaxed">{report.message}</p>
+        </div>
+
+        {/* System message style */}
+        <div className="flex justify-center mb-6">
+          <div className="ios-glass rounded-full px-4 py-2 text-sm text-white/70 text-center">
+            {report.isEnd ? 'Season Complete' : 'End of Week'}
+          </div>
+        </div>
+
+        {/* Buttons */}
+        <div className="space-y-3">
+          {report.isEnd ? (
+            <button 
+              onClick={onRestart} 
+              className="ios-button w-full haptic-press"
+              style={{background: '#FF3B30'}}
+            >
+              Start New Season
+            </button>
+          ) : (
+            <button 
+              onClick={onContinue} 
+              className="ios-button w-full haptic-press"
+            >
+              Continue to Next Week
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   </div>
 );
