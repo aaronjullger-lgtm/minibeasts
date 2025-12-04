@@ -221,37 +221,37 @@ const AppContent: React.FC = () => {
             <div className="hidden md:flex flex-col gap-1 w-36">
               <div className="flex items-center justify-between text-[0.7rem] text-slate-300">
                 <span>Season Progress</span>
-                <span>{progressPct}%</span>
+                <span className="font-bold">{progressPct}%</span>
               </div>
               <div className="progress-track">
                 <div
-                  className="progress-fill"
+                  className="progress-fill shimmer transition-all duration-500"
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
             </div>
             <button
               type="button"
-              className="pill-muted gap-1.5 hover-lift"
+              className="pill-muted gap-1.5 hover-lift hover-scale"
             >
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              Auto-save on
+              <span className="text-[0.65rem] md:text-[0.7rem]">Auto-save on</span>
             </button>
             <button
               type="button"
               onClick={() => setShowAchievements(true)}
-              className="pill-muted gap-1.5 hover-lift"
-              title="Achievements"
+              className="pill-muted gap-1.5 hover-lift hover-scale hover-brighten transition-all"
+              title="Achievements (A)"
             >
-              🏆
+              <span className="text-lg">🏆</span>
             </button>
             <button
               type="button"
               onClick={() => setShowSettings(true)}
-              className="pill-muted gap-1.5 hover-lift"
-              title="Settings"
+              className="pill-muted gap-1.5 hover-lift hover-scale hover-brighten transition-all"
+              title="Settings (S)"
             >
-              ⚙️
+              <span className="text-lg">⚙️</span>
             </button>
           </div>
         </header>
@@ -261,30 +261,30 @@ const AppContent: React.FC = () => {
           {/* LEFT COLUMN: HUD + tabs + main view */}
           <div className="flex-1 flex flex-col gap-3 md:gap-4">
             {/* HUD */}
-            <section className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-3">
-              <div className="hud-card hover-lift transition-all">
+            <section className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-3 animate-slide-in-up">
+              <div className="hud-card hover-lift hover-glow transition-all cursor-pointer group">
                 <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
-                  <span>Bankroll</span>
+                  <span className="group-hover:text-emerald-300 transition-colors">💰 Bankroll</span>
                   <span className="badge-pill bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 animate-pulse">
                     {bankroll > BANKROLL_THRESHOLD_HIGH_ROLLER ? 'High Roller' : bankroll > BANKROLL_THRESHOLD_DEGENERATE ? 'Degenerate' : 'Grinding'}
                   </span>
                 </div>
-                <div className="text-lg md:text-xl font-semibold text-emerald-300">
+                <div className="text-lg md:text-xl font-semibold text-emerald-300 group-hover:scale-110 transition-transform">
                   ${bankroll.toFixed(2)}
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-emerald-900/60 overflow-hidden">
-                  <div className="h-full w-2/3 bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-500" />
+                  <div className="h-full w-2/3 bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-500 shimmer" />
                 </div>
               </div>
 
-              <div className={`hud-card hover-lift transition-all ${grit >= GRIT_THRESHOLD_LEGENDARY ? 'pulse-glow' : ''}`}>
+              <div className={`hud-card hover-lift hover-glow transition-all cursor-pointer group ${grit >= GRIT_THRESHOLD_LEGENDARY ? 'pulse-glow border-2 border-amber-500/50' : ''}`}>
                 <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
-                  <span>Grit</span>
-                  <span className="text-xs text-amber-300">
+                  <span className="group-hover:text-amber-300 transition-colors">💪 Grit</span>
+                  <span className="text-xs text-amber-300 animate-pulse">
                     {grit >= GRIT_THRESHOLD_LEGENDARY ? '🔥 Legendary' : grit >= GRIT_THRESHOLD_ELITE ? '💪 Elite' : grit >= GRIT_THRESHOLD_RISING ? '⚡ Rising' : 'Building'}
                   </span>
                 </div>
-                <div className="flex items-baseline gap-1">
+                <div className="flex items-baseline gap-1 group-hover:scale-110 transition-transform">
                   <span className="text-lg md:text-xl font-semibold text-amber-300">
                     {grit}
                   </span>
@@ -292,20 +292,20 @@ const AppContent: React.FC = () => {
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-amber-900/50 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 transition-all duration-500 shimmer"
                     style={{ width: `${grit}%` }}
                   />
                 </div>
               </div>
 
-              <div className={`hud-card hover-lift transition-all ${chaos >= CHAOS_THRESHOLD_CRITICAL ? 'shake-animation' : ''}`}>
+              <div className={`hud-card hover-lift hover-glow transition-all cursor-pointer group ${chaos >= CHAOS_THRESHOLD_CRITICAL ? 'shake-animation border-2 border-pink-500/50' : ''}`}>
                 <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
-                  <span>Chaos</span>
-                  <span className="text-xs text-pink-300">
+                  <span className="group-hover:text-pink-300 transition-colors">🔥 Chaos</span>
+                  <span className="text-xs text-pink-300 animate-pulse">
                     {chaos >= CHAOS_THRESHOLD_CRITICAL ? '🚨 Critical' : chaos >= CHAOS_THRESHOLD_SPICY ? '🔥 Spicy' : chaos >= CHAOS_THRESHOLD_HEATING ? '⚠️ Heating Up' : 'Chill'}
                   </span>
                 </div>
-                <div className="flex items-baseline gap-1">
+                <div className="flex items-baseline gap-1 group-hover:scale-110 transition-transform">
                   <span className="text-lg md:text-xl font-semibold text-pink-300">
                     {chaos}
                   </span>
@@ -313,20 +313,20 @@ const AppContent: React.FC = () => {
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-pink-900/40 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-pink-400 via-fuchsia-400 to-purple-400 transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-pink-400 via-fuchsia-400 to-purple-400 transition-all duration-500 shimmer"
                     style={{ width: `${chaos}%` }}
                   />
                 </div>
               </div>
 
-              <div className={`hud-card hover-lift transition-all ${relationshipHeat >= RELATIONSHIP_THRESHOLD_DANGER ? 'shake-animation' : ''}`}>
+              <div className={`hud-card hover-lift hover-glow transition-all cursor-pointer group ${relationshipHeat >= RELATIONSHIP_THRESHOLD_DANGER ? 'shake-animation border-2 border-red-500/50' : ''}`}>
                 <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
-                  <span>Relationship</span>
-                  <span className="text-xs text-sky-300">
+                  <span className="group-hover:text-sky-300 transition-colors">💕 Relationship</span>
+                  <span className="text-xs text-sky-300 animate-pulse">
                     {relationshipHeat >= RELATIONSHIP_THRESHOLD_DANGER ? '💀 Danger' : relationshipHeat >= RELATIONSHIP_THRESHOLD_RISKY ? '⚠️ Risky' : relationshipHeat >= RELATIONSHIP_THRESHOLD_SKETCHY ? '👀 Sketchy' : 'Safe'}
                   </span>
                 </div>
-                <div className="flex items-baseline gap-1">
+                <div className="flex items-baseline gap-1 group-hover:scale-110 transition-transform">
                   <span className="text-lg md:text-xl font-semibold text-sky-300">
                     {relationshipHeat}
                   </span>
@@ -334,7 +334,7 @@ const AppContent: React.FC = () => {
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-sky-900/40 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-sky-300 via-orange-400 to-red-400 transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-sky-300 via-orange-400 to-red-400 transition-all duration-500 shimmer"
                     style={{ width: `${relationshipHeat}%` }}
                   />
                 </div>
@@ -345,66 +345,74 @@ const AppContent: React.FC = () => {
             <section className="section-card flex flex-col gap-3 md:gap-4">
               <div className="flex items-center justify-between">
                 <div className="inline-flex items-center gap-2">
-                  <span className="badge-pill bg-slate-800/80 text-slate-100 border border-slate-700/80">
+                  <span className="badge-pill bg-gradient-to-r from-blue-600/30 to-purple-600/30 text-slate-100 border border-blue-500/40 animate-pulse">
                     Season · Week {currentWeek}
                   </span>
-                  <span className="text-xs text-slate-400 hidden md:inline">
+                  <span className="text-xs text-slate-400 hidden md:inline animate-slide-in-left">
                     Pick your chaos: manage dynasty, chase parlays, or check the screenshots
                   </span>
                 </div>
                 <button 
                   type="button" 
-                  className="secondary-btn hidden md:inline-flex hover-lift"
+                  className="secondary-btn hidden md:inline-flex hover-lift hover-glow ripple"
                   onClick={handleNewRun}
                 >
-                  New Run
+                  🔄 New Run
                 </button>
               </div>
 
-              <div className="bg-slate-900/70 p-1.5 rounded-full border border-slate-700/80 flex gap-1">
+              <div className="bg-slate-900/70 p-1.5 rounded-full border border-slate-700/80 flex gap-1 shadow-lg">
                 <button
                   type="button"
-                  className={`segment-button hover-lift ${
-                    activeTab === "dynasty" ? "segment-button-active" : ""
+                  className={`segment-button hover-scale transition-all duration-300 ${
+                    activeTab === "dynasty" ? "segment-button-active shadow-lg" : ""
                   }`}
                   onClick={() => setActiveTab("dynasty")}
                 >
-                  Dynasty
+                  <span className="flex items-center gap-1">
+                    🏈 Dynasty
+                  </span>
                 </button>
                 <button
                   type="button"
-                  className={`segment-button hover-lift ${
-                    activeTab === "minigames" ? "segment-button-active" : ""
+                  className={`segment-button hover-scale transition-all duration-300 ${
+                    activeTab === "minigames" ? "segment-button-active shadow-lg" : ""
                   }`}
                   onClick={() => setActiveTab("minigames")}
                 >
-                  Minigames
+                  <span className="flex items-center gap-1">
+                    🎮 Minigames
+                  </span>
                 </button>
                 <button
                   type="button"
-                  className={`segment-button hover-lift ${
-                    activeTab === "roster" ? "segment-button-active" : ""
+                  className={`segment-button hover-scale transition-all duration-300 ${
+                    activeTab === "roster" ? "segment-button-active shadow-lg" : ""
                   }`}
                   onClick={() => setActiveTab("roster")}
                 >
-                  Roster
+                  <span className="flex items-center gap-1">
+                    👥 Roster
+                  </span>
                 </button>
                 <button
                   type="button"
-                  className={`segment-button hover-lift ${
-                    activeTab === "history" ? "segment-button-active" : ""
+                  className={`segment-button hover-scale transition-all duration-300 ${
+                    activeTab === "history" ? "segment-button-active shadow-lg" : ""
                   }`}
                   onClick={() => setActiveTab("history")}
                 >
-                  History
+                  <span className="flex items-center gap-1">
+                    📜 History
+                  </span>
                 </button>
               </div>
 
               <div className="mt-1 min-h-[220px] md:min-h-[260px]">
                 {activeTab === "dynasty" && (
-                  <div className="w-full h-full flex items-center justify-center p-6 text-center">
+                  <div className="w-full h-full flex items-center justify-center p-6 text-center animate-fade-in">
                     <div>
-                      <div className="mb-4 text-6xl">🎮</div>
+                      <div className="mb-4 text-6xl animate-float">🎮</div>
                       <h3 className="text-xl font-semibold text-slate-200 mb-2">
                         Ready to Start Dynasty Mode?
                       </h3>
@@ -413,10 +421,14 @@ const AppContent: React.FC = () => {
                       </p>
                       <button 
                         type="button"
-                        className="primary-btn hover-lift px-6 py-3"
+                        className="group relative overflow-hidden px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold shadow-xl hover:shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:translate-y-0 ripple"
                         onClick={handleStartGame}
                       >
-                        Start Dynasty Mode
+                        <span className="relative z-10 flex items-center justify-center gap-2">
+                          <span>🚀</span>
+                          Start Dynasty Mode
+                        </span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
                       </button>
                     </div>
                   </div>
@@ -463,15 +475,15 @@ const AppContent: React.FC = () => {
 
           {/* RIGHT COLUMN: Chat / side panel */}
           <aside className="w-full md:w-[280px] lg:w-[320px] flex flex-col gap-3">
-            <div className="section-card flex flex-col gap-3 h-full">
+            <div className="section-card flex flex-col gap-3 h-full animate-slide-in-right">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="relative">
-                    <div className="h-8 w-8 rounded-2xl bg-gradient-to-tr from-green-400 via-emerald-400 to-sky-400 flex items-center justify-center text-xs font-bold text-slate-950">
+                  <div className="relative group">
+                    <div className="h-8 w-8 rounded-2xl bg-gradient-to-tr from-green-400 via-emerald-400 to-sky-400 flex items-center justify-center text-xs font-bold text-slate-950 transition-transform group-hover:scale-110">
                       MB
                     </div>
                     {unreadMessages > 0 && (
-                      <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-[0.6rem] font-semibold flex items-center justify-center text-white">
+                      <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-[0.6rem] font-semibold flex items-center justify-center text-white animate-bounce-in shadow-lg">
                         {unreadMessages}
                       </span>
                     )}
@@ -480,7 +492,7 @@ const AppContent: React.FC = () => {
                     <span className="text-xs font-semibold leading-tight">
                       Group Chat · Mini Beasts
                     </span>
-                    <span className="text-[0.7rem] text-slate-400">
+                    <span className={`text-[0.7rem] transition-colors ${unreadMessages > 0 ? 'text-red-400 animate-pulse' : 'text-slate-400'}`}>
                       {unreadMessages > 0 ? "They are cooking you right now" : "Peaceful (for once)"}
                     </span>
                   </div>
@@ -488,8 +500,9 @@ const AppContent: React.FC = () => {
 
                 <button
                   type="button"
-                  className="badge bg-slate-800/80 text-slate-200 border border-slate-700/80"
+                  className="badge bg-gradient-to-r from-green-600/20 to-emerald-600/20 text-emerald-300 border border-emerald-500/50 animate-pulse hover:scale-105 transition-transform"
                 >
+                  <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse mr-1" />
                   Live
                 </button>
               </div>
