@@ -26,7 +26,7 @@ export const DatingSimScreen: React.FC<DatingSimScreenProps> = ({ scenario, onCo
         setTotalInsecurity(prev => prev + choice.insecurityGain);
 
         // Aaron randomly shows up to say "skill issue"
-        if (Math.random() > 0.4) {
+        if (Math.random() < 0.4) {
             setTimeout(() => {
                 setAaronAppeared(true);
                 setRoastMessage("aaron: skill issue");
@@ -174,7 +174,7 @@ export const DatingSimScreen: React.FC<DatingSimScreenProps> = ({ scenario, onCo
                             />
                             
                             <div className="text-sm text-gray-400 mb-4 text-center">
-                                💡 Tip: Longer responses ({'>'}50 chars) show desperation but slightly reduce insecurity
+                                💡 Tip: Longer responses (&gt;50 chars) show desperation but slightly reduce insecurity
                             </div>
                             
                             <button
