@@ -21,26 +21,30 @@ export const SettingsPanel: React.FC<{ onClose: () => void }> = ({ onClose }) =>
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-      <div className="bg-slate-900 rounded-3xl max-w-2xl w-full border-2 border-slate-700 shadow-2xl">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="glass-effect rounded-3xl max-w-2xl w-full border-2 border-slate-700/50 shadow-2xl animate-slide-in-up">
         {/* Header */}
-        <div className="border-b border-slate-700 p-6 flex items-center justify-between">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            ⚙️ Settings
+        <div className="border-b border-slate-700/50 p-6 flex items-center justify-between">
+          <h2 className="text-3xl font-bold text-gradient-blue flex items-center gap-2">
+            <span className="text-4xl">⚙️</span>
+            Settings
           </h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white text-2xl leading-none transition-colors"
+            className="text-slate-400 hover:text-white text-3xl leading-none transition-colors hover:scale-110 active:scale-95"
           >
             ×
           </button>
         </div>
 
         {/* Settings Content */}
-        <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+        <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto chat-scroll">
           {/* Audio Section */}
-          <section>
-            <h3 className="text-xl font-semibold text-slate-200 mb-4">🔊 Audio</h3>
+          <section className="animate-slide-in-left">
+            <h3 className="text-xl font-semibold text-slate-200 mb-4 flex items-center gap-2">
+              <span className="text-2xl">🔊</span>
+              Audio
+            </h3>
             <div className="space-y-3">
               <SettingToggle
                 label="Sound Effects"
@@ -58,8 +62,11 @@ export const SettingsPanel: React.FC<{ onClose: () => void }> = ({ onClose }) =>
           </section>
 
           {/* Game Settings */}
-          <section>
-            <h3 className="text-xl font-semibold text-slate-200 mb-4">🎮 Gameplay</h3>
+          <section className="animate-slide-in-left stagger-1">
+            <h3 className="text-xl font-semibold text-slate-200 mb-4 flex items-center gap-2">
+              <span className="text-2xl">🎮</span>
+              Gameplay
+            </h3>
             <div className="space-y-3">
               <SettingToggle
                 label="Auto-Save"
@@ -68,8 +75,9 @@ export const SettingsPanel: React.FC<{ onClose: () => void }> = ({ onClose }) =>
                 onChange={(enabled) => updateSetting('autoSaveEnabled', enabled)}
               />
               
-              <div className="bg-slate-800/50 rounded-xl p-4">
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+              <div className="glass-effect-light rounded-xl p-4 border border-slate-700/30">
+                <label className="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                  <span>⚔️</span>
                   Difficulty
                 </label>
                 <p className="text-xs text-slate-400 mb-3">
@@ -80,10 +88,10 @@ export const SettingsPanel: React.FC<{ onClose: () => void }> = ({ onClose }) =>
                     <button
                       key={level}
                       onClick={() => updateSetting('difficulty', level)}
-                      className={`flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-all ${
+                      className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all hover-lift ${
                         settings.difficulty === level
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                          ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg'
+                          : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/50'
                       }`}
                     >
                       {level.charAt(0).toUpperCase() + level.slice(1)}
@@ -95,8 +103,11 @@ export const SettingsPanel: React.FC<{ onClose: () => void }> = ({ onClose }) =>
           </section>
 
           {/* Display Settings */}
-          <section>
-            <h3 className="text-xl font-semibold text-slate-200 mb-4">🎨 Display</h3>
+          <section className="animate-slide-in-left stagger-2">
+            <h3 className="text-xl font-semibold text-slate-200 mb-4 flex items-center gap-2">
+              <span className="text-2xl">🎨</span>
+              Display
+            </h3>
             <div className="space-y-3">
               <SettingToggle
                 label="Animations"
@@ -108,8 +119,11 @@ export const SettingsPanel: React.FC<{ onClose: () => void }> = ({ onClose }) =>
           </section>
 
           {/* Danger Zone */}
-          <section>
-            <h3 className="text-xl font-semibold text-red-400 mb-4">⚠️ Danger Zone</h3>
+          <section className="animate-slide-in-left stagger-3">
+            <h3 className="text-xl font-semibold text-red-400 mb-4 flex items-center gap-2">
+              <span className="text-2xl">⚠️</span>
+              Danger Zone
+            </h3>
             {!showResetConfirm ? (
               <button
                 onClick={() => setShowResetConfirm(true)}
@@ -162,20 +176,20 @@ const SettingToggle: React.FC<{
   onChange: (enabled: boolean) => void;
 }> = ({ label, description, enabled, onChange }) => {
   return (
-    <div className="bg-slate-800/50 rounded-xl p-4 flex items-center justify-between">
+    <div className="glass-effect-light rounded-xl p-4 flex items-center justify-between border border-slate-700/20 hover-lift transition-all">
       <div className="flex-1">
         <div className="text-sm font-medium text-slate-200">{label}</div>
         <div className="text-xs text-slate-400 mt-1">{description}</div>
       </div>
       <button
         onClick={() => onChange(!enabled)}
-        className={`relative w-12 h-6 rounded-full transition-colors ${
-          enabled ? 'bg-blue-600' : 'bg-slate-600'
+        className={`relative w-14 h-7 rounded-full transition-all duration-300 hover:scale-105 ${
+          enabled ? 'bg-gradient-to-r from-blue-600 to-blue-500' : 'bg-slate-600'
         }`}
       >
         <div
-          className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${
-            enabled ? 'translate-x-6' : 'translate-x-0'
+          className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-all duration-300 shadow-lg ${
+            enabled ? 'translate-x-7' : 'translate-x-0'
           }`}
         />
       </button>

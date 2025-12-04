@@ -68,3 +68,30 @@ export const SkeletonCard: React.FC = () => {
     </div>
   );
 };
+
+export const LoadingDots: React.FC = () => {
+  return (
+    <div className="inline-flex gap-1">
+      <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+      <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+      <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+    </div>
+  );
+};
+
+export const LoadingBar: React.FC<{ progress: number; message?: string }> = ({ progress, message }) => {
+  return (
+    <div className="w-full p-4">
+      <div className="mb-2 flex items-center justify-between text-sm text-slate-400">
+        <span>{message || 'Loading...'}</span>
+        <span className="font-bold text-blue-400">{Math.round(progress)}%</span>
+      </div>
+      <div className="h-2.5 bg-slate-800 rounded-full overflow-hidden">
+        <div 
+          className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 transition-all duration-300 rounded-full shimmer"
+          style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
+        />
+      </div>
+    </div>
+  );
+};
