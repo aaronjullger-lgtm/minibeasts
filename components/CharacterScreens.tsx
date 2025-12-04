@@ -17,14 +17,14 @@ export const IntroScreen: React.FC<{ onStart: () => void; onContinue?: () => voi
   ];
 
   React.useEffect(() => {
-    if (!showIntro && step < messages.length - 1) {
+    if (step < messages.length - 1) {
       setShowTyping(true);
       const typingTimer = setTimeout(() => {
         setShowTyping(false);
       }, 800);
       return () => clearTimeout(typingTimer);
     }
-  }, [step, showIntro]);
+  }, [step]);
 
   if (showIntro) {
     return (
@@ -108,7 +108,10 @@ export const IntroScreen: React.FC<{ onStart: () => void; onContinue?: () => voi
                 </button>
               )}
               <button 
-                onClick={() => setShowIntro(false)} 
+                onClick={() => {
+                  setShowIntro(false);
+                  // Don't call onStart here, let it proceed to the chat intro
+                }} 
                 className="ios-button w-full haptic-press"
                 style={{fontSize: '18px', padding: '16px 24px'}}
               >
