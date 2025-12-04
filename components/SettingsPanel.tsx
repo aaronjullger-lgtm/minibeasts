@@ -1,47 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-interface Settings {
-  soundEnabled: boolean;
-  musicEnabled: boolean;
-  autoSaveEnabled: boolean;
-  difficulty: 'easy' | 'normal' | 'hard';
-  animationsEnabled: boolean;
-}
-
-const SETTINGS_KEY = 'minibeasts_settings';
-
-const defaultSettings: Settings = {
-  soundEnabled: true,
-  musicEnabled: true,
-  autoSaveEnabled: true,
-  difficulty: 'normal',
-  animationsEnabled: true
-};
-
-export const settingsService = {
-  getSettings(): Settings {
-    try {
-      const stored = localStorage.getItem(SETTINGS_KEY);
-      if (!stored) return defaultSettings;
-      return { ...defaultSettings, ...JSON.parse(stored) };
-    } catch (error) {
-      console.error('Failed to load settings:', error);
-      return defaultSettings;
-    }
-  },
-
-  saveSettings(settings: Settings): void {
-    try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-    } catch (error) {
-      console.error('Failed to save settings:', error);
-    }
-  },
-
-  resetSettings(): void {
-    localStorage.removeItem(SETTINGS_KEY);
-  }
-};
+import { settingsService, Settings, defaultSettings } from '../services/settingsService';
 
 export const SettingsPanel: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [settings, setSettings] = useState<Settings>(settingsService.getSettings());
