@@ -19,14 +19,17 @@ export const StatChangeNotification: React.FC<StatChangeNotificationProps> = ({
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => setIsVisible(true), 50);
+    const showTimer = setTimeout(() => setIsVisible(true), 50);
 
-    const timer = setTimeout(() => {
+    const hideTimer = setTimeout(() => {
       setIsVisible(false);
       setTimeout(onClose, 300);
     }, 2000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+    };
   }, [onClose]);
 
   const isPositive = change.value > 0;
@@ -82,28 +85,15 @@ export const FloatingStatChange: React.FC<{
   
   return (
     <div
-      className="fixed z-50 pointer-events-none"
+      className="fixed z-50 pointer-events-none animate-float-up"
       style={{
         left: x,
-        top: y,
-        animation: 'float-up 1.5s ease-out forwards'
+        top: y
       }}
     >
       <div className={`text-2xl font-bold ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
         {isPositive ? '+' : ''}{change.value}
       </div>
-      <style jsx>{`
-        @keyframes float-up {
-          0% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-          100% {
-            opacity: 0;
-            transform: translateY(-100px);
-          }
-        }
-      `}</style>
     </div>
   );
 };

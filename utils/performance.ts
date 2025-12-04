@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 
 /**
  * Debounce a function call
@@ -182,6 +182,3 @@ export function lazyWithPreload<T extends React.ComponentType<any>>(
     preload
   };
 }
-
-// Import React at the top for hooks
-import React from 'react';

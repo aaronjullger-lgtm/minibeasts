@@ -21,10 +21,31 @@ export interface GameStateData {
   newbieName: string;
 }
 
+const DEFAULT_PLAYER: PlayerState = {
+  id: '',
+  name: '',
+  rank: 0,
+  girlfriend: false,
+  nflTeamColor: '#000000',
+  bio: '',
+  grit: 0,
+  loveLife: 50,
+  fandom: 50,
+  uniqueStatValue: 50,
+  energy: 3,
+  happiness: 50,
+  paSchoolStress: 0,
+  insecurity: 0,
+  liberalGfSuspicion: 0,
+  truckMaintenance: 0,
+  ego: 0,
+  unlockedAchievements: []
+};
+
 export function useGameState(initialData: Partial<GameStateData>) {
   // Initialize state with proper defaults
   const [state, setState] = useState<GameStateData>(() => ({
-    player: initialData.player || {} as PlayerState,
+    player: initialData.player || DEFAULT_PLAYER,
     ranking: initialData.ranking || [],
     day: initialData.day || 1,
     week: initialData.week || 1,
