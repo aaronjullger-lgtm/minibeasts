@@ -690,6 +690,10 @@ export const allAchievements: Achievement[] = [
     { id: 'DRAFT_GURU', name: "Fantasy Expert", description: "Draft a team with a total projection over 75 in the Fantasy Draft." },
     { id: 'TRIVIA_PERFECT', name: "Brainiac", description: "Answer every question correctly in Trivia Night." },
     { id: 'DIE_GOD', name: "Die Is Life", description: "Score over 100 Grit in the Beer Die Challenge." },
+    { id: 'SUNDAY_SCARIES_WIN', name: "Parlay God", description: "Win big in Sunday Scaries with a 5-leg parlay." },
+    { id: 'COMMISH_CHAOS_REVOLT', name: "Absolute Power", description: "Cause a league revolt in Commish Chaos." },
+    { id: 'TY_WINDOW_PERFECT', name: "Ty Whisperer", description: "Catch all 3 Ty Windows in one game." },
+    { id: 'BITCHLESS_SURVIVOR', name: "Friend Zone Escape Artist", description: "Complete The Bitchless Chronicles with minimal insecurity gain." },
 
     // Store & Economy
     { id: 'HIT_PARLAY', name: "All-In Gambler", description: "Successfully hit a risky parlay action." },
@@ -709,4 +713,120 @@ export const allAchievements: Achievement[] = [
     { id: 'EGO_MANIAC', name: "I Am A God", description: "As Elie, reach 100 Ego." },
     { id: 'STRESS_FREE', name: "Finally, Peace", description: "As Aaron, have your PA School Stress drop to 0." },
     { id: 'SECURE', name: "Confidence", description: "As Craif, have your Insecurity drop to 0." },
+];
+
+// --- DATA FOR SUNDAY SCARIES PARLAY REVENGE GAME ---
+export interface ParlayLeg {
+    team: string;
+    description: string;
+    odds: number; // e.g., -110, +150
+    success: boolean | null;
+}
+
+export const sundayScariesTeams = [
+    "Cowboys", "Eagles", "Giants", "Commanders", "Bears", "Packers", "Vikings", "Lions",
+    "Buccaneers", "Saints", "Falcons", "Panthers", "49ers", "Rams", "Seahawks", "Cardinals",
+    "Steelers", "Ravens", "Browns", "Bengals", "Colts", "Titans", "Jaguars", "Texans",
+    "Chiefs", "Raiders", "Chargers", "Broncos", "Bills", "Dolphins", "Patriots", "Jets"
+];
+
+export const sundayScariesRoasts = {
+    losing: [
+        "bruh you really thought that was gonna hit? 🤡",
+        "another one bites the dust",
+        "colin would be proud of this terrible bet",
+        "your parlay is cooked bro",
+        "you're down bad right now",
+        "at least you tried... actually no you didn't even try that hard",
+        "this is why you're broke",
+        "imagine betting on that team lmaooo"
+    ],
+    won: [
+        "elie: i called it the whole time actually",
+        "elie: see i told you guys i'm smart",
+        "elie: this is why i'm the main character",
+        "justin: 🤓 'i knew that would happen'",
+        "elie: my other circle would understand this bet better"
+    ]
+};
+
+// --- DATA FOR COMMISH CHAOS ---
+export interface CommishAction {
+    name: string;
+    description: string;
+    powerCost: number;
+    chaosGain: number;
+    gritReward: number;
+}
+
+export const commishActions: CommishAction[] = [
+    { name: "Veto Fair Trade", description: "Veto a perfectly reasonable trade just because you can", powerCost: 20, chaosGain: 30, gritReward: 15 },
+    { name: "Change Scoring Rules", description: "Mid-season rule change to help your team", powerCost: 30, chaosGain: 50, gritReward: 25 },
+    { name: "Post Joint Ad", description: "Post another chiropractic ad that nobody asked for", powerCost: 5, chaosGain: 10, gritReward: 5 },
+    { name: "Ignore Complaints", description: "Someone's complaining? Just ignore them", powerCost: 10, chaosGain: 15, gritReward: 8 },
+    { name: "Commissioner Decree", description: "Make up a new rule on the spot", powerCost: 40, chaosGain: 60, gritReward: 30 }
+];
+
+// --- DATA FOR TY WINDOW ---
+export const tyWindowMessages = [
+    "sup.",
+    "yeah",
+    "lol",
+    "facts",
+    "same",
+    "nah",
+    "maybe",
+    "true",
+    "yo what's good fellas. been thinking about life lately and honestly beer die is the answer to everything. anyway catch yall later",
+    "bills mafia baby 🦬"
+];
+
+// --- DATA FOR BITCHLESS CHRONICLES ---
+export interface DatingScenario {
+    character: 'elie' | 'craif';
+    situation: string;
+    options: Array<{
+        text: string;
+        response: string;
+        insecurityGain: number;
+    }>;
+}
+
+export const datingScenarios: DatingScenario[] = [
+    {
+        character: 'elie',
+        situation: "You match with a girl who has a rainbow flag emoji in her bio",
+        options: [
+            { text: "Hey! Love your vibe", response: "Sorry, I'm actually only into women 🏳️‍🌈", insecurityGain: 30 },
+            { text: "What are you looking for?", response: "Women, actually. Thought the flag made that clear?", insecurityGain: 25 },
+            { text: "You seem interesting", response: "Thanks! My girlfriend thinks so too", insecurityGain: 35 }
+        ]
+    },
+    {
+        character: 'craif',
+        situation: "You text a girl you've been talking to for weeks",
+        options: [
+            { text: "Hey, want to grab dinner?", response: "Omg you're such a good friend! Let's do a group hangout!", insecurityGain: 25 },
+            { text: "Been thinking about you", response: "Aww you're so sweet! Like a brother to me 🥰", insecurityGain: 30 },
+            { text: "Coffee sometime?", response: "Sure! Can we invite some other people too?", insecurityGain: 20 }
+        ]
+    },
+    {
+        character: 'elie',
+        situation: "At a party, you start talking to a girl about your podcast",
+        options: [
+            { text: "I actually have a podcast", response: "Cool! My girlfriend has one too!", insecurityGain: 25 },
+            { text: "I'm kind of a content creator", response: "*walks away to talk to someone else*", insecurityGain: 40 },
+            { text: "Let me tell you about my takes", response: "I'm gonna go get a drink...", insecurityGain: 20 }
+        ]
+    },
+    {
+        character: 'craif',
+        situation: "You send the perfect text after days of drafting it",
+        options: [
+            { text: "*witty observation about her story*", response: "haha", insecurityGain: 15 },
+            { text: "*thoughtful question*", response: "*left on read*", insecurityGain: 30 },
+            { text: "*funny meme*", response: "😂 you're hilarious", insecurityGain: 10 }
+        ]
+    }
 ];

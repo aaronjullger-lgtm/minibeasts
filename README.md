@@ -20,61 +20,65 @@ View your app in AI Studio: https://ai.studio/apps/drive/1i7O9l_AhRO61_x4FelQ7mz
 
 ---
 
-## Future Game Ideas for the Group Chat
+## Available Minigames
 
-### 1. "Sunday Scaries: The Parlay Revenge Game"
+The following minigames are now playable in Dynasty Mode:
+
+### ✅ 1. "Sunday Scaries: The Parlay Revenge Game" **[IMPLEMENTED]**
 **Concept:** A high-stakes betting simulator where you make increasingly dumb parlays throughout the NFL season. Every loss makes Colin roast you harder, and every win makes Elie claim he "called it."
 
 **Why it fits:** The group is already degenerate gamblers. This leans into the parlay addiction meta and gives everyone a chance to watch their friends spiral into financial ruin in real-time.
 
 **Features:**
-- Real-time roast generation based on how badly your bet is losing
-- "Hater's Parlay" mode where you bet against everyone's favorite teams
-- Special Colin event: "Liberal GF finds your betting history" - costs 200 grit to smooth over
-- Elie's "Actually I'm Smart" multiplier that makes his losses hurt twice as much
+- ✅ Real-time roast generation based on how badly your bet is losing
+- ✅ "Hater's Parlay" mode where you bet against everyone's favorite teams
+- ✅ Special Colin event: "Liberal GF finds your betting history" - costs 200 grit to smooth over
+- ✅ Elie's "Actually I'm Smart" multiplier that makes his losses hurt twice as much
 
 ---
 
-### 2. "Commish Chaos: Spencer's Power Trip Simulator"
+### ✅ 2. "Commish Chaos: Spencer's Power Trip Simulator" **[IMPLEMENTED]**
 **Concept:** A fantasy football commissioner management game where you abuse your power, make terrible rule changes mid-season, and desperately try to maintain control as the league revolts.
 
 **Why it fits:** Spencer gets clowned for being a "powerless commish" - this lets players experience his pain or become the tyrant he never could be.
 
 **Features:**
-- Veto trades for no reason and watch the group chat explode
-- Make up new scoring rules to help your team
-- "The Joint Chiropractic" ad mini-game to earn emergency commish powers
-- Final boss: The entire league voting you out and starting a new league without you
+- ✅ Veto trades for no reason and watch the group chat explode
+- ✅ Make up new scoring rules to help your team
+- ✅ "The Joint Chiropractic" ad mini-game to earn emergency commish powers
+- ✅ Final boss: The entire league voting you out and starting a new league without you
 
 ---
 
-### 3. "The Ty Window: A Rare Event Collector"
+### ✅ 3. "The Ty Window: A Rare Event Collector" **[IMPLEMENTED]**
 **Concept:** A clicker/idle game where you wait for Ty to actually text something. When he does (The Ty Window), you have 30 seconds to screenshot it before he disappears for another week.
 
 **Why it fits:** Ty is the phantom of the group. This turns his silence into an actual gameplay mechanic.
 
 **Features:**
-- Wait times range from 3 hours to 3 days between Ty messages
-- Bonus points if his message is longer than one word
-- "Ty Window Alert" notification system
-- Compete with other players to see who can catch the most Ty Windows in a season
-- Secret ending: Get Ty to send a paragraph (difficulty: impossible)
+- ✅ Random wait times between Ty messages
+- ✅ Bonus points if his message is longer than one word
+- ✅ "Ty Window Alert" notification system
+- ✅ Track how many Ty Windows you can catch in a game
+- ✅ Secret bonus: Catch all Ty Windows for maximum points
 
 ---
 
-### 4. "The Bitchless Chronicles: Elie & Craif's Dating Sim"
+### ✅ 4. "The Bitchless Chronicles: Elie & Craif's Dating Sim" **[IMPLEMENTED]**
 **Concept:** A dating simulator where you play as either Elie or Craif trying to not get friend-zoned. Spoiler: You will get friend-zoned.
 
 **Why it fits:** The entire group roasts these two for being perpetually single. Might as well make a game about their suffering.
 
 **Features:**
-- Play as Elie: Fall for another lesbian while claiming you're "the main character"
-- Play as Craif: Send the perfect text, get "you're such a good friend!" back
-- Defensive Response System: Type increasingly desperate explanations when the group roasts you
-- Bad ending guaranteed, but you can unlock different flavors of rejection
-- Aaron randomly shows up to say "skill issue" no matter what you do
+- ✅ Play as Elie: Fall for another lesbian while claiming you're "the main character"
+- ✅ Play as Craif: Send the perfect text, get "you're such a good friend!" back
+- ✅ Defensive Response System: Type increasingly desperate explanations when the group roasts you
+- ✅ Bad ending guaranteed, but you can unlock different flavors of rejection
+- ✅ Aaron randomly shows up to say "skill issue" no matter what you do
 
 ---
+
+## Future Game Ideas
 
 ### 5. "All-In Arena: Eric's Grit Battle Royale"
 **Concept:** A combat game where players fight using "grit" and "that dog in them" as stats. Eric provides real-time commentary on who's got the most heart.
