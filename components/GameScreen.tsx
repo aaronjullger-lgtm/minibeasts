@@ -9,6 +9,7 @@ import { gameEvents } from '../events';
 import { SundayScariesMinigame, CommishChaosMinigame, TyWindowMinigame, BitchlessChroniclesMinigame } from './NewMinigames';
 import { AchievementNotification } from './AchievementNotification';
 import { StatChangeNotification } from './StatChangeNotification';
+import { useKeyboardShortcut } from '../utils/hooks';
 
 // --- MODAL COMPONENTS ---
 const ModalWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -1026,6 +1027,42 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
         ]);
     }
   }, [addSystemMessage, initialData.day, playerState.id]);
+  
+  // Keyboard Shortcuts for better UX
+  useKeyboardShortcut('m', () => {
+    if (!activeModal) {
+      setActiveModal('minigame');
+      soundService.playClick();
+    }
+  });
+  
+  useKeyboardShortcut('s', () => {
+    if (!activeModal) {
+      setActiveModal('store');
+      soundService.playClick();
+    }
+  });
+  
+  useKeyboardShortcut('l', () => {
+    if (!activeModal) {
+      setActiveModal('manage');
+      soundService.playClick();
+    }
+  });
+  
+  useKeyboardShortcut('a', () => {
+    if (!activeModal) {
+      setActiveModal('achievements');
+      soundService.playClick();
+    }
+  });
+  
+  useKeyboardShortcut('Escape', () => {
+    if (activeModal) {
+      setActiveModal(null);
+      soundService.playClick();
+    }
+  });
 
   const runRandomEvent = useCallback(() => {
       for (const event of randomEvents) {
