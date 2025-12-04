@@ -34,32 +34,49 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
-        background: radial-gradient(circle at top, #111827, #020617 55%);
+        font-feature-settings: "liga" 1, "calt" 1;
+        background: radial-gradient(ellipse at top, #1e293b 0%, #0f172a 50%, #020617 100%);
+        background-attachment: fixed;
         color: #f9fafb;
+        overflow-x: hidden;
       }
 
-      /* Keep the iMessage-inspired pieces as generic utility classes.
-         The actual layout comes from React + Tailwind. */
+      /* Enhanced iMessage-inspired bubbles */
       .imessage-bubble {
         max-width: 280px;
-        padding: 10px 14px;
-        border-radius: 18px;
+        padding: 11px 15px;
+        border-radius: 20px;
         font-size: 0.95rem;
-        line-height: 1.4;
+        line-height: 1.45;
         word-wrap: break-word;
         position: relative;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s ease;
+      }
+
+      .imessage-bubble:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       }
 
       .imessage-blue {
-        background: #007aff;
+        background: linear-gradient(135deg, #0a84ff 0%, #007aff 100%);
         color: white;
         border-bottom-right-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3), 
+                    0 1px 3px rgba(0, 0, 0, 0.2);
+      }
+
+      .imessage-blue:hover {
+        box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4), 
+                    0 2px 6px rgba(0, 0, 0, 0.25);
       }
 
       .imessage-gray {
-        background: rgba(148, 163, 184, 0.28);
+        background: linear-gradient(135deg, rgba(148, 163, 184, 0.32) 0%, rgba(148, 163, 184, 0.25) 100%);
         color: #e5e7eb;
         border-bottom-left-radius: 4px;
+        border: 1px solid rgba(148, 163, 184, 0.15);
       }
 
       .imessage-bubble::before {
@@ -72,30 +89,34 @@
 
       .imessage-blue::before {
         right: -6px;
-        background: #007aff;
+        background: linear-gradient(135deg, #0a84ff 0%, #007aff 100%);
         border-bottom-left-radius: 16px;
         clip-path: polygon(0 0, 100% 0, 100% 100%);
       }
 
       .imessage-gray::before {
         left: -6px;
-        background: rgba(148, 163, 184, 0.28);
+        background: linear-gradient(135deg, rgba(148, 163, 184, 0.32) 0%, rgba(148, 163, 184, 0.25) 100%);
         border-bottom-right-radius: 16px;
         clip-path: polygon(0 0, 0 100%, 100% 100%);
       }
 
       .ios-glass {
-        background: rgba(15, 23, 42, 0.85);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
         backdrop-filter: blur(30px) saturate(180%);
         -webkit-backdrop-filter: blur(30px) saturate(180%);
         border: 1px solid rgba(148, 163, 184, 0.25);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.05);
       }
 
       .ios-glass-light {
-        background: rgba(15, 23, 42, 0.9);
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
         backdrop-filter: blur(24px) saturate(180%);
         -webkit-backdrop-filter: blur(24px) saturate(180%);
         border: 1px solid rgba(148, 163, 184, 0.35);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.08);
       }
 
       .chat-scroll::-webkit-scrollbar {
