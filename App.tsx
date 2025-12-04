@@ -124,8 +124,8 @@ const App: React.FC = () => {
 
     // Create initial ranking with other characters
     const otherCharacters = Object.values(characterData)
-      .filter((c: any) => c.id !== selectedCharacter.id)
-      .map((c: any) => ({
+      .filter((c: CharacterData) => c.id !== selectedCharacter.id)
+      .map((c: CharacterData) => ({
         ...c,
         grit: Math.floor(Math.random() * 50) + 50,
         loveLife: 50,

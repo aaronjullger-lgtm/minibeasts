@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { sundayScariesTeams, sundayScariesRoasts, commishActions, tyWindowMessages, datingScenarios, ParlayLeg, CommishAction, OldDatingScenario } from '../constants';
 
+// Difficulty scaling constants
+const TY_WINDOW_BASE_WAIT = 3000; // Base wait time in ms
+const TY_WINDOW_ROUND_PENALTY = 2000; // Additional wait per round in ms
+const TY_WINDOW_MAX_RANDOM_WAIT = 5000; // Max random wait variance in ms
+const TY_WINDOW_BASE_TIME = 30; // Base capture window in seconds
+const TY_WINDOW_TIME_DECREASE = 8; // Seconds reduced per round
+const TY_WINDOW_MIN_TIME = 10; // Minimum capture window in seconds
+const COMMISH_CHAOS_RISK_DIVISOR = 20; // Chaos level divisor for risk multiplier
+
 // --- SUNDAY SCARIES: THE PARLAY REVENGE GAME ---
 export const SundayScariesMinigame: React.FC<{ 
     onGameEnd: (grit: number) => void;
@@ -232,7 +241,7 @@ export const CommishChaosMinigame: React.FC<{ onGameEnd: (grit: number) => void 
         setChaos(newChaos);
         
         // Escalating grit rewards based on how risky you're being
-        const riskMultiplier = Math.floor(newChaos / 20) + 1;
+        const riskMultiplier = Math.floor(newChaos / COMMISH_CHAOS_RISK_DIVISOR) + 1;
         const gritReward = action.gritReward * riskMultiplier;
         setGrit(prev => prev + gritReward);
         
@@ -374,9 +383,8 @@ export const TyWindowMinigame: React.FC<{ onGameEnd: (grit: number) => void }> =
     useEffect(() => {
         if (waiting) {
             // Progressive difficulty - wait times get longer each round
-            const baseWait = 3000;
-            const roundPenalty = (round - 1) * 2000; // Add 2 seconds each round
-            const waitTime = Math.floor(Math.random() * 5000) + baseWait + roundPenalty;
+            const roundPenalty = (round - 1) * TY_WINDOW_ROUND_PENALTY;
+            const waitTime = Math.floor(Math.random() * TY_WINDOW_MAX_RANDOM_WAIT) + TY_WINDOW_BASE_WAIT + roundPenalty;
             const timer = setTimeout(() => {
                 const message = tyWindowMessages[Math.floor(Math.random() * tyWindowMessages.length)];
                 setTyMessage(message);
@@ -384,7 +392,7 @@ export const TyWindowMinigame: React.FC<{ onGameEnd: (grit: number) => void }> =
                 setWindowActive(true);
                 
                 // Decrease time window each round (harder to catch)
-                const windowTime = Math.max(10, 30 - (round - 1) * 8);
+                const windowTime = Math.max(TY_WINDOW_MIN_TIME, TY_WINDOW_BASE_TIME - (round - 1) * TY_WINDOW_TIME_DECREASE);
                 setTimeLeft(windowTime);
                 
                 // Bonus points for longer messages
