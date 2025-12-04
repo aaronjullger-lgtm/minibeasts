@@ -117,20 +117,4 @@ const ToastItem: React.FC<{ toast: Toast; onClose: (id: string) => void }> = ({
   );
 };
 
-// Add animation styles to index.css
-export const toastStyles = `
-@keyframes slide-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
 
-.animate-slide-in-right {
-  animation: slide-in-right 0.3s ease-out;
-}
-`;

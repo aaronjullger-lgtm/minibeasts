@@ -245,9 +245,6 @@ export const SeasonDashboard: React.FC<SeasonDashboardProps> = ({
               Close
             </SecondaryButton>
           )}
-          <PrimaryButton onClick={() => {/* Navigate to minigames */}} fullWidth>
-            Play Minigames
-          </PrimaryButton>
         </div>
       </div>
     </div>

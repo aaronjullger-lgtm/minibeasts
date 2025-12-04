@@ -352,7 +352,7 @@
 
   /* Smooth transitions for all interactive elements */
   button, a, [role="button"] {
-    @apply transition-all duration-200 ease-out;
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out, color 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out;
   }
 
   button:active, a:active, [role="button"]:active {
