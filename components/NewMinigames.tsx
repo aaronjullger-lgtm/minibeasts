@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { sundayScariesTeams, sundayScariesRoasts, commishActions, tyWindowMessages, datingScenarios, ParlayLeg, CommishAction, DatingScenario } from '../constants';
+import { sundayScariesTeams, sundayScariesRoasts, commishActions, tyWindowMessages, datingScenarios, ParlayLeg, CommishAction, OldDatingScenario } from '../constants';
 
 // --- SUNDAY SCARIES: THE PARLAY REVENGE GAME ---
 export const SundayScariesMinigame: React.FC<{ 

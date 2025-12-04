@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { GameState, PlayerState, CharacterData, EndGameReport } from './types';
-import { characterData } from './constants';
+import { GameState, PlayerState, CharacterData, EndGameReport, DatingScenario } from './types';
+import { characterData, fullDatingScenarios } from './constants';
 import { GameScreen } from './components/GameScreen';
 import { IntroScreen, CharacterSelectScreen, EndScreen } from './components/CharacterScreens';
+import { DatingSimScreen } from './components/DatingSimScreen';
 
 const initialMasterRanking = (): PlayerState[] => 
   Object.values(characterData).map(c => ({
@@ -33,6 +34,9 @@ function App() {
   const [initialDataForGame, setInitialDataForGame] = useState<any>(null);
   const [savedGameData, setSavedGameData] = useState<any>(null);
   const [isSaveChecked, setIsSaveChecked] = useState(false);
+  
+  // Dating sim state
+  const [datingSimScenario, setDatingSimScenario] = useState<DatingScenario | null>(null);
   
   useEffect(() => {
     try {
@@ -95,6 +99,58 @@ function App() {
     setGameState('select');
   };
 
+  const handleDatingSimComplete = (result: {
+    insecurityGain: number;
+    rejectionFlavor: string;
+    achievements?: string[];
+  }) => {
+    // Apply stat changes to the player
+    if (player) {
+      const updatedPlayer = { ...player };
+      
+      // Update insecurity based on character
+      if (player.id === 'craif') {
+        updatedPlayer.insecurity = Math.min(100, updatedPlayer.insecurity + result.insecurityGain);
+      } else if (player.id === 'elie') {
+        updatedPlayer.ego = Math.max(0, updatedPlayer.ego - result.insecurityGain / 2);
+      }
+      
+      // Add small happiness loss
+      updatedPlayer.happiness = Math.max(0, updatedPlayer.happiness - result.insecurityGain / 2);
+      
+      // Add achievements
+      if (result.achievements) {
+        result.achievements.forEach(achId => {
+          if (!updatedPlayer.unlockedAchievements.includes(achId)) {
+            updatedPlayer.unlockedAchievements.push(achId);
+          }
+        });
+      }
+      
+      // Give some grit as consolation prize
+      const gritReward = Math.max(10, 40 - result.insecurityGain / 3);
+      updatedPlayer.grit = updatedPlayer.grit + gritReward;
+      
+      setPlayer(updatedPlayer);
+      
+      // Update master ranking
+      const updatedRanking = masterRanking.map(p => 
+        p.id === updatedPlayer.id ? updatedPlayer : p
+      );
+      setMasterRanking(updatedRanking);
+      
+      // Update initial data for game to reflect changes
+      setInitialDataForGame({
+        player: updatedPlayer,
+        ranking: updatedRanking
+      });
+    }
+    
+    // Return to playing state
+    setDatingSimScenario(null);
+    setGameState('playing');
+  };
+
   const renderGameState = () => {
     if (!isSaveChecked) {
       return <div className="min-h-screen flex items-center justify-center"><p>Loading...</p></div>;
@@ -107,10 +163,24 @@ function App() {
         return <CharacterSelectScreen onSelect={handleCharSelect} />;
       case 'playing':
         if (initialDataForGame) {
-          return <GameScreen initialData={initialDataForGame} onGameEnd={handleGameEnd} />;
+          return <GameScreen 
+            initialData={initialDataForGame} 
+            onGameEnd={handleGameEnd}
+            onTriggerDatingSim={(scenario: DatingScenario) => {
+              setDatingSimScenario(scenario);
+              setGameState('datingSim');
+            }}
+          />;
         }
         // Fallback
         setGameState('select');
+        return null;
+      case 'datingSim':
+        if (datingSimScenario) {
+          return <DatingSimScreen scenario={datingSimScenario} onComplete={handleDatingSimComplete} />;
+        }
+        // Fallback
+        setGameState('playing');
         return null;
       case 'ended':
         if (endGameReport) {

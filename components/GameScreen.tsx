@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { PlayerState, EndGameReport, Message, StoreItem, MinigameType, SeasonGoal, ManageLifeAction, RandomEvent, PropBet, Achievement, GlobalState, GameEvent } from '../types';
 import { generateNpcResponse, initiateNpcConversation, generateRoastAndReactions, generateNpcMinigameReactions } from '../services/geminiService';
-import { characterData, allStoreItems, SEASON_LENGTH, DAYS_PER_WEEK, getSeasonGoalsForPlayer, manageLifeActions, randomEvents, commentaryBattleData, fantasyDraftPlayers, triviaData, allAchievements, propBetTemplates, characterDefinitions } from '../constants';
+import { characterData, allStoreItems, SEASON_LENGTH, DAYS_PER_WEEK, getSeasonGoalsForPlayer, manageLifeActions, randomEvents, commentaryBattleData, fantasyDraftPlayers, triviaData, allAchievements, propBetTemplates, characterDefinitions, fullDatingScenarios } from '../constants';
 import { HUD } from './Dashboard';
 import { MessageBubble, Spinner } from './ChatUI';
 import { soundService } from '../services/soundService';
@@ -924,9 +924,10 @@ const DailyEventModal: React.FC<{ event: GameEvent, onClose: () => void }> = ({ 
 interface GameScreenProps {
   initialData: { player: PlayerState, ranking: PlayerState[] } | any;
   onGameEnd: (report: EndGameReport, finalRanking: PlayerState[]) => void;
+  onTriggerDatingSim?: (scenario: any) => void;
 }
 
-export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }) => {
+export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, onTriggerDatingSim }) => {
   const [playerState, setPlayerState] = useState<PlayerState>(initialData.player || initialData.playerState);
   const [ranking, setRanking] = useState<PlayerState[]>(initialData.ranking);
   const [day, setDay] = useState(() => initialData.day || 1);
@@ -1017,6 +1018,24 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
   const runRandomEvent = useCallback(() => {
       for (const event of randomEvents) {
           if (event.trigger(playerState, day, week)) {
+              // Check if this is a dating sim trigger event
+              if ((event.id === 'bitchless_chronicles_elie' || event.id === 'bitchless_chronicles_craif') && onTriggerDatingSim) {
+                  addSystemMessage(event.message);
+                  
+                  // Find the appropriate scenario
+                  const character = event.id === 'bitchless_chronicles_elie' ? 'elie' : 'craif';
+                  const scenario = fullDatingScenarios.find(s => s.character === character);
+                  
+                  if (scenario) {
+                      // Trigger the dating sim screen
+                      setTimeout(() => {
+                          onTriggerDatingSim(scenario);
+                      }, 2000); // Give player time to read the event message
+                  }
+                  return;
+              }
+              
+              // Normal event processing
               addSystemMessage(event.message);
               setRanking(prev => prev.map(p => {
                   if (p.id === playerState.id) {
@@ -1037,7 +1056,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd }
               return;
           }
       }
-  }, [playerState, day, week, addSystemMessage]);
+  }, [playerState, day, week, addSystemMessage, onTriggerDatingSim]);
   
   // Dynasty Mode: Trigger special events
   const triggerDynastyEvent = useCallback(() => {
