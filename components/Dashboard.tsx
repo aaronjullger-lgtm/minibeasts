@@ -50,79 +50,45 @@ const usePrevious = <T,>(value: T): T | undefined => {
 };
 
 const CharacterStats: React.FC<{ player: PlayerState }> = ({ player }) => {
-    const [statChanges, setStatChanges] = useState<Array<{ id: number, label: string, value: number }>>([]);
-    const prevPlayer = usePrevious(player);
-
-    useEffect(() => {
-        if (!prevPlayer) return;
-        const changes: Array<{ id: number, label: string, value: number }> = [];
-        
-        const checkStat = (stat: keyof PlayerState, label: string) => {
-            const currentValue = player[stat] as number | undefined;
-            const prevValue = prevPlayer[stat] as number | undefined;
-            if (currentValue !== undefined && prevValue !== undefined && currentValue !== prevValue) {
-                changes.push({
-                    id: Date.now() + Math.random(),
-                    label,
-                    value: currentValue - prevValue
-                });
-            }
-        };
-
-        checkStat('grit', 'GRIT');
-        checkStat('happiness', 'HAPPINESS');
-        checkStat('energy', 'ENERGY');
-        if (player.id === 'aaron') checkStat('paSchoolStress', 'STRESS');
-        if (player.id === 'elie') checkStat('ego', 'EGO');
-        if (player.id === 'craif') checkStat('insecurity', 'INSECURITY');
-        if (player.id === 'colin') checkStat('parlayAddiction', 'ADDICTION');
-        if (player.id === 'spencer') checkStat('commishPower', 'POWER');
-        if (player.id === 'pace') checkStat('clout', 'CLOUT');
-
-        if (changes.length > 0) {
-            setStatChanges(prev => [...prev, ...changes]);
-            changes.forEach(change => {
-                setTimeout(() => {
-                    setStatChanges(prev => prev.filter(c => c.id !== change.id));
-                }, 2000);
-            });
-        }
-
-    }, [player, prevPlayer]);
-
-    const StatDisplay: React.FC<{ label: string; value: number; color: string; emoji?: string }> = ({ label, value, color, emoji }) => (
-        <StatTooltip text={statDescriptions[label] || "A measure of something important."}>
+    // Simple stat display without animations to avoid infinite loop
+    const renderStat = (label: string, value: number, color: string, emoji?: string) => (
+        <StatTooltip key={label} text={statDescriptions[label] || "A measure of something important."}>
             <div className="cursor-help relative ios-glass rounded-xl p-3 text-center">
                 <span className={`block text-xs font-semibold ${color} mb-1`}>{emoji} {label}</span>
                 <span className="text-2xl font-bold">{value}</span>
-                {statChanges.filter(c => c.label === label).map(change => (
-                    <div key={change.id} className={`absolute top-0 left-1/2 -translate-x-1/2 font-bold text-lg animate-fade-up ${change.value > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                        {change.value > 0 ? `+${change.value}` : change.value}
-                    </div>
-                ))}
             </div>
         </StatTooltip>
     );
 
-    const getStats = () => {
-        const coreStats = [
-            <StatDisplay key="grit" label="GRIT" value={player.grit} color="text-blue-400" emoji="⚡" />,
-            <StatDisplay key="happy" label="MOOD" value={player.happiness} color="text-green-400" emoji="😊" />,
-            <StatDisplay key="energy" label="ENERGY" value={player.energy} color="text-yellow-400" emoji="🔋" />
-        ];
+    const stats = [
+        renderStat("GRIT", player.grit, "text-blue-400", "⚡"),
+        renderStat("MOOD", player.happiness, "text-green-400", "😊"),
+        renderStat("ENERGY", player.energy, "text-yellow-400", "🔋")
+    ];
 
-        switch (player.id) {
-            case 'aaron': return [<StatDisplay key="stress" label="STRESS" value={player.paSchoolStress} color="text-red-400" emoji="📚" />, ...coreStats];
-            case 'elie': return [<StatDisplay key="ego" label="EGO" value={player.ego} color="text-purple-400" emoji="👑" />, ...coreStats];
-            case 'craif': return [<StatDisplay key="insecurity" label="INSECURITY" value={player.insecurity} color="text-gray-400" emoji="💔" />, ...coreStats];
-            case 'colin': return [<StatDisplay key="addiction" label="PARLAY" value={player.parlayAddiction || 0} color="text-red-500" emoji="🎰" />, ...coreStats];
-            case 'spencer': return [<StatDisplay key="power" label="POWER" value={player.commishPower || 0} color="text-teal-400" emoji="👨‍⚖️" />, ...coreStats];
-            case 'pace': return [<StatDisplay key="clout" label="CLOUT" value={player.clout || 0} color="text-pink-400" emoji="✨" />, ...coreStats];
-            default: return coreStats;
-        }
-    };
+    // Add character-specific stat
+    switch (player.id) {
+        case 'aaron': 
+            stats.unshift(renderStat("STRESS", player.paSchoolStress, "text-red-400", "📚"));
+            break;
+        case 'elie': 
+            stats.unshift(renderStat("EGO", player.ego, "text-purple-400", "👑"));
+            break;
+        case 'craif': 
+            stats.unshift(renderStat("INSECURITY", player.insecurity, "text-gray-400", "💔"));
+            break;
+        case 'colin': 
+            stats.unshift(renderStat("PARLAY", player.parlayAddiction || 0, "text-red-500", "🎰"));
+            break;
+        case 'spencer': 
+            stats.unshift(renderStat("POWER", player.commishPower || 0, "text-teal-400", "👨‍⚖️"));
+            break;
+        case 'pace': 
+            stats.unshift(renderStat("CLOUT", player.clout || 0, "text-pink-400", "✨"));
+            break;
+    }
     
-    return <div className="grid grid-cols-3 md:grid-cols-4 gap-2 w-full">{getStats()}</div>;
+    return <div className="grid grid-cols-3 md:grid-cols-4 gap-2 w-full">{stats}</div>;
 }
 
 const MinigameIcon: React.FC<{ game: MinigameType | null }> = ({ game }) => {
