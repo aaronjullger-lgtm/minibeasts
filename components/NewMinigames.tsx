@@ -711,9 +711,245 @@ export const BitchlessChroniclesMinigame: React.FC<{
     );
 };
 
+// --- FANTASY DRAFT MINIGAME ---
+export const FantasyDraftMinigame: React.FC<{ onGameEnd: (grit: number) => void }> = ({ onGameEnd }) => {
+    const [currentRound, setCurrentRound] = useState(0);
+    const [team, setTeam] = useState<typeof fantasyDraftPlayers[0]>([]);
+    const [grit, setGrit] = useState(0);
+    const [gameOver, setGameOver] = useState(false);
+
+    const draftPlayer = (player: typeof fantasyDraftPlayers[0][0]) => {
+        const newTeam = [...team, player];
+        setTeam(newTeam);
+
+        // Award grit based on player type and projection
+        let gritEarned = 0;
+        if (player.type === 'Gritty Vet') {
+            gritEarned = 20; // Reliable grit
+        } else if (player.type === 'Safe Stud') {
+            gritEarned = 15; // Solid choice
+        } else {
+            // High-ceiling player - random outcome
+            const busted = Math.random() > 0.5;
+            gritEarned = busted ? 5 : 30;
+        }
+
+        setGrit(prev => prev + gritEarned);
+
+        if (currentRound < fantasyDraftPlayers.length - 1) {
+            setCurrentRound(currentRound + 1);
+        } else {
+            setGameOver(true);
+        }
+    };
+
+    const endGame = () => {
+        const totalProjection = team.reduce((sum, p) => sum + p.projection, 0);
+        const bonus = totalProjection > 75 ? 50 : totalProjection > 60 ? 25 : 0;
+        onGameEnd(grit + bonus);
+    };
+
+    if (gameOver) {
+        const totalProjection = team.reduce((sum, p) => sum + p.projection, 0);
+        const totalRisk = team.reduce((sum, p) => sum + p.risk, 0) / team.length;
+
+        return (
+            <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-3xl text-center border-4 border-green-500/50">
+                <h2 className="text-4xl font-orbitron mb-4">🏈 Draft Complete! 🏈</h2>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="bg-blue-900 p-4 rounded-xl">
+                        <p className="text-sm text-gray-300">Total Projection</p>
+                        <p className="text-3xl font-bold">{totalProjection}</p>
+                    </div>
+                    <div className="bg-purple-900 p-4 rounded-xl">
+                        <p className="text-sm text-gray-300">Avg Risk</p>
+                        <p className="text-3xl font-bold">{Math.round(totalRisk)}%</p>
+                    </div>
+                </div>
+                <div className="space-y-2 mb-6">
+                    {team.map((player, i) => (
+                        <div key={i} className="bg-gray-800 p-3 rounded-lg text-left">
+                            <p className="font-bold">{player.name} ({player.type})</p>
+                            <p className="text-sm text-gray-400">{player.notes}</p>
+                        </div>
+                    ))}
+                </div>
+                <p className="text-2xl mb-4">Grit Earned: {grit}</p>
+                <button onClick={endGame} className="px-8 py-4 bg-green-600 hover:bg-green-700 rounded-xl font-bold text-xl">
+                    Finish Draft
+                </button>
+            </div>
+        );
+    }
+
+    const round = fantasyDraftPlayers[currentRound];
+
+    return (
+        <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-4xl text-center border-4 border-green-500/50">
+            <h2 className="text-4xl font-orbitron mb-4">📈 Fantasy Draft - Round {currentRound + 1}</h2>
+            <p className="text-xl mb-6">Current Grit: {grit}</p>
+            <p className="text-lg mb-6 text-gray-300">Choose your player wisely...</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {round.map((player, i) => (
+                    <button
+                        key={i}
+                        onClick={() => draftPlayer(player)}
+                        className="p-6 bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 rounded-2xl font-bold transform hover:scale-105 transition-all"
+                    >
+                        <div className="text-2xl mb-2">{player.name}</div>
+                        <div className="text-sm text-yellow-400 mb-2">{player.type}</div>
+                        <div className="text-xs text-gray-300 mb-3">{player.notes}</div>
+                        <div className="flex justify-between text-sm">
+                            <span className="text-green-400">Proj: {player.projection}</span>
+                            <span className="text-red-400">Risk: {player.risk}%</span>
+                        </div>
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+// --- TRIVIA NIGHT MINIGAME ---
+export const TriviaNightMinigame: React.FC<{ onGameEnd: (grit: number) => void }> = ({ onGameEnd }) => {
+    const [currentQuestion, setCurrentQuestion] = useState(0);
+    const [score, setScore] = useState(0);
+    const [answered, setAnswered] = useState(false);
+    const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+
+    const question = triviaData[currentQuestion];
+
+    const handleAnswer = (index: number) => {
+        if (answered) return;
+
+        setSelectedAnswer(index);
+        setAnswered(true);
+
+        if (index === question.correct) {
+            setScore(prev => prev + 20);
+        }
+    };
+
+    const nextQuestion = () => {
+        if (currentQuestion < triviaData.length - 1) {
+            setCurrentQuestion(prev => prev + 1);
+            setAnswered(false);
+            setSelectedAnswer(null);
+        } else {
+            onGameEnd(score);
+        }
+    };
+
+    return (
+        <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-3xl text-center border-4 border-indigo-500/50">
+            <h2 className="text-4xl font-orbitron mb-4">🧠 NFL Trivia Night</h2>
+            <div className="flex justify-between mb-6 text-xl">
+                <span>Question {currentQuestion + 1}/{triviaData.length}</span>
+                <span className="text-green-400">Score: {score}</span>
+            </div>
+            <div className="bg-gray-900 p-6 rounded-xl mb-6">
+                <p className="text-2xl">{question.question}</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                {question.answers.map((answer, index) => {
+                    let bgColor = 'bg-gray-700 hover:bg-gray-600';
+                    if (answered) {
+                        if (index === question.correct) {
+                            bgColor = 'bg-green-600';
+                        } else if (index === selectedAnswer) {
+                            bgColor = 'bg-red-600';
+                        }
+                    }
+                    return (
+                        <button
+                            key={index}
+                            onClick={() => handleAnswer(index)}
+                            disabled={answered}
+                            className={`p-4 ${bgColor} rounded-xl font-bold text-lg disabled:cursor-default transition-all`}
+                        >
+                            {answer}
+                        </button>
+                    );
+                })}
+            </div>
+            {answered && (
+                <button
+                    onClick={nextQuestion}
+                    className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold text-xl"
+                >
+                    {currentQuestion < triviaData.length - 1 ? 'Next Question' : 'Finish Quiz'}
+                </button>
+            )}
+        </div>
+    );
+};
+
+// --- COMMENTARY BATTLE MINIGAME ---
+export const CommentaryBattleMinigame: React.FC<{ onGameEnd: (grit: number) => void }> = ({ onGameEnd }) => {
+    const [currentScenario, setCurrentScenario] = useState(0);
+    const [score, setScore] = useState(0);
+    const [gameOver, setGameOver] = useState(false);
+
+    const scenario = commentaryBattleData[currentScenario];
+
+    const handleChoice = (option: typeof commentaryBattleData[0]['options'][0]) => {
+        const newScore = score + option.points;
+        setScore(newScore);
+
+        if (currentScenario < commentaryBattleData.length - 1) {
+            setCurrentScenario(prev => prev + 1);
+        } else {
+            setGameOver(true);
+        }
+    };
+
+    if (gameOver) {
+        return (
+            <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-2xl text-center border-4 border-gray-500/50">
+                <h2 className="text-4xl font-orbitron mb-4">🎙️ Game Over!</h2>
+                <p className="text-3xl mb-6">Final Score: {score}</p>
+                <p className="text-xl mb-6">
+                    {score >= 35 ? "🔥 LEGENDARY COMMENTARY!" : score >= 25 ? "💪 Solid takes!" : "😬 You tried..."}
+                </p>
+                <button
+                    onClick={() => onGameEnd(score)}
+                    className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold text-xl"
+                >
+                    Finish
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-3xl text-center border-4 border-gray-500/50">
+            <h2 className="text-4xl font-orbitron mb-4">🎙️ Commentary Battle</h2>
+            <p className="text-xl mb-6 text-green-400">Score: {score}</p>
+            <div className="bg-gray-900 p-6 rounded-xl mb-6">
+                <p className="text-xl italic">{scenario.scenario}</p>
+            </div>
+            <p className="text-lg mb-4 text-gray-300">Drop your take:</p>
+            <div className="space-y-3">
+                {scenario.options.map((option, index) => (
+                    <button
+                        key={index}
+                        onClick={() => handleChoice(option)}
+                        className="w-full p-4 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 rounded-xl font-bold text-left transition-all transform hover:scale-102"
+                    >
+                        <div className="flex justify-between items-center">
+                            <span>{option.text}</span>
+                            <span className="text-sm text-green-400">+{option.points}</span>
+                        </div>
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 // Wrapper component for the minigames tab
 export const NewMinigames: React.FC = () => {
-    const [selectedGame, setSelectedGame] = useState<'sunday_scaries' | 'commish_chaos' | 'ty_window' | 'bitchless_chronicles' | null>(null);
+    const [selectedGame, setSelectedGame] = useState<'sunday_scaries' | 'commish_chaos' | 'ty_window' | 'bitchless_chronicles' | 'beer_die' | 'fantasy_draft' | 'trivia_night' | 'commentary_battle' | null>(null);
     const [grit, setGrit] = useState(0);
     const [showResult, setShowResult] = useState(false);
 
@@ -763,12 +999,28 @@ export const NewMinigames: React.FC = () => {
         return <BitchlessChroniclesMinigame onGameEnd={handleGameEnd} playerName="Player" />;
     }
 
+    if (selectedGame === 'beer_die') {
+        return <BeerDieChallengeMinigame onGameEnd={handleGameEnd} />;
+    }
+
+    if (selectedGame === 'fantasy_draft') {
+        return <FantasyDraftMinigame onGameEnd={handleGameEnd} />;
+    }
+
+    if (selectedGame === 'trivia_night') {
+        return <TriviaNightMinigame onGameEnd={handleGameEnd} />;
+    }
+
+    if (selectedGame === 'commentary_battle') {
+        return <CommentaryBattleMinigame onGameEnd={handleGameEnd} />;
+    }
+
     return (
         <div className="w-full h-full flex flex-col items-center justify-center p-6 space-y-4">
             <h2 className="text-3xl font-orbitron mb-6 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
                 Choose Your Mini Game
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-6xl">
                 <button
                     onClick={() => setSelectedGame('sunday_scaries')}
                     className="p-6 bg-gradient-to-br from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
@@ -803,6 +1055,42 @@ export const NewMinigames: React.FC = () => {
                     <div className="text-4xl mb-3">💔</div>
                     <div className="text-2xl mb-2">Bitchless Chronicles</div>
                     <div className="text-sm text-gray-200">Experience dating rejection simulator</div>
+                </button>
+
+                <button
+                    onClick={() => setSelectedGame('beer_die')}
+                    className="p-6 bg-gradient-to-br from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                >
+                    <div className="text-4xl mb-3">🎲</div>
+                    <div className="text-2xl mb-2">Beer Die Challenge</div>
+                    <div className="text-sm text-gray-200">Click the dice before they disappear</div>
+                </button>
+
+                <button
+                    onClick={() => setSelectedGame('fantasy_draft')}
+                    className="p-6 bg-gradient-to-br from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                >
+                    <div className="text-4xl mb-3">📈</div>
+                    <div className="text-2xl mb-2">Fantasy Draft</div>
+                    <div className="text-sm text-gray-200">Build your championship roster</div>
+                </button>
+
+                <button
+                    onClick={() => setSelectedGame('trivia_night')}
+                    className="p-6 bg-gradient-to-br from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                >
+                    <div className="text-4xl mb-3">🧠</div>
+                    <div className="text-2xl mb-2">Trivia Night</div>
+                    <div className="text-sm text-gray-200">Test your NFL knowledge</div>
+                </button>
+
+                <button
+                    onClick={() => setSelectedGame('commentary_battle')}
+                    className="p-6 bg-gradient-to-br from-slate-600 to-gray-600 hover:from-slate-700 hover:to-gray-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                >
+                    <div className="text-4xl mb-3">🎙️</div>
+                    <div className="text-2xl mb-2">Commentary Battle</div>
+                    <div className="text-sm text-gray-200">Drop the best takes</div>
                 </button>
             </div>
         </div>
