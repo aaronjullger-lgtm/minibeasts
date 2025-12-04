@@ -17,6 +17,19 @@ const App: React.FC = () => {
   const chaos = 48;
   const relationshipHeat = 33; // e.g. "how close are you to getting caught"
   const unreadMessages = 3;
+  
+  // Stat thresholds for visual feedback
+  const GRIT_THRESHOLD_LEGENDARY = 90;
+  const GRIT_THRESHOLD_ELITE = 75;
+  const GRIT_THRESHOLD_RISING = 50;
+  const CHAOS_THRESHOLD_CRITICAL = 80;
+  const CHAOS_THRESHOLD_SPICY = 60;
+  const CHAOS_THRESHOLD_HEATING = 40;
+  const RELATIONSHIP_THRESHOLD_DANGER = 70;
+  const RELATIONSHIP_THRESHOLD_RISKY = 50;
+  const RELATIONSHIP_THRESHOLD_SKETCHY = 30;
+  const BANKROLL_THRESHOLD_HIGH_ROLLER = 500;
+  const BANKROLL_THRESHOLD_DEGENERATE = 300;
 
   const progressPct = Math.min(
     100,
@@ -79,7 +92,7 @@ const App: React.FC = () => {
                 <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
                   <span>Bankroll</span>
                   <span className="badge-pill bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 animate-pulse">
-                    {bankroll > 500 ? 'High Roller' : bankroll > 300 ? 'Degenerate' : 'Grinding'}
+                    {bankroll > BANKROLL_THRESHOLD_HIGH_ROLLER ? 'High Roller' : bankroll > BANKROLL_THRESHOLD_DEGENERATE ? 'Degenerate' : 'Grinding'}
                   </span>
                 </div>
                 <div className="text-lg md:text-xl font-semibold text-emerald-300">
@@ -90,11 +103,11 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <div className={`hud-card hover-lift transition-all ${grit >= 90 ? 'pulse-glow' : ''}`}>
+              <div className={`hud-card hover-lift transition-all ${grit >= GRIT_THRESHOLD_LEGENDARY ? 'pulse-glow' : ''}`}>
                 <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
                   <span>Grit</span>
                   <span className="text-xs text-amber-300">
-                    {grit >= 90 ? '🔥 Legendary' : grit >= 75 ? '💪 Elite' : grit >= 50 ? '⚡ Rising' : 'Building'}
+                    {grit >= GRIT_THRESHOLD_LEGENDARY ? '🔥 Legendary' : grit >= GRIT_THRESHOLD_ELITE ? '💪 Elite' : grit >= GRIT_THRESHOLD_RISING ? '⚡ Rising' : 'Building'}
                   </span>
                 </div>
                 <div className="flex items-baseline gap-1">
@@ -111,11 +124,11 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <div className={`hud-card hover-lift transition-all ${chaos >= 80 ? 'shake-animation' : ''}`}>
+              <div className={`hud-card hover-lift transition-all ${chaos >= CHAOS_THRESHOLD_CRITICAL ? 'shake-animation' : ''}`}>
                 <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
                   <span>Chaos</span>
                   <span className="text-xs text-pink-300">
-                    {chaos >= 80 ? '🚨 Critical' : chaos >= 60 ? '🔥 Spicy' : chaos >= 40 ? '⚠️ Heating Up' : 'Chill'}
+                    {chaos >= CHAOS_THRESHOLD_CRITICAL ? '🚨 Critical' : chaos >= CHAOS_THRESHOLD_SPICY ? '🔥 Spicy' : chaos >= CHAOS_THRESHOLD_HEATING ? '⚠️ Heating Up' : 'Chill'}
                   </span>
                 </div>
                 <div className="flex items-baseline gap-1">
@@ -132,11 +145,11 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <div className={`hud-card hover-lift transition-all ${relationshipHeat >= 70 ? 'shake-animation' : ''}`}>
+              <div className={`hud-card hover-lift transition-all ${relationshipHeat >= RELATIONSHIP_THRESHOLD_DANGER ? 'shake-animation' : ''}`}>
                 <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
                   <span>Relationship</span>
                   <span className="text-xs text-sky-300">
-                    {relationshipHeat >= 70 ? '💀 Danger' : relationshipHeat >= 50 ? '⚠️ Risky' : relationshipHeat >= 30 ? '👀 Sketchy' : 'Safe'}
+                    {relationshipHeat >= RELATIONSHIP_THRESHOLD_DANGER ? '💀 Danger' : relationshipHeat >= RELATIONSHIP_THRESHOLD_RISKY ? '⚠️ Risky' : relationshipHeat >= RELATIONSHIP_THRESHOLD_SKETCHY ? '👀 Sketchy' : 'Safe'}
                   </span>
                 </div>
                 <div className="flex items-baseline gap-1">
