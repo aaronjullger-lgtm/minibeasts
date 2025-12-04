@@ -655,3 +655,54 @@ export const BitchlessChroniclesMinigame: React.FC<{
         </div>
     );
 };
+
+// --- MAIN MINIGAMES COMPONENT ---
+export const NewMinigames: React.FC = () => {
+    const [activeMinigame, setActiveMinigame] = useState<string | null>(null);
+
+    const minigames = [
+        { id: 'sunday_scaries', name: 'Sunday Scaries: The Parlay Revenge Game', emoji: '🎰' },
+        { id: 'commish_chaos', name: "Commish Chaos: Spencer's Power Trip", emoji: '👑' },
+        { id: 'ty_window', name: 'The Ty Window: A Rare Event', emoji: '⏰' },
+        { id: 'bitchless', name: 'The Bitchless Chronicles', emoji: '💔' },
+    ];
+
+    const handleGameEnd = (grit: number) => {
+        console.log(`Minigame ended with ${grit} grit`);
+        setActiveMinigame(null);
+    };
+
+    if (activeMinigame === 'sunday_scaries') {
+        return <SundayScariesMinigame onGameEnd={handleGameEnd} playerName="Player" />;
+    }
+    if (activeMinigame === 'commish_chaos') {
+        return <CommishChaosMinigame onGameEnd={handleGameEnd} />;
+    }
+    if (activeMinigame === 'ty_window') {
+        return <TyWindowMinigame onGameEnd={handleGameEnd} />;
+    }
+    if (activeMinigame === 'bitchless') {
+        return <BitchlessChroniclesMinigame onGameEnd={handleGameEnd} character="elie" />;
+    }
+
+    return (
+        <div className="w-full h-full">
+            <div className="mb-4">
+                <h2 className="text-xl font-bold text-slate-100 mb-2">Available Minigames</h2>
+                <p className="text-sm text-slate-400">Choose your chaos</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {minigames.map((game) => (
+                    <button
+                        key={game.id}
+                        onClick={() => setActiveMinigame(game.id)}
+                        className="p-4 bg-slate-900/70 hover:bg-slate-800/70 border border-slate-700/70 rounded-2xl transition-all text-left"
+                    >
+                        <div className="text-2xl mb-2">{game.emoji}</div>
+                        <div className="text-sm font-semibold text-slate-100">{game.name}</div>
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};

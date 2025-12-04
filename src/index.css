@@ -21,8 +21,11 @@
   }
 
   .app-frame {
-    @apply ios-glass-light shadow-2xl rounded-3xl w-full max-w-5xl min-h-[560px]
+    @apply shadow-2xl rounded-3xl w-full max-w-5xl min-h-[560px]
     flex flex-col border border-slate-700/60;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   .app-header {
