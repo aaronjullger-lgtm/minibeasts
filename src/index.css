@@ -1,17 +1,84 @@
 @import "tailwindcss";
 
+/* Base styles */
+
 @layer base {
+  html,
   body {
-    @apply bg-black text-white;
+    @apply bg-slate-950 text-slate-50;
+  }
+
+  body {
+    @apply antialiased;
   }
 }
+
+/* App shell layout */
 
 @layer components {
-  .btn-primary {
-    @apply bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg;
+  .app-shell {
+    @apply min-h-screen w-full flex items-center justify-center px-4 py-6 md:py-10;
+  }
+
+  .app-frame {
+    @apply ios-glass-light shadow-2xl rounded-3xl w-full max-w-5xl min-h-[560px]
+    flex flex-col border border-slate-700/60;
+  }
+
+  .app-header {
+    @apply flex items-center justify-between gap-3 px-4 md:px-6 py-3
+    border-b border-slate-700/70 bg-slate-900/70;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .badge-pill {
+    @apply px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .segment-button {
+    @apply flex-1 text-xs md:text-sm font-medium py-2 rounded-full
+    text-slate-300 hover:text-white hover:bg-slate-700/80 transition-colors;
+  }
+
+  .segment-button-active {
+    @apply bg-slate-100 text-slate-900 shadow-sm;
+  }
+
+  .hud-card {
+    @apply flex flex-col gap-1 rounded-2xl bg-slate-900/70 border border-slate-700/70
+    px-3 py-2.5 md:px-4 md:py-3;
+  }
+
+  .section-card {
+    @apply rounded-2xl bg-slate-950/80 border border-slate-800/80
+    px-3 md:px-4 py-3 md:py-4;
+  }
+
+  .primary-btn {
+    @apply inline-flex items-center justify-center rounded-full px-4 md:px-5 py-2.5
+    text-sm font-semibold bg-blue-500 hover:bg-blue-400 text-white shadow
+    transition-transform transition-colors active:scale-[0.97];
+  }
+
+  .secondary-btn {
+    @apply inline-flex items-center justify-center rounded-full px-4 md:px-5 py-2.5
+    text-sm font-medium bg-slate-800/80 hover:bg-slate-700/80 text-slate-100
+    border border-slate-700/80 transition-colors active:scale-[0.97];
+  }
+
+  .pill-muted {
+    @apply inline-flex items-center gap-1 rounded-full bg-slate-900/80
+    border border-slate-700/80 px-3 py-1 text-xs md:text-[0.7rem] text-slate-300;
+  }
+
+  .progress-track {
+    @apply h-1.5 w-full rounded-full bg-slate-800 overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full rounded-full bg-gradient-to-r from-emerald-400 via-sky-400 to-blue-500;
   }
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
