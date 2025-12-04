@@ -44,40 +44,40 @@ export const IntroScreen: React.FC<{ onStart: () => void; onContinue?: () => voi
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-8">
           <div className="w-full max-w-lg">
             {/* Game Logo/Title */}
-            <div className="text-center mb-8" style={{animation: 'slide-up 0.6s ease-out'}}>
-              <h1 className="text-5xl font-bold text-white mb-3 tracking-tight">mini beasts</h1>
-              <div className="inline-block ios-glass rounded-full px-6 py-2 mb-6">
-                <p className="text-blue-400 text-sm font-semibold">A Fantasy Football Life Simulator</p>
+            <div className="text-center mb-8 animate-slide-in-up">
+              <h1 className="text-6xl font-bold text-white mb-3 tracking-tight text-glow">mini beasts</h1>
+              <div className="inline-block glass-effect rounded-full px-6 py-2 mb-6 hover-lift">
+                <p className="text-gradient-blue text-sm font-semibold">A Fantasy Football Life Simulator</p>
               </div>
             </div>
 
             {/* Game Description */}
-            <div className="ios-glass rounded-3xl p-6 mb-6 border border-blue-500/20" style={{animation: 'slide-up 0.7s ease-out'}}>
+            <div className="glass-effect rounded-3xl p-6 mb-6 border border-blue-500/30 animate-slide-in-up stagger-1 card-shine hover-lift">
               <div className="text-center mb-4">
-                <span className="text-3xl">🏈</span>
+                <span className="text-4xl animate-float">🏈</span>
               </div>
-              <h2 className="text-xl font-semibold text-white mb-3 text-center">Welcome to the Group Chat</h2>
-              <p className="text-white/80 text-base leading-relaxed mb-3">
+              <h2 className="text-2xl font-semibold text-white mb-3 text-center">Welcome to the Group Chat</h2>
+              <p className="text-white/90 text-base leading-relaxed mb-3">
                 Join an online fantasy football group chat with 18 unique personalities. Navigate friendships, rivalries, and the chaos of a full NFL season.
               </p>
               <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="bg-white/5 rounded-xl p-3">
-                  <div className="text-xl mb-1">💬</div>
+                <div className="glass-effect-light rounded-xl p-3 hover-lift transition-all">
+                  <div className="text-2xl mb-1">💬</div>
                   <div className="text-white/90 text-sm font-medium">Group Chat</div>
                   <div className="text-white/60 text-xs">Dynamic conversations</div>
                 </div>
-                <div className="bg-white/5 rounded-xl p-3">
-                  <div className="text-xl mb-1">📊</div>
+                <div className="glass-effect-light rounded-xl p-3 hover-lift transition-all">
+                  <div className="text-2xl mb-1">📊</div>
                   <div className="text-white/90 text-sm font-medium">Manage Stats</div>
                   <div className="text-white/60 text-xs">Balance your life</div>
                 </div>
-                <div className="bg-white/5 rounded-xl p-3">
-                  <div className="text-xl mb-1">🎯</div>
+                <div className="glass-effect-light rounded-xl p-3 hover-lift transition-all">
+                  <div className="text-2xl mb-1">🎯</div>
                   <div className="text-white/90 text-sm font-medium">Make Choices</div>
                   <div className="text-white/60 text-xs">Shape your story</div>
                 </div>
-                <div className="bg-white/5 rounded-xl p-3">
-                  <div className="text-xl mb-1">🏆</div>
+                <div className="glass-effect-light rounded-xl p-3 hover-lift transition-all">
+                  <div className="text-2xl mb-1">🏆</div>
                   <div className="text-white/90 text-sm font-medium">Win It All</div>
                   <div className="text-white/60 text-xs">Survive the season</div>
                 </div>
@@ -85,11 +85,15 @@ export const IntroScreen: React.FC<{ onStart: () => void; onContinue?: () => voi
             </div>
 
             {/* Character Preview */}
-            <div className="text-center mb-6" style={{animation: 'slide-up 0.8s ease-out'}}>
-              <p className="text-white/60 text-sm mb-3">Choose from 18 characters</p>
+            <div className="text-center mb-6 animate-slide-in-up stagger-2">
+              <p className="text-white/70 text-sm mb-4 font-medium">Choose from 18 characters</p>
               <div className="flex justify-center gap-2">
-                {['pace', 'eric', 'colin', 'justin', 'elie', 'aaron'].map((id) => (
-                  <div key={id} className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20 hover:border-blue-500 transition-all">
+                {['pace', 'eric', 'colin', 'justin', 'elie', 'aaron'].map((id, idx) => (
+                  <div 
+                    key={id} 
+                    className={`w-14 h-14 rounded-full overflow-hidden border-2 border-white/30 hover:border-blue-500 transition-all hover-lift hover:scale-110 animate-bounce-in`}
+                    style={{ animationDelay: `${0.6 + idx * 0.1}s` }}
+                  >
                     <MiniBeastIcon characterId={id} isTalking={false} />
                   </div>
                 ))}
@@ -97,12 +101,15 @@ export const IntroScreen: React.FC<{ onStart: () => void; onContinue?: () => voi
             </div>
 
             {/* Action Buttons */}
-            <div className="space-y-3" style={{animation: 'slide-up 0.9s ease-out'}}>
+            <div className="space-y-3 animate-slide-in-up stagger-3">
               {onContinue && (
                 <button 
                   onClick={onContinue} 
-                  className="ios-button w-full haptic-press"
-                  style={{background: '#34C759', fontSize: '18px', padding: '16px 24px'}}
+                  className="w-full rounded-full px-6 py-4 text-lg font-semibold text-white ripple hover-lift"
+                  style={{
+                    background: 'linear-gradient(135deg, #34C759 0%, #30D158 100%)',
+                    boxShadow: '0 4px 16px rgba(52, 199, 89, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                  }}
                 >
                   Continue Season
                 </button>
@@ -112,8 +119,7 @@ export const IntroScreen: React.FC<{ onStart: () => void; onContinue?: () => voi
                   setShowIntro(false);
                   // Don't call onStart here, let it proceed to the chat intro
                 }} 
-                className="ios-button w-full haptic-press"
-                style={{fontSize: '18px', padding: '16px 24px'}}
+                className="w-full primary-btn text-lg py-4 ripple"
               >
                 {onContinue ? "Start New Game" : "Start Game"}
               </button>
@@ -217,15 +223,18 @@ export const IntroScreen: React.FC<{ onStart: () => void; onContinue?: () => voi
             {onContinue && (
               <button 
                 onClick={onContinue} 
-                className="ios-button w-full haptic-press"
-                style={{background: '#34C759'}}
+                className="w-full rounded-full px-6 py-4 text-lg font-semibold text-white ripple hover-lift"
+                style={{
+                  background: 'linear-gradient(135deg, #34C759 0%, #30D158 100%)',
+                  boxShadow: '0 4px 16px rgba(52, 199, 89, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                }}
               >
                 Continue Season
               </button>
             )}
             <button 
               onClick={onStart} 
-              className="ios-button w-full haptic-press"
+              className="primary-btn w-full text-lg py-4 ripple"
             >
               {onContinue ? "Start New Game" : "Join the Group"}
             </button>
@@ -290,23 +299,22 @@ export const CharacterSelectScreen: React.FC<{ onSelect: (char: CharacterData) =
 
       {/* Selected Character Details - Fixed at Top */}
       {selectedChar && (
-        <div className="px-4 pt-3 pb-4 bg-imessage-dark border-b border-white/10">
-          <div className="ios-glass rounded-2xl p-4 border border-blue-500/30" style={{animation: 'message-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'}}>
+        <div className="px-4 pt-3 pb-4 bg-imessage-dark border-b border-white/10 animate-slide-in-up">
+          <div className="glass-effect rounded-2xl p-5 border-2 border-blue-500/50 pulse-glow card-shine">
             <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-500 flex-shrink-0">
+              <div className="w-20 h-20 rounded-full overflow-hidden border-3 border-blue-500 flex-shrink-0 glow-pulse">
                 <MiniBeastIcon characterId={selectedChar.id} isTalking={false} />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-white font-semibold text-lg mb-1">{selectedChar.name}</h3>
+                <h3 className="text-white font-bold text-xl mb-2 text-gradient-blue">{selectedChar.name}</h3>
                 {selectedChar.bio.split('\n').map((line, i) => (
-                  <p key={i} className="text-white/70 text-sm mb-1">{line}</p>
+                  <p key={i} className="text-white/80 text-sm mb-1.5 leading-relaxed">{line}</p>
                 ))}
               </div>
             </div>
             <button 
               onClick={handleConfirm}
-              className="ios-button w-full haptic-press mt-4"
-              style={{padding: '12px 24px'}}
+              className="primary-btn w-full mt-4 py-3.5 text-base ripple"
             >
               Play as {selectedChar.name} →
             </button>
@@ -325,26 +333,34 @@ export const CharacterSelectScreen: React.FC<{ onSelect: (char: CharacterData) =
               <button
                 key={char.id}
                 onClick={() => handleSelect(char)}
-                className={`ios-glass rounded-2xl p-4 flex flex-col items-center gap-3 transition-all haptic-press relative ${
+                className={`rounded-2xl p-4 flex flex-col items-center gap-3 transition-all relative interactive-card ${
                   isSelected 
-                    ? 'border-2 border-blue-500 bg-blue-500/20' 
-                    : 'border border-white/10 hover:border-white/30'
+                    ? 'border-2 border-blue-500 pulse-glow' 
+                    : 'border border-white/20'
                 }`}
-                style={{animation: 'slide-up 0.3s ease-out'}}
+                style={{
+                  background: isSelected 
+                    ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.15) 100%)' 
+                    : 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%)',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: isSelected 
+                    ? '0 8px 32px rgba(59, 130, 246, 0.4), 0 0 0 1px rgba(59, 130, 246, 0.3)'
+                    : '0 4px 12px rgba(0, 0, 0, 0.3)'
+                }}
               >
                 <div className={`w-20 h-20 rounded-full overflow-hidden border-2 transition-all ${
-                  isSelected ? 'border-blue-500 ring-2 ring-blue-500/50' : 'border-white/20'
+                  isSelected ? 'border-blue-400 ring-4 ring-blue-500/40 scale-pulse' : 'border-white/30'
                 }`}>
                   <MiniBeastIcon characterId={char.id} isTalking={false} />
                 </div>
                 <div className="text-center">
-                  <div className={`font-semibold text-sm mb-1 ${isSelected ? 'text-blue-400' : 'text-white'}`}>
+                  <div className={`font-semibold text-sm mb-1 ${isSelected ? 'text-gradient-blue font-bold' : 'text-white'}`}>
                     {char.name}
                   </div>
-                  <div className="text-white/60 text-xs line-clamp-2">{bio[0]}</div>
+                  <div className="text-white/70 text-xs line-clamp-2">{bio[0]}</div>
                 </div>
                 {isSelected && (
-                  <div className="absolute top-2 right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="absolute top-2 right-2 w-7 h-7 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg animate-bounce-in">
                     <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
