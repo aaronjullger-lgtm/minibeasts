@@ -7,24 +7,40 @@ import { NewMinigames } from "./components/NewMinigames";
 import { HistoryTab } from "./components/HistoryTab";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { AchievementsPanel } from "./components/AchievementsPanel";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { ToastProvider, useToast } from "./components/ToastNotification";
 import { CharacterData, GameState } from "./types";
 import { characterData } from "./constants";
 import { saveService } from "./services/saveService";
+import { useKeyboardShortcut } from "./utils/hooks";
 
 type MainTab = "dynasty" | "minigames" | "roster" | "history";
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>("intro");
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterData | null>(null);
   const [activeTab, setActiveTab] = useState<MainTab>("dynasty");
   const [hasSavedGame, setHasSavedGame] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const { showToast } = useToast();
 
   // Check for saved game on mount
   useEffect(() => {
     setHasSavedGame(saveService.hasSavedGame());
   }, []);
+
+  // Keyboard shortcuts
+  useKeyboardShortcut('s', () => {
+    if (gameState === 'playing') {
+      handleQuickSave();
+    }
+  }, { ctrl: true });
+
+  useKeyboardShortcut('Escape', () => {
+    if (showSettings) setShowSettings(false);
+    if (showAchievements) setShowAchievements(false);
+  });
 
   // These would normally come from your game state / services:
   const currentWeek = 3;
@@ -85,12 +101,12 @@ const App: React.FC = () => {
   const handleQuickSave = () => {
     // This will be properly implemented when we have access to game state
     // For now, just show a message
-    alert("Quick save will be available during gameplay!");
+    showToast("Quick save will be available during gameplay!", "info");
   };
 
   const handleAdvanceWeek = () => {
     // This will be properly implemented in GameScreen
-    alert("Week advancement is available in Dynasty Mode gameplay!");
+    showToast("Week advancement is available in Dynasty Mode gameplay!", "info");
   };
 
   const [chatMessage, setChatMessage] = useState("");
@@ -527,6 +543,16 @@ const App: React.FC = () => {
       {/* Achievements Panel */}
       {showAchievements && <AchievementsPanel onClose={() => setShowAchievements(false)} />}
     </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <ErrorBoundary>
+      <ToastProvider>
+        <AppContent />
+      </ToastProvider>
+    </ErrorBoundary>
   );
 };
 

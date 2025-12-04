@@ -1,24 +1,37 @@
 // A simple service to play programmatic sounds without assets.
-const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+import { settingsService } from './settingsService';
+
+const audioContext = typeof window !== 'undefined' 
+  ? new (window.AudioContext || (window as any).webkitAudioContext)()
+  : null;
 
 const playSound = (freq: number, type: OscillatorType, duration: number, volume = 0.5) => {
-    if (!audioContext || audioContext.state === 'suspended') {
-      audioContext.resume();
-    }
-    if (!audioContext) return;
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.type = type;
-    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
-    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + duration);
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    // Check if sound is enabled in settings
+    if (!settingsService.shouldPlaySound()) return;
     
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + duration);
+    if (!audioContext) return;
+    
+    if (audioContext.state === 'suspended') {
+      audioContext.resume().catch(err => console.warn('Failed to resume audio context:', err));
+    }
+    
+    try {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + duration);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration);
+    } catch (error) {
+      console.warn('Error playing sound:', error);
+    }
 };
 
 const playNoteSequence = (notes: {freq: number, duration: number, delay: number}[]) => {
