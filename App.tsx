@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import { GameScreen } from "./components/GameScreen";
+import { IntroScreen, CharacterSelectScreen } from "./components/CharacterScreens";
 import { ChatUI } from "./components/ChatUI";
 import { Dashboard } from "./components/Dashboard";
 import { NewMinigames } from "./components/NewMinigames";
+import { CharacterData, GameState } from "./types";
+import { characterData } from "./constants";
 
 type MainTab = "dynasty" | "minigames" | "roster" | "history";
 
 const App: React.FC = () => {
+  const [gameState, setGameState] = useState<GameState>("intro");
+  const [selectedCharacter, setSelectedCharacter] = useState<CharacterData | null>(null);
   const [activeTab, setActiveTab] = useState<MainTab>("dynasty");
 
   // These would normally come from your game state / services:
@@ -36,6 +41,125 @@ const App: React.FC = () => {
     Math.max(0, Math.round((currentWeek / totalWeeks) * 100))
   );
 
+  // Handle character selection and game state transitions
+  const handleStartGame = () => {
+    setGameState("select");
+  };
+
+  const handleCharacterSelect = (character: CharacterData) => {
+    setSelectedCharacter(character);
+    setGameState("playing");
+  };
+
+  const handleGameEnd = () => {
+    setGameState("intro");
+    setSelectedCharacter(null);
+  };
+
+  const handleNewRun = () => {
+    setSelectedCharacter(null);
+    setGameState("intro");
+  };
+
+  const handleContinueSeason = () => {
+    setGameState("playing");
+  };
+
+  const handleQuickSave = () => {
+    // TODO: Implement save functionality
+    alert("Game saved! (Save functionality will be implemented)");
+  };
+
+  const handleAdvanceWeek = () => {
+    // TODO: Implement week advancement
+    alert("Advancing to next week! (This will be connected to Dynasty Mode)");
+  };
+
+  const [chatMessage, setChatMessage] = useState("");
+  const handleSendMessage = () => {
+    if (chatMessage.trim()) {
+      // TODO: Implement chat message handling
+      console.log("Sending message:", chatMessage);
+      setChatMessage("");
+    }
+  };
+
+  // If we're in intro or character select mode, show those screens
+  if (gameState === "intro") {
+    return (
+      <IntroScreen 
+        onStart={handleStartGame}
+        onContinue={selectedCharacter ? handleContinueSeason : undefined}
+      />
+    );
+  }
+
+  if (gameState === "select") {
+    return (
+      <CharacterSelectScreen onSelect={handleCharacterSelect} />
+    );
+  }
+
+  // If we're playing and have a character, show the full game
+  if (gameState === "playing" && selectedCharacter) {
+    // Create initial player state from selected character
+    const initialPlayerState = {
+      ...selectedCharacter,
+      grit: 100,
+      loveLife: 50,
+      fandom: 50,
+      uniqueStatValue: 50,
+      energy: 3,
+      happiness: 75,
+      paSchoolStress: 50,
+      insecurity: 50,
+      liberalGfSuspicion: 50,
+      truckMaintenance: 50,
+      ego: 50,
+      parlayAddiction: 50,
+      commishPower: 50,
+      clout: 50,
+      unlockedAchievements: []
+    };
+
+    // Create initial ranking with other characters
+    const otherCharacters = Object.values(characterData)
+      .filter((c: CharacterData) => c.id !== selectedCharacter.id)
+      .map((c: CharacterData) => ({
+        ...c,
+        grit: Math.floor(Math.random() * 50) + 50,
+        loveLife: 50,
+        fandom: 50,
+        uniqueStatValue: 50,
+        energy: 3,
+        happiness: 75,
+        paSchoolStress: 50,
+        insecurity: 50,
+        liberalGfSuspicion: 50,
+        truckMaintenance: 50,
+        ego: 50,
+        parlayAddiction: 50,
+        commishPower: 50,
+        clout: 50,
+        unlockedAchievements: []
+      }));
+
+    const initialData = {
+      player: initialPlayerState,
+      ranking: [initialPlayerState, ...otherCharacters],
+      day: 1,
+      week: 1
+    };
+
+    return (
+      <GameScreen 
+        initialData={initialData}
+        onGameEnd={handleGameEnd}
+      />
+    );
+  }
+
+  // Otherwise show the main menu UI
   return (
     <div className="app-shell">
       <div className="app-frame">
@@ -178,7 +302,11 @@ const App: React.FC = () => {
                     Pick your chaos: manage dynasty, chase parlays, or check the screenshots
                   </span>
                 </div>
-                <button type="button" className="secondary-btn hidden md:inline-flex hover-lift">
+                <button 
+                  type="button" 
+                  className="secondary-btn hidden md:inline-flex hover-lift"
+                  onClick={handleNewRun}
+                >
                   New Run
                 </button>
               </div>
@@ -228,11 +356,18 @@ const App: React.FC = () => {
                     <div>
                       <div className="mb-4 text-6xl">🎮</div>
                       <h3 className="text-xl font-semibold text-slate-200 mb-2">
-                        Dynasty Mode
+                        Ready to Start Dynasty Mode?
                       </h3>
-                      <p className="text-slate-400 text-sm max-w-md">
-                        The full Dynasty Mode experience will be available soon! This is where you'll manage your season, chat with the crew, and chase glory.
+                      <p className="text-slate-400 text-sm max-w-md mb-6">
+                        Jump into the full Dynasty Mode experience! Manage your season, chat with the crew, and chase glory through an entire NFL season.
                       </p>
+                      <button 
+                        type="button"
+                        className="primary-btn hover-lift px-6 py-3"
+                        onClick={handleStartGame}
+                      >
+                        Start Dynasty Mode
+                      </button>
                     </div>
                   </div>
                 )}
@@ -263,10 +398,18 @@ const App: React.FC = () => {
 
             {/* Bottom primary actions on mobile */}
             <div className="flex md:hidden justify-between gap-2 pt-1">
-              <button type="button" className="secondary-btn flex-1 hover-lift">
+              <button 
+                type="button" 
+                className="secondary-btn flex-1 hover-lift"
+                onClick={handleQuickSave}
+              >
                 Quick Save
               </button>
-              <button type="button" className="primary-btn flex-1 hover-lift">
+              <button 
+                type="button" 
+                className="primary-btn flex-1 hover-lift"
+                onClick={handleAdvanceWeek}
+              >
                 Advance Week
               </button>
             </div>
@@ -316,10 +459,14 @@ const App: React.FC = () => {
                     type="text"
                     placeholder="Drop a take, confess, or double down..."
                     className="flex-1 bg-slate-950/90 border border-slate-800/80 rounded-full px-3 py-1.5 text-xs md:text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+                    value={chatMessage}
+                    onChange={(e) => setChatMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   />
                   <button
                     type="button"
                     className="primary-btn px-3 md:px-4 py-1.5 text-xs md:text-sm"
+                    onClick={handleSendMessage}
                   >
                     Send
                   </button>
