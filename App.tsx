@@ -1,204 +1,324 @@
-import React, { useState, useEffect } from 'react';
-import { GameState, PlayerState, CharacterData, EndGameReport, DatingScenario } from './types';
-import { characterData, fullDatingScenarios } from './constants';
-import { GameScreen } from './components/GameScreen';
-import { IntroScreen, CharacterSelectScreen, EndScreen } from './components/CharacterScreens';
-import { DatingSimScreen } from './components/DatingSimScreen';
+import React, { useState } from "react";
+import { GameScreen } from "./components/GameScreen";
+import { ChatUI } from "./components/ChatUI";
+import { Dashboard } from "./components/Dashboard";
+import { NewMinigames } from "./components/NewMinigames";
 
-const initialMasterRanking = (): PlayerState[] => 
-  Object.values(characterData).map(c => ({
-    ...c,
-    grit: 0,
-    loveLife: 50, // 0-100
-    fandom: 50, // 0-100
-    uniqueStatValue: 50, // 0-100
-    happiness: 100,
-    energy: 3, // Daily Action Points, max 3
-    paSchoolStress: 50, // Aaron
-    insecurity: 50, // Craif
-    liberalGfSuspicion: 0, // Colin
-    truckMaintenance: 100, // Andrew
-    ego: 50, // Elie
-    parlayAddiction: c.id === 'colin' ? 20 : 0,
-    commishPower: c.id === 'spencer' ? 10 : 0,
-    clout: c.id === 'pace' ? 30 : 0,
-    unlockedAchievements: [],
-  }));
+type MainTab = "dynasty" | "minigames" | "roster" | "history";
 
-function App() {
-  const [gameState, setGameState] = useState<GameState>('intro');
-  const [player, setPlayer] = useState<PlayerState | null>(null);
-  const [endGameReport, setEndGameReport] = useState<EndGameReport | null>(null);
-  const [masterRanking, setMasterRanking] = useState<PlayerState[]>(initialMasterRanking);
+const App: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<MainTab>("dynasty");
 
-  const [initialDataForGame, setInitialDataForGame] = useState<any>(null);
-  const [savedGameData, setSavedGameData] = useState<any>(null);
-  const [isSaveChecked, setIsSaveChecked] = useState(false);
-  
-  // Dating sim state
-  const [datingSimScenario, setDatingSimScenario] = useState<DatingScenario | null>(null);
-  
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('miniBeastsSave');
-      if (saved) {
-        setSavedGameData(JSON.parse(saved));
-      }
-    } catch (e) {
-      console.error("Failed to load saved game:", e);
-      localStorage.removeItem('miniBeastsSave');
-    }
-    setIsSaveChecked(true);
-  }, []);
+  // These would normally come from your game state / services:
+  const currentWeek = 3;
+  const totalWeeks = 17;
+  const bankroll = 425.5;
+  const grit = 72;
+  const chaos = 48;
+  const relationshipHeat = 33; // e.g. "how close are you to getting caught"
+  const unreadMessages = 3;
 
-  const handleCharSelect = (char: CharacterData) => {
-    const selectedPlayer = masterRanking.find(c => c.id === char.id);
-    if (selectedPlayer) {
-      setPlayer(selectedPlayer);
-      setInitialDataForGame({ player: selectedPlayer, ranking: masterRanking });
-      setGameState('playing');
-    }
-  };
-  
-  const handleContinueFromSave = () => {
-    if (savedGameData) {
-        setPlayer(savedGameData.playerState);
-        setMasterRanking(savedGameData.ranking);
-        setInitialDataForGame(savedGameData);
-        setGameState('playing');
-    }
-  };
-
-  const handleGameEnd = (report: EndGameReport, finalRanking: PlayerState[]) => {
-    localStorage.removeItem('miniBeastsSave');
-    setEndGameReport(report);
-    setMasterRanking(finalRanking);
-    setGameState('ended');
-  };
-
-  const handleRestart = () => {
-    localStorage.removeItem('miniBeastsSave');
-    setEndGameReport(null);
-    setPlayer(null);
-    setSavedGameData(null);
-    setInitialDataForGame(null);
-    setMasterRanking(initialMasterRanking());
-    setGameState('intro');
-  };
-  
-  const handleContinue = () => {
-    setEndGameReport(null);
-    if (player) {
-      const updatedPlayer = masterRanking.find(p => p.id === player.id);
-      if (updatedPlayer) setPlayer(updatedPlayer);
-    }
-    setGameState('playing');
-  };
-  
-  const handleIntroEnd = () => {
-    setGameState('select');
-  };
-
-  const handleDatingSimComplete = (result: {
-    insecurityGain: number;
-    rejectionFlavor: string;
-    achievements?: string[];
-  }) => {
-    // Apply stat changes to the player
-    if (player) {
-      const updatedPlayer = { ...player };
-      
-      // Update insecurity based on character
-      if (player.id === 'craif') {
-        updatedPlayer.insecurity = Math.min(100, updatedPlayer.insecurity + result.insecurityGain);
-      } else if (player.id === 'elie') {
-        updatedPlayer.ego = Math.max(0, updatedPlayer.ego - result.insecurityGain / 2);
-      }
-      
-      // Add small happiness loss
-      updatedPlayer.happiness = Math.max(0, updatedPlayer.happiness - result.insecurityGain / 2);
-      
-      // Add achievements
-      if (result.achievements) {
-        result.achievements.forEach(achId => {
-          if (!updatedPlayer.unlockedAchievements.includes(achId)) {
-            updatedPlayer.unlockedAchievements.push(achId);
-          }
-        });
-      }
-      
-      // Give some grit as consolation prize
-      const gritReward = Math.max(10, 40 - result.insecurityGain / 3);
-      updatedPlayer.grit = updatedPlayer.grit + gritReward;
-      
-      setPlayer(updatedPlayer);
-      
-      // Update master ranking
-      const updatedRanking = masterRanking.map(p => 
-        p.id === updatedPlayer.id ? updatedPlayer : p
-      );
-      setMasterRanking(updatedRanking);
-      
-      // Update initial data for game to reflect changes
-      setInitialDataForGame({
-        player: updatedPlayer,
-        ranking: updatedRanking
-      });
-    }
-    
-    // Return to playing state
-    setDatingSimScenario(null);
-    setGameState('playing');
-  };
-
-  const renderGameState = () => {
-    if (!isSaveChecked) {
-      return <div className="min-h-screen flex items-center justify-center"><p>Loading...</p></div>;
-    }
-    
-    switch (gameState) {
-      case 'intro':
-        return <IntroScreen onStart={handleIntroEnd} onContinue={savedGameData ? handleContinueFromSave : undefined} />;
-      case 'select':
-        return <CharacterSelectScreen onSelect={handleCharSelect} />;
-      case 'playing':
-        if (initialDataForGame) {
-          return <GameScreen 
-            initialData={initialDataForGame} 
-            onGameEnd={handleGameEnd}
-            onTriggerDatingSim={(scenario: DatingScenario) => {
-              setDatingSimScenario(scenario);
-              setGameState('datingSim');
-            }}
-          />;
-        }
-        // Fallback
-        setGameState('select');
-        return null;
-      case 'datingSim':
-        if (datingSimScenario) {
-          return <DatingSimScreen scenario={datingSimScenario} onComplete={handleDatingSimComplete} />;
-        }
-        // Fallback
-        setGameState('playing');
-        return null;
-      case 'ended':
-        if (endGameReport) {
-          return <EndScreen report={endGameReport} onRestart={handleRestart} onContinue={handleContinue} />;
-        }
-        // Fallback
-        setGameState('select');
-        return null;
-      default:
-        return <IntroScreen onStart={handleIntroEnd} />;
-    }
-  };
+  const progressPct = Math.min(
+    100,
+    Math.max(0, Math.round((currentWeek / totalWeeks) * 100))
+  );
 
   return (
-    <div className="bg-imessage-dark text-white min-h-screen">
-      {renderGameState()}
+    <div className="app-shell">
+      <div className="app-frame">
+        {/* HEADER */}
+        <header className="app-header">
+          <div className="flex items-center gap-3">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <h1 className="text-sm md:text-base font-semibold tracking-tight">
+                  Mini Beasts: The All-In Meal
+                </h1>
+                <span className="badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                  Dynasty Mode
+                </span>
+              </div>
+              <div className="mt-1 flex items-center gap-2 text-[0.7rem] md:text-xs text-slate-300/80">
+                <span>Week {currentWeek} of {totalWeeks}</span>
+                <span className="h-1 w-1 rounded-full bg-slate-500" />
+                <span>Browser Play</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className="hidden md:flex flex-col gap-1 w-36">
+              <div className="flex items-center justify-between text-[0.7rem] text-slate-300">
+                <span>Season Progress</span>
+                <span>{progressPct}%</span>
+              </div>
+              <div className="progress-track">
+                <div
+                  className="progress-fill"
+                  style={{ width: `${progressPct}%` }}
+                />
+              </div>
+            </div>
+            <button
+              type="button"
+              className="pill-muted gap-1.5"
+            >
+              <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              Auto-save on
+            </button>
+          </div>
+        </header>
+
+        {/* MAIN BODY */}
+        <div className="flex flex-1 flex-col md:flex-row gap-3 md:gap-4 p-3 md:p-4">
+          {/* LEFT COLUMN: HUD + tabs + main view */}
+          <div className="flex-1 flex flex-col gap-3 md:gap-4">
+            {/* HUD */}
+            <section className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-3">
+              <div className="hud-card">
+                <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
+                  <span>Bankroll</span>
+                  <span className="badge-pill bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+                    Degenerate
+                  </span>
+                </div>
+                <div className="text-lg md:text-xl font-semibold text-emerald-300">
+                  ${bankroll.toFixed(2)}
+                </div>
+                <div className="h-1.5 w-full rounded-full bg-emerald-900/60 overflow-hidden">
+                  <div className="h-full w-2/3 bg-emerald-400" />
+                </div>
+              </div>
+
+              <div className="hud-card">
+                <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
+                  <span>Grit</span>
+                  <span className="text-xs text-amber-300">That Dog In You</span>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-lg md:text-xl font-semibold text-amber-300">
+                    {grit}
+                  </span>
+                  <span className="text-xs text-slate-400">/ 100</span>
+                </div>
+                <div className="h-1.5 w-full rounded-full bg-amber-900/50 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-300 to-amber-500"
+                    style={{ width: `${grit}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="hud-card">
+                <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
+                  <span>Chaos</span>
+                  <span className="text-xs text-pink-300">Group Chat Heat</span>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-lg md:text-xl font-semibold text-pink-300">
+                    {chaos}
+                  </span>
+                  <span className="text-xs text-slate-400">/ 100</span>
+                </div>
+                <div className="h-1.5 w-full rounded-full bg-pink-900/40 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-pink-400 via-fuchsia-400 to-purple-400"
+                    style={{ width: `${chaos}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="hud-card">
+                <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
+                  <span>Relationship</span>
+                  <span className="text-xs text-sky-300">Suspicion</span>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-lg md:text-xl font-semibold text-sky-300">
+                    {relationshipHeat}
+                  </span>
+                  <span className="text-xs text-slate-400">%</span>
+                </div>
+                <div className="h-1.5 w-full rounded-full bg-sky-900/40 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-sky-300 to-red-400"
+                    style={{ width: `${relationshipHeat}%` }}
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Tabs */}
+            <section className="section-card flex flex-col gap-3 md:gap-4">
+              <div className="flex items-center justify-between">
+                <div className="inline-flex items-center gap-2">
+                  <span className="badge-pill bg-slate-800/80 text-slate-100 border border-slate-700/80">
+                    Season · Week {currentWeek}
+                  </span>
+                  <span className="text-xs text-slate-400 hidden md:inline">
+                    Pick your chaos: manage dynasty, chase parlays, or check the screenshots
+                  </span>
+                </div>
+                <button type="button" className="secondary-btn hidden md:inline-flex">
+                  New Run
+                </button>
+              </div>
+
+              <div className="bg-slate-900/70 p-1.5 rounded-full border border-slate-700/80 flex gap-1">
+                <button
+                  type="button"
+                  className={`segment-button ${
+                    activeTab === "dynasty" ? "segment-button-active" : ""
+                  }`}
+                  onClick={() => setActiveTab("dynasty")}
+                >
+                  Dynasty
+                </button>
+                <button
+                  type="button"
+                  className={`segment-button ${
+                    activeTab === "minigames" ? "segment-button-active" : ""
+                  }`}
+                  onClick={() => setActiveTab("minigames")}
+                >
+                  Minigames
+                </button>
+                <button
+                  type="button"
+                  className={`segment-button ${
+                    activeTab === "roster" ? "segment-button-active" : ""
+                  }`}
+                  onClick={() => setActiveTab("roster")}
+                >
+                  Roster
+                </button>
+                <button
+                  type="button"
+                  className={`segment-button ${
+                    activeTab === "history" ? "segment-button-active" : ""
+                  }`}
+                  onClick={() => setActiveTab("history")}
+                >
+                  History
+                </button>
+              </div>
+
+              <div className="mt-1 min-h-[220px] md:min-h-[260px]">
+                {activeTab === "dynasty" && (
+                  <div className="w-full h-full">
+                    {/* Your existing core experience */}
+                    <GameScreen />
+                  </div>
+                )}
+
+                {activeTab === "minigames" && (
+                  <div className="w-full h-full">
+                    <NewMinigames />
+                  </div>
+                )}
+
+                {activeTab === "roster" && (
+                  <div className="w-full h-full">
+                    <Dashboard />
+                  </div>
+                )}
+
+                {activeTab === "history" && (
+                  <div className="w-full h-full flex items-center justify-center text-xs md:text-sm text-slate-300/90">
+                    {/* Placeholder – wire to your actual history / log later */}
+                    <p className="max-w-sm text-center">
+                      Season recap, worst takes, and parlay obituaries will live here.
+                      For now, keep surviving the group chat.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </section>
+
+            {/* Bottom primary actions on mobile */}
+            <div className="flex md:hidden justify-between gap-2 pt-1">
+              <button type="button" className="secondary-btn flex-1">
+                Quick Save
+              </button>
+              <button type="button" className="primary-btn flex-1">
+                Advance Week
+              </button>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: Chat / side panel */}
+          <aside className="w-full md:w-[280px] lg:w-[320px] flex flex-col gap-3">
+            <div className="section-card flex flex-col gap-3 h-full">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="relative">
+                    <div className="h-8 w-8 rounded-2xl bg-gradient-to-tr from-green-400 via-emerald-400 to-sky-400 flex items-center justify-center text-xs font-bold text-slate-950">
+                      MB
+                    </div>
+                    {unreadMessages > 0 && (
+                      <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-[0.6rem] font-semibold flex items-center justify-center text-white">
+                        {unreadMessages}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold leading-tight">
+                      Group Chat · Mini Beasts
+                    </span>
+                    <span className="text-[0.7rem] text-slate-400">
+                      {unreadMessages > 0 ? "They are cooking you right now" : "Peaceful (for once)"}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="badge bg-slate-800/80 text-slate-200 border border-slate-700/80"
+                >
+                  Live
+                </button>
+              </div>
+
+              <div className="flex-1 min-h-[220px] rounded-2xl bg-slate-950/90 border border-slate-900/90 overflow-hidden flex flex-col">
+                {/* Plug in your existing chat UI */}
+                <div className="flex-1 overflow-y-auto chat-scroll p-2.5 md:p-3.5">
+                  <ChatUI />
+                </div>
+
+                <div className="border-t border-slate-800/80 bg-slate-900/80 px-2.5 md:px-3 py-2 flex items-center gap-2">
+                  <input
+                    type="text"
+                    placeholder="Drop a take, confess, or double down..."
+                    className="flex-1 bg-slate-950/90 border border-slate-800/80 rounded-full px-3 py-1.5 text-xs md:text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+                  />
+                  <button
+                    type="button"
+                    className="primary-btn px-3 md:px-4 py-1.5 text-xs md:text-sm"
+                  >
+                    Send
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Small helper / tips card */}
+            <div className="hidden md:block section-card text-xs text-slate-300/90">
+              <p className="font-semibold text-slate-100 mb-1.5">
+                How to actually survive this:
+              </p>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>Manage grit like a real stamina bar — don&apos;t go all-in every week.</li>
+                <li>Check the chat before you lock parlays; they will jinx you.</li>
+                <li>
+                  Relationship heat too high? Take a week off from betting, or at least pretend.
+                </li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default App;
