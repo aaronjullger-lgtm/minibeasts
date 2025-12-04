@@ -5,6 +5,8 @@ import { ChatUI } from "./components/ChatUI";
 import { Dashboard } from "./components/Dashboard";
 import { NewMinigames } from "./components/NewMinigames";
 import { HistoryTab } from "./components/HistoryTab";
+import { SettingsPanel } from "./components/SettingsPanel";
+import { AchievementsPanel } from "./components/AchievementsPanel";
 import { CharacterData, GameState } from "./types";
 import { characterData } from "./constants";
 import { saveService } from "./services/saveService";
@@ -16,6 +18,8 @@ const App: React.FC = () => {
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterData | null>(null);
   const [activeTab, setActiveTab] = useState<MainTab>("dynasty");
   const [hasSavedGame, setHasSavedGame] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
 
   // Check for saved game on mount
   useEffect(() => {
@@ -216,6 +220,22 @@ const App: React.FC = () => {
             >
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               Auto-save on
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowAchievements(true)}
+              className="pill-muted gap-1.5 hover-lift"
+              title="Achievements"
+            >
+              🏆
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowSettings(true)}
+              className="pill-muted gap-1.5 hover-lift"
+              title="Settings"
+            >
+              ⚙️
             </button>
           </div>
         </header>
@@ -500,6 +520,12 @@ const App: React.FC = () => {
           </aside>
         </div>
       </div>
+      
+      {/* Settings Panel */}
+      {showSettings && <SettingsPanel onClose={() => setShowSettings(false)} />}
+      
+      {/* Achievements Panel */}
+      {showAchievements && <AchievementsPanel onClose={() => setShowAchievements(false)} />}
     </div>
   );
 };
