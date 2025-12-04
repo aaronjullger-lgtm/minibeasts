@@ -3,14 +3,14 @@ import React from 'react';
 import { Message } from '../types';
 import { characterData } from '../constants';
 
-export const Spinner: React.FC = () => (
+export const Spinner: React.FC = React.memo(() => (
   <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
   </svg>
-);
+));
 
-export const MiniBeastIcon: React.FC<{ characterId: string; isTalking?: boolean }> = ({ characterId, isTalking = false }) => {
+export const MiniBeastIcon: React.FC<{ characterId: string; isTalking?: boolean }> = React.memo(({ characterId, isTalking = false }) => {
   // Enhanced color palette with gradients
   const skin = "#FFD5B8";
   const skinShadow = "#E8B896";
@@ -240,9 +240,9 @@ export const MiniBeastIcon: React.FC<{ characterId: string; isTalking?: boolean 
       </svg>
     </div>
   );
-};
+});
 
-export const MessageBubble: React.FC<{ msg: Message; playerId: string }> = ({ msg, playerId }) => {
+export const MessageBubble: React.FC<{ msg: Message; playerId: string }> = React.memo(({ msg, playerId }) => {
   const { speaker, text } = msg;
   const speakerInfo = characterData[speaker] || { name: "System" };
   const { name } = speakerInfo;
@@ -303,7 +303,7 @@ export const MessageBubble: React.FC<{ msg: Message; playerId: string }> = ({ ms
       </div>
     </div>
   );
-};
+});
 
 // Simple ChatUI wrapper component for the main App
 export const ChatUI: React.FC = () => {
