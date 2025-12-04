@@ -17,6 +17,19 @@ const App: React.FC = () => {
   const chaos = 48;
   const relationshipHeat = 33; // e.g. "how close are you to getting caught"
   const unreadMessages = 3;
+  
+  // Stat thresholds for visual feedback
+  const GRIT_THRESHOLD_LEGENDARY = 90;
+  const GRIT_THRESHOLD_ELITE = 75;
+  const GRIT_THRESHOLD_RISING = 50;
+  const CHAOS_THRESHOLD_CRITICAL = 80;
+  const CHAOS_THRESHOLD_SPICY = 60;
+  const CHAOS_THRESHOLD_HEATING = 40;
+  const RELATIONSHIP_THRESHOLD_DANGER = 70;
+  const RELATIONSHIP_THRESHOLD_RISKY = 50;
+  const RELATIONSHIP_THRESHOLD_SKETCHY = 30;
+  const BANKROLL_THRESHOLD_HIGH_ROLLER = 500;
+  const BANKROLL_THRESHOLD_DEGENERATE = 300;
 
   const progressPct = Math.min(
     100,
@@ -61,7 +74,7 @@ const App: React.FC = () => {
             </div>
             <button
               type="button"
-              className="pill-muted gap-1.5"
+              className="pill-muted gap-1.5 hover-lift"
             >
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               Auto-save on
@@ -75,25 +88,27 @@ const App: React.FC = () => {
           <div className="flex-1 flex flex-col gap-3 md:gap-4">
             {/* HUD */}
             <section className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-3">
-              <div className="hud-card">
+              <div className="hud-card hover-lift transition-all">
                 <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
                   <span>Bankroll</span>
-                  <span className="badge-pill bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
-                    Degenerate
+                  <span className="badge-pill bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 animate-pulse">
+                    {bankroll > BANKROLL_THRESHOLD_HIGH_ROLLER ? 'High Roller' : bankroll > BANKROLL_THRESHOLD_DEGENERATE ? 'Degenerate' : 'Grinding'}
                   </span>
                 </div>
                 <div className="text-lg md:text-xl font-semibold text-emerald-300">
                   ${bankroll.toFixed(2)}
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-emerald-900/60 overflow-hidden">
-                  <div className="h-full w-2/3 bg-emerald-400" />
+                  <div className="h-full w-2/3 bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-500" />
                 </div>
               </div>
 
-              <div className="hud-card">
+              <div className={`hud-card hover-lift transition-all ${grit >= GRIT_THRESHOLD_LEGENDARY ? 'pulse-glow' : ''}`}>
                 <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
                   <span>Grit</span>
-                  <span className="text-xs text-amber-300">That Dog In You</span>
+                  <span className="text-xs text-amber-300">
+                    {grit >= GRIT_THRESHOLD_LEGENDARY ? '🔥 Legendary' : grit >= GRIT_THRESHOLD_ELITE ? '💪 Elite' : grit >= GRIT_THRESHOLD_RISING ? '⚡ Rising' : 'Building'}
+                  </span>
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-lg md:text-xl font-semibold text-amber-300">
@@ -103,16 +118,18 @@ const App: React.FC = () => {
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-amber-900/50 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-amber-300 to-amber-500"
+                    className="h-full bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 transition-all duration-500"
                     style={{ width: `${grit}%` }}
                   />
                 </div>
               </div>
 
-              <div className="hud-card">
+              <div className={`hud-card hover-lift transition-all ${chaos >= CHAOS_THRESHOLD_CRITICAL ? 'shake-animation' : ''}`}>
                 <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
                   <span>Chaos</span>
-                  <span className="text-xs text-pink-300">Group Chat Heat</span>
+                  <span className="text-xs text-pink-300">
+                    {chaos >= CHAOS_THRESHOLD_CRITICAL ? '🚨 Critical' : chaos >= CHAOS_THRESHOLD_SPICY ? '🔥 Spicy' : chaos >= CHAOS_THRESHOLD_HEATING ? '⚠️ Heating Up' : 'Chill'}
+                  </span>
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-lg md:text-xl font-semibold text-pink-300">
@@ -122,16 +139,18 @@ const App: React.FC = () => {
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-pink-900/40 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-pink-400 via-fuchsia-400 to-purple-400"
+                    className="h-full bg-gradient-to-r from-pink-400 via-fuchsia-400 to-purple-400 transition-all duration-500"
                     style={{ width: `${chaos}%` }}
                   />
                 </div>
               </div>
 
-              <div className="hud-card">
+              <div className={`hud-card hover-lift transition-all ${relationshipHeat >= RELATIONSHIP_THRESHOLD_DANGER ? 'shake-animation' : ''}`}>
                 <div className="flex items-center justify-between text-[0.7rem] text-slate-400">
                   <span>Relationship</span>
-                  <span className="text-xs text-sky-300">Suspicion</span>
+                  <span className="text-xs text-sky-300">
+                    {relationshipHeat >= RELATIONSHIP_THRESHOLD_DANGER ? '💀 Danger' : relationshipHeat >= RELATIONSHIP_THRESHOLD_RISKY ? '⚠️ Risky' : relationshipHeat >= RELATIONSHIP_THRESHOLD_SKETCHY ? '👀 Sketchy' : 'Safe'}
+                  </span>
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-lg md:text-xl font-semibold text-sky-300">
@@ -141,7 +160,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-sky-900/40 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-sky-300 to-red-400"
+                    className="h-full bg-gradient-to-r from-sky-300 via-orange-400 to-red-400 transition-all duration-500"
                     style={{ width: `${relationshipHeat}%` }}
                   />
                 </div>
@@ -159,7 +178,7 @@ const App: React.FC = () => {
                     Pick your chaos: manage dynasty, chase parlays, or check the screenshots
                   </span>
                 </div>
-                <button type="button" className="secondary-btn hidden md:inline-flex">
+                <button type="button" className="secondary-btn hidden md:inline-flex hover-lift">
                   New Run
                 </button>
               </div>
@@ -167,7 +186,7 @@ const App: React.FC = () => {
               <div className="bg-slate-900/70 p-1.5 rounded-full border border-slate-700/80 flex gap-1">
                 <button
                   type="button"
-                  className={`segment-button ${
+                  className={`segment-button hover-lift ${
                     activeTab === "dynasty" ? "segment-button-active" : ""
                   }`}
                   onClick={() => setActiveTab("dynasty")}
@@ -176,7 +195,7 @@ const App: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  className={`segment-button ${
+                  className={`segment-button hover-lift ${
                     activeTab === "minigames" ? "segment-button-active" : ""
                   }`}
                   onClick={() => setActiveTab("minigames")}
@@ -185,7 +204,7 @@ const App: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  className={`segment-button ${
+                  className={`segment-button hover-lift ${
                     activeTab === "roster" ? "segment-button-active" : ""
                   }`}
                   onClick={() => setActiveTab("roster")}
@@ -194,7 +213,7 @@ const App: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  className={`segment-button ${
+                  className={`segment-button hover-lift ${
                     activeTab === "history" ? "segment-button-active" : ""
                   }`}
                   onClick={() => setActiveTab("history")}
@@ -205,9 +224,16 @@ const App: React.FC = () => {
 
               <div className="mt-1 min-h-[220px] md:min-h-[260px]">
                 {activeTab === "dynasty" && (
-                  <div className="w-full h-full">
-                    {/* Your existing core experience */}
-                    <GameScreen />
+                  <div className="w-full h-full flex items-center justify-center p-6 text-center">
+                    <div>
+                      <div className="mb-4 text-6xl">🎮</div>
+                      <h3 className="text-xl font-semibold text-slate-200 mb-2">
+                        Dynasty Mode
+                      </h3>
+                      <p className="text-slate-400 text-sm max-w-md">
+                        The full Dynasty Mode experience will be available soon! This is where you'll manage your season, chat with the crew, and chase glory.
+                      </p>
+                    </div>
                   </div>
                 )}
 
@@ -237,10 +263,10 @@ const App: React.FC = () => {
 
             {/* Bottom primary actions on mobile */}
             <div className="flex md:hidden justify-between gap-2 pt-1">
-              <button type="button" className="secondary-btn flex-1">
+              <button type="button" className="secondary-btn flex-1 hover-lift">
                 Quick Save
               </button>
-              <button type="button" className="primary-btn flex-1">
+              <button type="button" className="primary-btn flex-1 hover-lift">
                 Advance Week
               </button>
             </div>

@@ -304,3 +304,18 @@ export const MessageBubble: React.FC<{ msg: Message; playerId: string }> = ({ ms
     </div>
   );
 };
+
+// Simple ChatUI wrapper component for the main App
+export const ChatUI: React.FC = () => {
+  return (
+    <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+      <div className="mb-4 text-6xl">💬</div>
+      <h3 className="text-xl font-semibold text-slate-200 mb-2">
+        Group Chat
+      </h3>
+      <p className="text-slate-400 text-sm max-w-md">
+        The Mini Beasts group chat will appear here. Jump into Dynasty Mode to start chatting with the crew!
+      </p>
+    </div>
+  );
+};
