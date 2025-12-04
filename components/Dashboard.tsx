@@ -90,11 +90,11 @@ const CharacterStats: React.FC<{ player: PlayerState }> = ({ player }) => {
 
     }, [player, prevPlayer]);
 
-    const StatDisplay: React.FC<{ label: string; value: number; color: string }> = ({ label, value, color }) => (
+    const StatDisplay: React.FC<{ label: string; value: number; color: string; emoji?: string }> = ({ label, value, color, emoji }) => (
         <StatTooltip text={statDescriptions[label] || "A measure of something important."}>
-            <div className="cursor-help relative">
-                <span className={`block text-xs font-bold ${color}`}>{label}</span>
-                <span className="font-graduate text-lg md:text-2xl">{value}</span>
+            <div className="cursor-help relative ios-glass rounded-xl p-3 text-center">
+                <span className={`block text-xs font-semibold ${color} mb-1`}>{emoji} {label}</span>
+                <span className="text-2xl font-bold">{value}</span>
                 {statChanges.filter(c => c.label === label).map(change => (
                     <div key={change.id} className={`absolute top-0 left-1/2 -translate-x-1/2 font-bold text-lg animate-fade-up ${change.value > 0 ? 'text-green-400' : 'text-red-400'}`}>
                         {change.value > 0 ? `+${change.value}` : change.value}
@@ -106,23 +106,23 @@ const CharacterStats: React.FC<{ player: PlayerState }> = ({ player }) => {
 
     const getStats = () => {
         const coreStats = [
-            <StatDisplay key="grit" label="GRIT" value={player.grit} color="text-blue-400" />,
-            <StatDisplay key="happy" label="HAPPINESS" value={player.happiness} color="text-green-400" />,
-            <StatDisplay key="energy" label="ENERGY" value={player.energy} color="text-yellow-400" />
+            <StatDisplay key="grit" label="GRIT" value={player.grit} color="text-blue-400" emoji="⚡" />,
+            <StatDisplay key="happy" label="MOOD" value={player.happiness} color="text-green-400" emoji="😊" />,
+            <StatDisplay key="energy" label="ENERGY" value={player.energy} color="text-yellow-400" emoji="🔋" />
         ];
 
         switch (player.id) {
-            case 'aaron': return [<StatDisplay key="stress" label="STRESS" value={player.paSchoolStress} color="text-red-400" />, ...coreStats];
-            case 'elie': return [<StatDisplay key="ego" label="EGO" value={player.ego} color="text-purple-400" />, ...coreStats];
-            case 'craif': return [<StatDisplay key="insecurity" label="INSECURITY" value={player.insecurity} color="text-gray-400" />, ...coreStats];
-            case 'colin': return [<StatDisplay key="addiction" label="ADDICTION" value={player.parlayAddiction || 0} color="text-red-500" />, ...coreStats];
-            case 'spencer': return [<StatDisplay key="power" label="POWER" value={player.commishPower || 0} color="text-teal-400" />, ...coreStats];
-            case 'pace': return [<StatDisplay key="clout" label="CLOUT" value={player.clout || 0} color="text-pink-400" />, ...coreStats];
+            case 'aaron': return [<StatDisplay key="stress" label="STRESS" value={player.paSchoolStress} color="text-red-400" emoji="📚" />, ...coreStats];
+            case 'elie': return [<StatDisplay key="ego" label="EGO" value={player.ego} color="text-purple-400" emoji="👑" />, ...coreStats];
+            case 'craif': return [<StatDisplay key="insecurity" label="INSECURITY" value={player.insecurity} color="text-gray-400" emoji="💔" />, ...coreStats];
+            case 'colin': return [<StatDisplay key="addiction" label="PARLAY" value={player.parlayAddiction || 0} color="text-red-500" emoji="🎰" />, ...coreStats];
+            case 'spencer': return [<StatDisplay key="power" label="POWER" value={player.commishPower || 0} color="text-teal-400" emoji="👨‍⚖️" />, ...coreStats];
+            case 'pace': return [<StatDisplay key="clout" label="CLOUT" value={player.clout || 0} color="text-pink-400" emoji="✨" />, ...coreStats];
             default: return coreStats;
         }
     };
     
-    return <div className="flex items-center justify-center md:justify-start gap-3 md:gap-4 text-center">{getStats()}</div>;
+    return <div className="grid grid-cols-3 md:grid-cols-4 gap-2 w-full">{getStats()}</div>;
 }
 
 const MinigameIcon: React.FC<{ game: MinigameType | null }> = ({ game }) => {
@@ -186,72 +186,76 @@ interface HUDProps {
 
 export const HUD: React.FC<HUDProps> = ({ player, day, week, weeklyGritGoal, onActionClick, timeOfDay, nextMinigame, seasonGoals }) => {
   const [showGoals, setShowGoals] = useState(false);
+  const [showStats, setShowStats] = useState(false);
   const statusMessage = getStatusMessage(player);
   const gritProgress = Math.min(100, (player.grit / weeklyGritGoal) * 100);
 
   return (
-    <div className="w-full glass-dark backdrop-blur-xl p-4 shadow-2xl z-20 flex flex-col gap-4 text-white border-b-2 border-blue-500/30">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
-        <div className="flex items-center gap-4 md:gap-5">
-          <div className="w-14 h-14 md:w-16 md:h-16 rounded-full flex-shrink-0 shadow-lg neon-blue p-0.5 bg-gradient-to-br from-blue-500 to-purple-600">
-            <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
-              <MiniBeastIcon characterId={player.id} isTalking={false} />
-            </div>
+    <div className="w-full ios-glass backdrop-blur-xl border-b border-white/10 shadow-lg z-20">
+      {/* iOS-style info bar */}
+      <div className="px-4 py-3 flex items-center justify-between border-b border-white/10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full overflow-hidden border border-white/20">
+            <MiniBeastIcon characterId={player.id} isTalking={false} />
           </div>
-          <div className="flex-grow">
-            <h2 className="font-orbitron text-2xl md:text-3xl bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent font-bold">{player.name}</h2>
-            <p className="text-sm md:text-base text-cyan-300 italic font-semibold">"{statusMessage}"</p>
+          <div>
+            <h2 className="text-white font-semibold text-sm">{player.name}</h2>
+            <p className="text-white/60 text-xs">Week {week}, Day {day}</p>
           </div>
         </div>
-        <div className="hidden md:block w-px h-14 bg-gradient-to-b from-transparent via-blue-500/50 to-transparent" />
-        <CharacterStats player={player} />
-        <div className="hidden md:block w-px h-14 bg-gradient-to-b from-transparent via-blue-500/50 to-transparent" />
-        <div className="flex items-center gap-4">
-           <div className="relative">
-              <button onClick={() => setShowGoals(!showGoals)} onBlur={() => setShowGoals(false)} className="text-right hover:text-cyan-300 transition-colors glass rounded-xl p-3 border border-blue-500/30">
-                <h3 className="font-orbitron text-xl md:text-2xl bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent font-bold">Week {week}</h3>
-                <p className="text-xs md:text-sm text-gray-400 font-semibold">Day {day}</p>
-              </button>
-              {showGoals && (
-                <div className="absolute top-full right-0 mt-2 w-80 glass-dark border-2 border-blue-500/30 rounded-xl p-4 shadow-2xl z-10 neon-blue">
-                    <h4 className="font-bold text-xl mb-3 text-cyan-300 font-orbitron">Season Goals</h4>
-                    <ul className="space-y-2">
-                        {seasonGoals.map(goal => (
-                            <li key={goal.id} className={`text-sm font-semibold ${goal.isCompleted ? 'text-green-400 line-through' : 'text-gray-200'}`}>
-                                {goal.description}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-              )}
-           </div>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <div className="w-full md:hidden"><TimeOfDay time={timeOfDay} /></div>
-        <button onClick={() => onActionClick('store')} className="btn-modern bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 font-bold py-3 px-4 text-sm md:text-base md:px-5 rounded-xl transition-transform transform hover:scale-105 shadow-lg border border-purple-400/30 neon-purple font-orbitron">Store</button>
-        <button onClick={() => onActionClick('minigame')} className="btn-modern bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 font-bold py-3 px-4 text-sm md:text-base md:px-5 rounded-xl transition-transform transform hover:scale-105 flex items-center gap-2 shadow-lg border border-yellow-400/30 font-orbitron neon-yellow">
-          Game <MinigameIcon game={nextMinigame} />
+        <button 
+          onClick={() => setShowStats(!showStats)} 
+          className="ios-button-secondary px-3 py-1 text-sm"
+        >
+          Stats
         </button>
-        <button onClick={() => onActionClick('manage')} className="btn-modern bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 font-bold py-3 px-4 text-sm md:text-base md:px-5 rounded-xl transition-transform transform hover:scale-105 shadow-lg border border-red-400/30 neon-pink font-orbitron">Manage</button>
-        <button onClick={() => onActionClick('achievements')} className="btn-modern bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 font-bold py-3 px-4 text-sm md:text-base md:px-5 rounded-xl transition-transform transform hover:scale-105 shadow-lg border border-green-400/30 neon-green font-orbitron">🏆</button>
-
       </div>
-      
-      <div className="flex items-center gap-4">
-        <div className="flex-grow">
+
+      {/* Stats Panel - Collapsible */}
+      {showStats && (
+        <div className="p-4 border-b border-white/10" style={{animation: 'slide-up 0.3s ease-out'}}>
+          <CharacterStats player={player} />
+          <div className="mt-3 ios-glass rounded-xl p-3">
             <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-bold text-cyan-300 font-orbitron">WEEKLY GRIT GOAL</span>
-            <span className="text-sm font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent font-orbitron">{player.grit} / {weeklyGritGoal}</span>
+              <span className="text-white/70 text-xs font-semibold">Weekly Goal</span>
+              <span className="text-white text-xs font-bold">{player.grit} / {weeklyGritGoal}</span>
             </div>
-            <div className="w-full bg-gray-800/50 rounded-full h-3 border border-blue-500/30 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 h-full rounded-full animate-gradient shadow-lg neon-blue" style={{ width: `${gritProgress}%`, transition: 'width 0.5s ease-in-out' }}></div>
+            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+              <div 
+                className="bg-blue-500 h-full rounded-full transition-all duration-500" 
+                style={{ width: `${gritProgress}%` }}
+              />
             </div>
+          </div>
         </div>
-        <div className="w-48 flex-shrink-0 hidden md:block">
-             <TimeOfDay time={timeOfDay} />
-        </div>
+      )}
+
+      {/* Action Buttons */}
+      <div className="p-3 flex gap-2 overflow-x-auto ios-scrollbar">
+        <button 
+          onClick={() => onActionClick('minigame')} 
+          className="ios-button flex-shrink-0 flex items-center gap-2 text-sm"
+        >
+          <MinigameIcon game={nextMinigame} /> Play Game
+        </button>
+        <button 
+          onClick={() => onActionClick('store')} 
+          className="ios-button-secondary flex-shrink-0 text-sm"
+        >
+          🛍️ Store
+        </button>
+        <button 
+          onClick={() => onActionClick('manage')} 
+          className="ios-button-secondary flex-shrink-0 text-sm"
+        >
+          ⚙️ Manage
+        </button>
+        <button 
+          onClick={() => onActionClick('achievements')} 
+          className="ios-button-secondary flex-shrink-0 text-sm"
+        >
+          🏆 Goals
+        </button>
       </div>
     </div>
   );
