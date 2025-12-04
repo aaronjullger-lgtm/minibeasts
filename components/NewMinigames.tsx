@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { sundayScariesTeams, sundayScariesRoasts, commishActions, tyWindowMessages, datingScenarios, ParlayLeg, CommishAction, OldDatingScenario } from '../constants';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { sundayScariesTeams, sundayScariesRoasts, commishActions, tyWindowMessages, datingScenarios, ParlayLeg, CommishAction, OldDatingScenario, fantasyDraftPlayers, triviaData, commentaryBattleData } from '../constants';
 
 // Difficulty scaling constants
 const TY_WINDOW_BASE_WAIT = 3000; // Base wait time in ms
@@ -707,6 +707,124 @@ export const BitchlessChroniclesMinigame: React.FC<{
                     </div>
                 </>
             )}
+        </div>
+    );
+};
+
+// --- BEER DIE CHALLENGE MINIGAME ---
+export const BeerDieChallengeMinigame: React.FC<{ onGameEnd: (grit: number) => void }> = ({ onGameEnd }) => {
+    const [score, setScore] = useState(0);
+    const [misses, setMisses] = useState(3);
+    const [die, setDie] = useState<{ id: number; x: number; y: number, startTime: number, duration: number } | null>(null);
+    const gameLoopRef = useRef<number | null>(null);
+    const gameState = useRef({ score, misses, onGameEnd, isOver: false });
+
+    useEffect(() => {
+        gameState.current.score = score;
+        gameState.current.misses = misses;
+        gameState.current.onGameEnd = onGameEnd;
+    }, [score, misses, onGameEnd]);
+
+    const endGame = useCallback(() => {
+        if (!gameState.current.isOver) {
+            gameState.current.isOver = true;
+            if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
+            gameState.current.onGameEnd(gameState.current.score);
+        }
+    }, []);
+
+    const spawnDie = useCallback(() => {
+        if (gameState.current.isOver || gameState.current.misses <= 0) {
+            endGame();
+            return;
+        }
+        const duration = Math.max(400, 1200 - (gameState.current.score * 8));
+        setDie({
+            id: Date.now(),
+            x: Math.random() * 80 + 10,
+            y: Math.random() * 80 + 10,
+            startTime: performance.now(),
+            duration: duration,
+        });
+    }, [endGame]);
+
+    useEffect(() => {
+        const loop = () => {
+            if (gameState.current.isOver) return;
+            
+            setDie(currentDie => {
+                if (currentDie && performance.now() - currentDie.startTime > currentDie.duration) {
+                    setMisses(m => m - 1);
+                    return null;
+                }
+                return currentDie;
+            });
+            gameLoopRef.current = requestAnimationFrame(loop);
+        };
+        
+        spawnDie();
+        gameLoopRef.current = requestAnimationFrame(loop);
+        
+        return () => {
+             gameState.current.isOver = true;
+             if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
+        }
+    }, [spawnDie]);
+
+    useEffect(() => {
+        if (misses <= 0) {
+            endGame();
+        }
+    }, [misses, endGame]);
+
+    useEffect(() => {
+        if (die === null && !gameState.current.isOver) {
+            const timer = setTimeout(spawnDie, 300);
+            return () => clearTimeout(timer);
+        }
+    }, [die, spawnDie]);
+
+    const handleClickDie = () => {
+        if (die && !gameState.current.isOver) {
+            setScore(s => s + 8);
+            setDie(null);
+        }
+    };
+    
+    const progress = die ? Math.min(1, (performance.now() - die.startTime) / die.duration) : 0;
+
+    return (
+        <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-2xl text-center border-4 border-cyan-500/50">
+            <h2 className="text-5xl font-orbitron mb-4 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">🎲 Beer Die Challenge</h2>
+            <div className="flex justify-between items-center mb-6 text-2xl">
+                <p className="font-bold">Grit: <span className="text-yellow-400">{score}</span></p>
+                <p className="font-bold">Lives: <span className="text-red-500 text-3xl">{'❤️'.repeat(misses)}</span></p>
+            </div>
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 w-full h-80 rounded-2xl relative cursor-crosshair border-2 border-cyan-500/30">
+                {die && (
+                    <button
+                        onClick={handleClickDie}
+                        className="absolute text-4xl transition-transform hover:scale-110"
+                        style={{ left: `${die.x}%`, top: `${die.y}%`, transform: 'translate(-50%, -50%)' }}
+                    >
+                        <div className="relative">
+                            <svg width="60" height="60" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" fill="none" stroke="#1f2937" strokeWidth="10" />
+                                <circle 
+                                    cx="50" cy="50" r="45" 
+                                    fill="none" stroke="cyan" strokeWidth="10"
+                                    strokeDasharray="282.7"
+                                    strokeDashoffset={282.7 * progress}
+                                    transform="rotate(-90 50 50)"
+                                    style={{filter: 'drop-shadow(0 0 10px cyan)'}}
+                                />
+                            </svg>
+                            <span className="absolute inset-0 flex items-center justify-center">🎲</span>
+                        </div>
+                    </button>
+                )}
+                 {misses <= 0 && <div className="absolute inset-0 flex items-center justify-center text-5xl text-red-500 bg-black/50 rounded-2xl">GAME OVER</div>}
+            </div>
         </div>
     );
 };

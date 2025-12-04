@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { gameStateService, GameHistory } from '../services/gameStateService';
+import { SEASON_LENGTH } from '../constants';
 
 export const HistoryTab: React.FC = () => {
   const [history, setHistory] = useState<GameHistory[]>([]);
@@ -76,7 +77,7 @@ export const HistoryTab: React.FC = () => {
         >
           All
         </button>
-        {[...Array(17)].map((_, i) => (
+        {[...Array(SEASON_LENGTH)].map((_, i) => (
           <button
             key={i + 1}
             onClick={() => setFilter(i + 1)}

@@ -1,6 +1,8 @@
 import { PlayerState, Message, GlobalState } from '../types';
 import { SEASON_LENGTH, DAYS_PER_WEEK } from '../constants';
 
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 export interface GameHistory {
   week: number;
   day: number;
@@ -189,8 +191,7 @@ export const gameStateService = {
    * Format a date for display
    */
   formatGameDate(week: number, day: number): string {
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    return `Week ${week}, ${dayNames[day - 1] || `Day ${day}`}`;
+    return `Week ${week}, ${DAY_NAMES[day - 1] || `Day ${day}`}`;
   },
 
   /**
