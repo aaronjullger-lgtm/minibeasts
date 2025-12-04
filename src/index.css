@@ -21,7 +21,7 @@
   }
 
   .app-frame {
-    @apply ios-glass-light shadow-2xl rounded-3xl w-full max-w-5xl min-h-[560px]
+    @apply bg-slate-900/60 backdrop-blur-xl shadow-2xl rounded-3xl w-full max-w-5xl min-h-[560px]
     flex flex-col border border-slate-700/60;
   }
 

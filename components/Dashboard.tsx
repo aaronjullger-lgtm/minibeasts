@@ -226,3 +226,35 @@ export const HUD: React.FC<HUDProps> = ({ player, day, week, weeklyGritGoal, onA
     </div>
   );
 };
+// Simple Dashboard/Roster view component
+export const Dashboard: React.FC = () => {
+  return (
+    <div className="w-full h-full flex items-center justify-center p-6">
+      <div className="text-center max-w-2xl">
+        <h2 className="text-3xl font-orbitron mb-4 bg-gradient-to-r from-emerald-400 to-cyan-500 bg-clip-text text-transparent">
+          Roster & Stats
+        </h2>
+        <p className="text-slate-300 text-lg mb-6">
+          Your complete roster stats, player profiles, and season performance will be displayed here.
+        </p>
+        <div className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-6 space-y-4">
+          <div className="flex justify-between items-center py-3 border-b border-slate-700/50">
+            <span className="text-slate-400">Total Grit Earned</span>
+            <span className="text-emerald-400 font-bold text-xl">Coming Soon</span>
+          </div>
+          <div className="flex justify-between items-center py-3 border-b border-slate-700/50">
+            <span className="text-slate-400">Games Played</span>
+            <span className="text-cyan-400 font-bold text-xl">Coming Soon</span>
+          </div>
+          <div className="flex justify-between items-center py-3">
+            <span className="text-slate-400">Best Streak</span>
+            <span className="text-yellow-400 font-bold text-xl">Coming Soon</span>
+          </div>
+        </div>
+        <p className="text-slate-500 text-sm mt-6 italic">
+          Full roster management and detailed stats are being implemented. Stay tuned!
+        </p>
+      </div>
+    </div>
+  );
+};

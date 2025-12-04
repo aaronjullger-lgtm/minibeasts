@@ -205,9 +205,16 @@ const App: React.FC = () => {
 
               <div className="mt-1 min-h-[220px] md:min-h-[260px]">
                 {activeTab === "dynasty" && (
-                  <div className="w-full h-full">
-                    {/* Your existing core experience */}
-                    <GameScreen />
+                  <div className="w-full h-full flex items-center justify-center p-6 text-center">
+                    <div>
+                      <div className="mb-4 text-6xl">🎮</div>
+                      <h3 className="text-xl font-semibold text-slate-200 mb-2">
+                        Dynasty Mode
+                      </h3>
+                      <p className="text-slate-400 text-sm max-w-md">
+                        The full Dynasty Mode experience will be available soon! This is where you'll manage your season, chat with the crew, and chase glory.
+                      </p>
+                    </div>
                   </div>
                 )}
 

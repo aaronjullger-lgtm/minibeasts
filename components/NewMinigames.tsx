@@ -655,3 +655,101 @@ export const BitchlessChroniclesMinigame: React.FC<{
         </div>
     );
 };
+
+// Wrapper component for the minigames tab
+export const NewMinigames: React.FC = () => {
+    const [selectedGame, setSelectedGame] = useState<'sunday_scaries' | 'commish_chaos' | 'ty_window' | 'bitchless_chronicles' | null>(null);
+    const [grit, setGrit] = useState(0);
+    const [showResult, setShowResult] = useState(false);
+
+    const handleGameEnd = (earnedGrit: number) => {
+        setGrit(earnedGrit);
+        setShowResult(true);
+    };
+
+    const resetGame = () => {
+        setSelectedGame(null);
+        setGrit(0);
+        setShowResult(false);
+    };
+
+    if (showResult) {
+        return (
+            <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-2xl mx-auto text-center border-4 border-green-500/50">
+                <h2 className="text-5xl font-orbitron mb-6 bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                    Minigame Complete!
+                </h2>
+                <p className="text-4xl mb-8">
+                    {grit > 0 ? '+' : ''}{grit} Grit Earned
+                </p>
+                <button
+                    onClick={resetGame}
+                    className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold text-xl"
+                >
+                    Play Another Game
+                </button>
+            </div>
+        );
+    }
+
+    if (selectedGame === 'sunday_scaries') {
+        return <SundayScariesMinigame onGameEnd={handleGameEnd} playerName="Player" />;
+    }
+
+    if (selectedGame === 'commish_chaos') {
+        return <CommishChaosMinigame onGameEnd={handleGameEnd} />;
+    }
+
+    if (selectedGame === 'ty_window') {
+        return <TyWindowMinigame onGameEnd={handleGameEnd} />;
+    }
+
+    if (selectedGame === 'bitchless_chronicles') {
+        return <BitchlessChroniclesMinigame onGameEnd={handleGameEnd} playerName="Player" />;
+    }
+
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-center p-6 space-y-4">
+            <h2 className="text-3xl font-orbitron mb-6 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                Choose Your Mini Game
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl">
+                <button
+                    onClick={() => setSelectedGame('sunday_scaries')}
+                    className="p-6 bg-gradient-to-br from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                >
+                    <div className="text-4xl mb-3">🎰</div>
+                    <div className="text-2xl mb-2">Sunday Scaries</div>
+                    <div className="text-sm text-gray-200">Build a parlay and pray it hits</div>
+                </button>
+
+                <button
+                    onClick={() => setSelectedGame('commish_chaos')}
+                    className="p-6 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                >
+                    <div className="text-4xl mb-3">👑</div>
+                    <div className="text-2xl mb-2">Commish Chaos</div>
+                    <div className="text-sm text-gray-200">Abuse your power as commissioner</div>
+                </button>
+
+                <button
+                    onClick={() => setSelectedGame('ty_window')}
+                    className="p-6 bg-gradient-to-br from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                >
+                    <div className="text-4xl mb-3">👻</div>
+                    <div className="text-2xl mb-2">The Ty Window</div>
+                    <div className="text-sm text-gray-200">Catch Ty when he actually messages</div>
+                </button>
+
+                <button
+                    onClick={() => setSelectedGame('bitchless_chronicles')}
+                    className="p-6 bg-gradient-to-br from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                >
+                    <div className="text-4xl mb-3">💔</div>
+                    <div className="text-2xl mb-2">Bitchless Chronicles</div>
+                    <div className="text-sm text-gray-200">Experience dating rejection simulator</div>
+                </button>
+            </div>
+        </div>
+    );
+};
