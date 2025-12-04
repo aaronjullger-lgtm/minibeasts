@@ -1,4 +1,4 @@
-import { CharacterData, StoreItem, SeasonGoal, ManageLifeAction, PlayerState, RandomEvent, Message, Achievement, CharacterDef, Item } from './types';
+import { CharacterData, StoreItem, SeasonGoal, ManageLifeAction, PlayerState, RandomEvent, Message, Achievement, CharacterDef, Item, DatingScenario } from './types';
 
 export const MAX_YARDS = 100;
 export const SEASON_LENGTH = 17;
@@ -419,6 +419,10 @@ export const randomEvents: RandomEvent[] = [
   // Gameday event
   { id: 'gameday_good', trigger: (p, day) => (day % 7 === 0) && Math.random() < 0.4, message: "GAMEDAY: Your fantasy players are going off! It's a great Sunday.", effects: { happiness: 25 }, grit: 10 },
   { id: 'gameday_bad', trigger: (p, day) => (day % 7 === 0) && Math.random() < 0.4, message: "GAMEDAY: Your entire fantasy team forgot how to play football. Pain.", effects: { happiness: -25 } },
+  
+  // Dating Sim Trigger Events (handled separately in GameScreen)
+  { id: 'bitchless_chronicles_elie', trigger: (p) => p.id === 'elie' && Math.random() < 0.15, message: "EVENT: Elie matched with someone on a dating app. This should be interesting...", effects: {} },
+  { id: 'bitchless_chronicles_craif', trigger: (p) => p.id === 'craif' && Math.random() < 0.15, message: "EVENT: Craif has been texting a girl for weeks. Time to make his move...", effects: {} },
 ];
 
 export const getSeasonGoalsForPlayer = (playerId: string): SeasonGoal[] => {
@@ -782,7 +786,8 @@ export const tyWindowMessages = [
 ];
 
 // --- DATA FOR BITCHLESS CHRONICLES ---
-export interface DatingScenario {
+// Old interface kept for backward compatibility with existing minigame
+export interface OldDatingScenario {
     character: 'elie' | 'craif';
     situation: string;
     options: Array<{
@@ -792,7 +797,7 @@ export interface DatingScenario {
     }>;
 }
 
-export const datingScenarios: DatingScenario[] = [
+export const datingScenarios: OldDatingScenario[] = [
     {
         character: 'elie',
         situation: "You match with a girl who has a rainbow flag emoji in her bio",
@@ -827,6 +832,72 @@ export const datingScenarios: DatingScenario[] = [
             { text: "*witty observation about her story*", response: "haha", insecurityGain: 15 },
             { text: "*thoughtful question*", response: "*left on read*", insecurityGain: 30 },
             { text: "*funny meme*", response: "😂 you're hilarious", insecurityGain: 10 }
+        ]
+    }
+];
+
+// New dating scenarios for the full DatingSimScreen component
+export const fullDatingScenarios: DatingScenario[] = [
+    {
+        id: 'elie_lesbian_saga',
+        character: 'elie',
+        description: "Elie's classic move: falling for another lesbian while being 'the main character'",
+        choices: [
+            {
+                situation: "You match with a girl who has a rainbow flag emoji in her bio",
+                options: [
+                    { text: "Hey! Love your vibe", response: "Sorry, I'm actually only into women 🏳️‍🌈", insecurityGain: 30 },
+                    { text: "What are you looking for?", response: "Women, actually. Thought the flag made that clear?", insecurityGain: 25 },
+                    { text: "You seem interesting", response: "Thanks! My girlfriend thinks so too", insecurityGain: 35 }
+                ]
+            },
+            {
+                situation: "At a party, you start talking to a girl about your podcast",
+                options: [
+                    { text: "I actually have a podcast", response: "Cool! My girlfriend has one too!", insecurityGain: 25 },
+                    { text: "I'm kind of a content creator", response: "*walks away to talk to someone else*", insecurityGain: 40 },
+                    { text: "Let me tell you about my takes", response: "I'm gonna go get a drink...", insecurityGain: 20 }
+                ]
+            },
+            {
+                situation: "You see her at a coffee shop and decide to be bold",
+                options: [
+                    { text: "Hey! Funny seeing you here", response: "Oh hey... actually I'm here with my girlfriend", insecurityGain: 35 },
+                    { text: "We should hang out sometime", response: "Sure! I'll bring my partner along", insecurityGain: 30 },
+                    { text: "Can I buy you a coffee?", response: "Thanks but my girlfriend already got me one", insecurityGain: 40 }
+                ]
+            }
+        ]
+    },
+    {
+        id: 'craif_friendzone_speedrun',
+        character: 'craif',
+        description: "Craif sends the perfect text after days of drafting... and gets friend-zoned anyway",
+        choices: [
+            {
+                situation: "You text a girl you've been talking to for weeks",
+                options: [
+                    { text: "Hey, want to grab dinner?", response: "Omg you're such a good friend! Let's do a group hangout!", insecurityGain: 25 },
+                    { text: "Been thinking about you", response: "Aww you're so sweet! Like a brother to me 🥰", insecurityGain: 30 },
+                    { text: "Coffee sometime?", response: "Sure! Can we invite some other people too?", insecurityGain: 20 }
+                ]
+            },
+            {
+                situation: "You send the perfect text after days of drafting it",
+                options: [
+                    { text: "*witty observation about her story*", response: "haha", insecurityGain: 15 },
+                    { text: "*thoughtful question*", response: "*left on read*", insecurityGain: 30 },
+                    { text: "*funny meme*", response: "😂 you're hilarious", insecurityGain: 10 }
+                ]
+            },
+            {
+                situation: "After weeks of texting, you finally suggest meeting up",
+                options: [
+                    { text: "Want to see a movie this weekend?", response: "Yeah! We should make it a friend group thing!", insecurityGain: 28 },
+                    { text: "I'd love to take you to dinner", response: "Aww you're the best friend ever! But I'm seeing someone", insecurityGain: 35 },
+                    { text: "How about we hang out, just us?", response: "I see you more as a friend tbh", insecurityGain: 32 }
+                ]
+            }
         ]
     }
 ];

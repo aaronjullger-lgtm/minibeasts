@@ -79,7 +79,7 @@ export interface EndGameReport {
     isEnd: boolean;
 }
 
-export type GameState = 'intro' | 'select' | 'playing' | 'ended';
+export type GameState = 'intro' | 'select' | 'playing' | 'datingSim' | 'ended';
 
 export type MinigameType = 'kicking' | 'quarterback' | 'play_calling' | 'running_back' | 'fantasy_draft' | 'commentary_battle' | 'trivia_night' | 'beer_die' | 'sunday_scaries' | 'commish_chaos' | 'ty_window' | 'bitchless_chronicles';
 
@@ -135,4 +135,25 @@ export interface GameEvent {
         targetStat: 'loveLife' | 'fandom' | 'uniqueStatValue' | 'energy' | 'cringeMeter' | 'entertainmentMeter' | 'grit';
         value: number;
     }>;
+}
+
+// Dating Sim Types
+export type RejectionFlavor = 'mild' | 'standard' | 'brutal' | 'complete_disaster';
+
+export interface DialogueChoice {
+    text: string;
+    response: string;
+    insecurityGain: number;
+}
+
+export interface DatingChoice {
+    situation: string;
+    options: DialogueChoice[];
+}
+
+export interface DatingScenario {
+    id: string;
+    character: 'elie' | 'craif';
+    description: string;
+    choices: DatingChoice[];
 }
