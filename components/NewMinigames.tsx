@@ -38,12 +38,17 @@ export const SundayScariesMinigame: React.FC<{
         
         setGamePhase('watching');
         
-        // Simulate games resolving
+        // Simulate games resolving with difficulty scaling
         let delay = 1000;
         let finalLegs: ParlayLeg[] = [...parlayLegs];
         parlayLegs.forEach((leg, index) => {
             setTimeout(() => {
-                const success = Math.random() > 0.5;
+                // Make it harder as more legs are added (realistic parlay odds)
+                // Each additional leg reduces success chance
+                const difficultyPenalty = index * 0.08; // 8% harder per leg
+                const baseSuccessChance = isHatersMode ? 0.45 : 0.55; // Hater's mode is riskier
+                const successChance = Math.max(0.2, baseSuccessChance - difficultyPenalty);
+                const success = Math.random() < successChance;
                 setParlayLegs(prev => {
                     const updated = [...prev];
                     updated[index] = { ...updated[index], success };
@@ -70,12 +75,20 @@ export const SundayScariesMinigame: React.FC<{
 
     const resolveParlay = (legs: ParlayLeg[]) => {
         const allSuccess = legs.every(leg => leg.success === true);
+        const successfulLegs = legs.filter(leg => leg.success === true).length;
         
         if (allSuccess) {
-            const baseGrit = legs.length * 20 + (isHatersMode ? 30 : 0);
+            // Exponential rewards for bigger parlays (more realistic to gambling)
+            const multiplier = Math.pow(2, legs.length - 1); // 2, 4, 8, 16, 32
+            const baseGrit = legs.length * 15 * multiplier + (isHatersMode ? 50 : 0);
             setGrit(baseGrit);
             const elieRoast = sundayScariesRoasts.won[Math.floor(Math.random() * sundayScariesRoasts.won.length)];
-            setRoastMessage(elieRoast);
+            setRoastMessage(`${elieRoast} YOU HIT A ${legs.length}-LEGGER! 🎉`);
+        } else if (successfulLegs === legs.length - 1) {
+            // Brutal "one leg away" message
+            const loss = legs.length * 8 * elieMultiplier;
+            setGrit(-loss);
+            setRoastMessage(`💀 ONE LEG AWAY! That stings even more. Lost ${loss} grit.`);
         } else {
             const loss = legs.length * 5 * elieMultiplier;
             setGrit(-loss);
@@ -215,12 +228,27 @@ export const CommishChaosMinigame: React.FC<{ onGameEnd: (grit: number) => void 
         if (commishPower < action.powerCost || gameOver) return;
         
         setCommishPower(prev => prev - action.powerCost);
-        setChaos(prev => prev + action.chaosGain);
-        setGrit(prev => prev + action.gritReward);
-        setMessage(`${action.description} - The league is NOT happy!`);
+        const newChaos = chaos + action.chaosGain;
+        setChaos(newChaos);
+        
+        // Escalating grit rewards based on how risky you're being
+        const riskMultiplier = Math.floor(newChaos / 20) + 1;
+        const gritReward = action.gritReward * riskMultiplier;
+        setGrit(prev => prev + gritReward);
+        
+        // More dramatic messages as chaos increases
+        if (newChaos >= 80) {
+            setMessage(`${action.description} - 🔥 THE LEAGUE IS ON FIRE! Revolt imminent!`);
+        } else if (newChaos >= 60) {
+            setMessage(`${action.description} - ⚠️ The group chat is EXPLODING with rage!`);
+        } else if (newChaos >= 40) {
+            setMessage(`${action.description} - 😤 People are starting to get really annoyed...`);
+        } else {
+            setMessage(`${action.description} - The league is NOT happy!`);
+        }
         
         // Check if league revolt triggered
-        if (chaos + action.chaosGain >= 100) {
+        if (newChaos >= 100) {
             setGameOver(true);
             setMessage("🚨 THE LEAGUE HAS REVOLTED! They're starting a new league without you! GAME OVER");
         }
@@ -304,13 +332,21 @@ export const CommishChaosMinigame: React.FC<{ onGameEnd: (grit: number) => void 
                         ))}
                     </div>
                     
-                    <button
-                        onClick={playJointAd}
-                        disabled={commishPower > 50}
-                        className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        🏥 Emergency Joint Ad (Restore Power)
-                    </button>
+                    <div className="flex gap-4 justify-center">
+                        <button
+                            onClick={playJointAd}
+                            disabled={commishPower > 50}
+                            className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            🏥 Emergency Joint Ad (Restore Power)
+                        </button>
+                        <button
+                            onClick={endGame}
+                            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold"
+                        >
+                            💰 Cash Out ({grit} Grit)
+                        </button>
+                    </div>
                 </>
             ) : (
                 <button
@@ -337,13 +373,19 @@ export const TyWindowMinigame: React.FC<{ onGameEnd: (grit: number) => void }> =
 
     useEffect(() => {
         if (waiting) {
-            const waitTime = Math.floor(Math.random() * 5000) + 3000; // 3-8 seconds
+            // Progressive difficulty - wait times get longer each round
+            const baseWait = 3000;
+            const roundPenalty = (round - 1) * 2000; // Add 2 seconds each round
+            const waitTime = Math.floor(Math.random() * 5000) + baseWait + roundPenalty;
             const timer = setTimeout(() => {
                 const message = tyWindowMessages[Math.floor(Math.random() * tyWindowMessages.length)];
                 setTyMessage(message);
                 setWaiting(false);
                 setWindowActive(true);
-                setTimeLeft(30);
+                
+                // Decrease time window each round (harder to catch)
+                const windowTime = Math.max(10, 30 - (round - 1) * 8);
+                setTimeLeft(windowTime);
                 
                 // Bonus points for longer messages
                 const bonus = message.length > 20 ? 20 : 0;
@@ -352,7 +394,7 @@ export const TyWindowMinigame: React.FC<{ onGameEnd: (grit: number) => void }> =
             
             return () => clearTimeout(timer);
         }
-    }, [waiting]);
+    }, [waiting, round]);
 
     useEffect(() => {
         if (windowActive && timeLeft > 0) {
@@ -379,7 +421,12 @@ export const TyWindowMinigame: React.FC<{ onGameEnd: (grit: number) => void }> =
     const captureMessage = () => {
         if (!windowActive) return;
         
-        const points = Math.floor(tyMessage.length / 2) + 10;
+        // Bonus points for fast captures
+        const timeBonus = Math.floor(timeLeft * 2);
+        const lengthBonus = Math.floor(tyMessage.length / 2);
+        const roundBonus = round * 10; // More points for later rounds
+        const points = timeBonus + lengthBonus + roundBonus + 10;
+        
         setScore(prev => prev + points);
         setCaptured(prev => prev + 1);
         setWindowActive(false);
