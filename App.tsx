@@ -195,7 +195,7 @@ function App() {
   };
 
   return (
-    <div className="bg-game-gradient text-white min-h-screen font-inter bg-particles">
+    <div className="bg-imessage-dark text-white min-h-screen">
       {renderGameState()}
     </div>
   );

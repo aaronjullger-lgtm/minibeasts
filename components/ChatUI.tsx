@@ -10,7 +10,7 @@ export const Spinner: React.FC = () => (
   </svg>
 );
 
-export const MiniBeastIcon: React.FC<{ characterId: string; isTalking: boolean }> = ({ characterId, isTalking }) => {
+export const MiniBeastIcon: React.FC<{ characterId: string; isTalking: boolean }> = ({ characterId, isTalking = false }) => {
   // Enhanced color palette with gradients
   const skin = "#FFD5B8";
   const skinShadow = "#E8B896";
@@ -249,16 +249,18 @@ export const MessageBubble: React.FC<{ msg: Message; playerId: string }> = ({ ms
   const isYou = speaker === playerId;
   const isSystem = speaker === 'system';
 
-  const nameColors: { [key: string]: string } = {
-    elie: 'text-red-400', justin: 'text-green-400', eric: 'text-blue-400', colin: 'text-purple-400', wyatt: 'text-pink-400', seth: 'text-pink-400',
-    spencer: 'text-orange-400', craif: 'text-yellow-500', pace: 'text-teal-300', max: 'text-indigo-400', nick: 'text-green-400', andrew: 'text-orange-400',
-    alex: 'text-green-400', aaron: 'text-blue-500', luke: 'text-gray-300', dj: 'text-yellow-300', ty: 'text-cyan-400', tj: 'text-gray-500',
+  // Generate random realistic time
+  const getMessageTime = () => {
+    const hour = Math.floor(Math.random() * 12) + 1;
+    const minute = Math.floor(Math.random() * 60).toString().padStart(2, '0');
+    const ampm = Math.random() > 0.5 ? 'AM' : 'PM';
+    return `${hour}:${minute} ${ampm}`;
   };
 
   if (isSystem) {
     return (
-      <div className="w-full flex flex-col items-center message-bubble">
-        <div className="px-5 py-3 rounded-full glass-dark text-cyan-300 text-center self-center text-sm italic w-full max-w-full border border-blue-500/30 shadow-lg font-semibold">
+      <div className="w-full flex justify-center my-4 message-bubble">
+        <div className="ios-glass rounded-full px-4 py-2 text-sm text-white/70 text-center max-w-[80%]">
           {text}
         </div>
       </div>
@@ -266,17 +268,30 @@ export const MessageBubble: React.FC<{ msg: Message; playerId: string }> = ({ ms
   }
 
   return (
-    <div className={`w-full flex ${isYou ? 'justify-end' : 'justify-start'} message-bubble`}>
-      <div className={`flex max-w-xs md:max-w-md ${isYou ? 'flex-row-reverse' : 'flex-row'}`}>
-        <div className={`w-12 h-12 rounded-full flex-shrink-0 ${isYou ? 'ml-3' : 'mr-3'} shadow-lg p-0.5 ${isYou ? 'bg-gradient-to-br from-blue-500 to-purple-600 neon-blue' : 'bg-gradient-to-br from-cyan-500 to-purple-500'}`}>
-          <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
-            <MiniBeastIcon characterId={speaker} isTalking={!isYou} />
+    <div className={`w-full flex ${isYou ? 'justify-end' : 'justify-start'} mb-4 message-bubble`}>
+      <div className={`flex ${isYou ? 'flex-row-reverse' : 'flex-row'} items-end gap-2 max-w-[80%]`}>
+        {/* Avatar - only show for others */}
+        {!isYou && (
+          <div className="w-8 h-8 rounded-full flex-shrink-0 overflow-hidden border border-white/10">
+            <MiniBeastIcon characterId={speaker} isTalking={false} />
           </div>
-        </div>
-        <div className="flex flex-col">
-          {!isYou && (<span className={`font-bold text-sm mb-1 ${nameColors[speaker] || 'text-gray-400'} drop-shadow`}>{name}</span>)}
-          <div className={`px-5 py-3 rounded-2xl shadow-lg ${isYou ? 'bg-gradient-to-br from-blue-600 to-purple-600 self-end rounded-br-md border border-blue-400/30 neon-blue' : 'glass-dark self-start rounded-bl-md border border-gray-500/30'}`}>
-            <p className="text-white font-medium">{text}</p>
+        )}
+        
+        <div className={`flex flex-col ${isYou ? 'items-end' : 'items-start'}`}>
+          {/* Name label - only for others */}
+          {!isYou && (
+            <span className="text-white/60 text-xs font-medium px-3 mb-1">{name}</span>
+          )}
+          
+          {/* Message bubble */}
+          <div className={`imessage-bubble ${isYou ? 'imessage-blue' : 'imessage-gray'}`}>
+            {text}
+          </div>
+          
+          {/* Timestamp and read receipt */}
+          <div className={`message-time ${isYou ? 'text-right' : 'text-left'} px-3 flex items-center gap-1`}>
+            <span>{getMessageTime()}</span>
+            {isYou && <span className="read-receipt">Read</span>}
           </div>
         </div>
       </div>
