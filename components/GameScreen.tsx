@@ -7,6 +7,8 @@ import { MessageBubble, Spinner } from './ChatUI';
 import { soundService } from '../services/soundService';
 import { gameEvents } from '../events';
 import { SundayScariesMinigame, CommishChaosMinigame, TyWindowMinigame, BitchlessChroniclesMinigame } from './NewMinigames';
+import { AchievementNotification } from './AchievementNotification';
+import { StatChangeNotification } from './StatChangeNotification';
 
 // --- MODAL COMPONENTS ---
 const ModalWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -961,6 +963,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
   const [kickClickCount, setKickClickCount] = useState(0);
   const [tyWindowOpen, setTyWindowOpen] = useState(false);
   const [tyWindowStartTime, setTyWindowStartTime] = useState<number | null>(null);
+  
+  // Notification states for visual feedback
+  const [achievementQueue, setAchievementQueue] = useState<Achievement[]>([]);
+  const [statChangeQueue, setStatChangeQueue] = useState<Array<{ stat: string; change: number; id: string }>>([]);
 
   const feedEndRef = useRef<HTMLDivElement>(null);
   const isInitialized = useRef(false);
@@ -1248,9 +1254,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
                       
                       if (playerState.grit >= weeklyGritGoal) {
                           addSystemMessage(`WEEKLY GOAL MET! You feel accomplished. [+15 Happiness, +25 Energy]`);
+                          soundService.playWeekComplete();
+                          soundService.playSuccess();
                           setRanking(prev => prev.map(p => p.id === playerState.id ? {...p, happiness: Math.min(100, p.happiness + 15), energy: Math.min(100, p.energy + 25)} : p));
                       } else {
                          addSystemMessage(`You missed your weekly grit goal... try harder. [-15 Happiness]`);
+                         soundService.playError();
                          setRanking(prev => prev.map(p => p.id === playerState.id ? {...p, happiness: Math.max(0, p.happiness - 15)} : p));
                       }
                       setWeeklyGritGoal(g => g + 25);
@@ -1326,6 +1335,16 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
                    const currentVal = newStats[statKey] as number | undefined;
                    if (typeof currentVal === 'number') {
                      (newStats[statKey] as number) = Math.max(0, Math.min(100, currentVal + value));
+                     // Add notification for significant stat changes
+                     if (Math.abs(value) >= 5) {
+                       setStatChangeQueue(prev => [...prev, {
+                         stat: String(key),
+                         change: value,
+                         id: `${Date.now()}-${key}`
+                       }]);
+                       if (value > 0) soundService.playSuccess();
+                       else soundService.playError();
+                     }
                   }
               }
               return newStats;
@@ -1439,8 +1458,22 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
     setRanking(prev => prev.map(c => c.id === playerState.id ? { ...c, grit: c.grit + grit, energy: Math.max(0, c.energy - 25) } : c));
     
     addSystemMessage(`You scored ${grit} Grit in the ${gamePlayed} minigame!`);
-    if (grit > 0) soundService.playMinigameWin();
-    else soundService.playMinigameLoss();
+    if (grit > 0) {
+      soundService.playMinigameWin();
+      soundService.playGritGain();
+    } else {
+      soundService.playMinigameLoss();
+      soundService.playGritLoss();
+    }
+    
+    // Add visual notification for grit change
+    if (grit !== 0) {
+      setStatChangeQueue(prev => [...prev, {
+        stat: 'Grit',
+        change: grit,
+        id: `${Date.now()}-grit`
+      }]);
+    }
 
     setNextMinigame(MINIGAMES[Math.floor(Math.random() * MINIGAMES.length)]);
     simulateNpcScores(gamePlayed, grit);
@@ -1637,7 +1670,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
                 const achievement = allAchievements.find(a => a.id === id);
                 if (achievement) {
                     addSystemMessage(`🏆 ACHIEVEMENT UNLOCKED: ${achievement.name}`);
-                    soundService.playGoalComplete();
+                    soundService.playAchievement(); // Use dedicated achievement sound
+                    // Add to notification queue for visual popup
+                    setAchievementQueue(prev => [...prev, achievement]);
                 }
                 achievementsUnlocked = true;
             }
@@ -1806,6 +1841,18 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
               ))}
           </div>
       </div>
+      
+      {/* Achievement Notifications */}
+      <AchievementNotification
+        achievements={achievementQueue}
+        onDismiss={(id) => setAchievementQueue(prev => prev.filter(a => a.id !== id))}
+      />
+      
+      {/* Stat Change Notifications */}
+      <StatChangeNotification
+        changes={statChangeQueue}
+        onDismiss={(id) => setStatChangeQueue(prev => prev.filter(c => c.id !== id))}
+      />
     </div>
   );
 };
