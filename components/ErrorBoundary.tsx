@@ -52,14 +52,14 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-          <div className="max-w-2xl w-full bg-slate-900 rounded-3xl p-8 border-2 border-red-500/50 shadow-2xl">
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 animate-fade-in">
+          <div className="max-w-2xl w-full glass-effect rounded-3xl p-8 border-2 border-red-500/50 shadow-2xl animate-slide-in-up">
             <div className="text-center mb-6">
-              <div className="text-6xl mb-4">💥</div>
-              <h1 className="text-3xl font-bold text-red-400 mb-2">
+              <div className="text-6xl mb-4 animate-wiggle">💥</div>
+              <h1 className="text-3xl font-bold text-red-400 mb-2 animate-slide-in-up">
                 Oops! Something Went Wrong
               </h1>
-              <p className="text-slate-300 text-lg">
+              <p className="text-slate-300 text-lg animate-slide-in-up stagger-1">
                 The app encountered an unexpected error. Don't worry, your progress might be saved.
               </p>
             </div>
@@ -85,13 +85,13 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="flex gap-3 justify-center">
               <button
                 onClick={this.handleReset}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl text-white font-bold transition-colors"
+                className="primary-btn hover-lift ripple"
               >
                 Try Again
               </button>
               <button
                 onClick={() => window.location.reload()}
-                className="px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-white font-bold transition-colors"
+                className="secondary-btn hover-lift"
               >
                 Reload Page
               </button>
