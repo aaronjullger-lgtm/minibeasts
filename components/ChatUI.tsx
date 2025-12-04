@@ -10,7 +10,7 @@ export const Spinner: React.FC = () => (
   </svg>
 );
 
-export const MiniBeastIcon: React.FC<{ characterId: string; isTalking: boolean }> = ({ characterId, isTalking = false }) => {
+export const MiniBeastIcon: React.FC<{ characterId: string; isTalking?: boolean }> = ({ characterId, isTalking = false }) => {
   // Enhanced color palette with gradients
   const skin = "#FFD5B8";
   const skinShadow = "#E8B896";
@@ -249,13 +249,19 @@ export const MessageBubble: React.FC<{ msg: Message; playerId: string }> = ({ ms
   const isYou = speaker === playerId;
   const isSystem = speaker === 'system';
 
-  // Generate random realistic time
-  const getMessageTime = () => {
-    const hour = Math.floor(Math.random() * 12) + 1;
-    const minute = Math.floor(Math.random() * 60).toString().padStart(2, '0');
-    const ampm = Math.random() > 0.5 ? 'AM' : 'PM';
-    return `${hour}:${minute} ${ampm}`;
-  };
+  // Generate stable timestamp based on message text hash
+  const messageTime = React.useMemo(() => {
+    // Create a simple hash from the message text to generate consistent time
+    let hash = 0;
+    for (let i = 0; i < text.length; i++) {
+      hash = ((hash << 5) - hash) + text.charCodeAt(i);
+      hash |= 0;
+    }
+    const hour = Math.abs(hash % 12) + 1;
+    const minute = Math.abs(hash >> 8) % 60;
+    const ampm = (hash & 1) ? 'AM' : 'PM';
+    return `${hour}:${minute.toString().padStart(2, '0')} ${ampm}`;
+  }, [text]);
 
   if (isSystem) {
     return (
@@ -290,7 +296,7 @@ export const MessageBubble: React.FC<{ msg: Message; playerId: string }> = ({ ms
           
           {/* Timestamp and read receipt */}
           <div className={`message-time ${isYou ? 'text-right' : 'text-left'} px-3 flex items-center gap-1`}>
-            <span>{getMessageTime()}</span>
+            <span>{messageTime}</span>
             {isYou && <span className="read-receipt">Read</span>}
           </div>
         </div>
