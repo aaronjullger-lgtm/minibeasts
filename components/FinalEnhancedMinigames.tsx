@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { datingScenarios, fantasyDraftPlayers, triviaData, commentaryBattleData } from '../constants';
+import { datingScenarios } from '../constants';
 
 // ============================================================================
 // BITCHLESS CHRONICLES: ULTIMATE HEARTBREAK SIMULATOR
@@ -32,7 +32,21 @@ export const UltraBitchlessChroniclesMinigame: React.FC<{
     };
 
     const chooseOption = (option: { text: string; response: string; insecurityGain: number }) => {
-        const insecurityGain = option.insecurityGain;
+        let insecurityGain = option.insecurityGain;
+        
+        // ELIE'S SPECIAL ABILITY: Delusion Shield - 50% less insecurity from first rejection
+        if (character === 'elie' && rejectionCount === 0 && insecurityGain >= 5) {
+            insecurityGain = Math.floor(insecurityGain * 0.5);
+        }
+        
+        // CRAIF'S SPECIAL ABILITY: Perfect Texter - chance to turn rejection into success
+        if (character === 'craif' && insecurityGain >= 5) {
+            // 20% chance to unlock breakthrough path
+            if (Math.random() < 0.2) {
+                insecurityGain = 3; // Make it a success
+            }
+        }
+        
         setInsecurity(prev => Math.min(prev + insecurityGain, 100));
         
         // Check if it's actually a good response (rare!)
