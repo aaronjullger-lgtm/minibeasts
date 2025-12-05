@@ -201,26 +201,30 @@ export const HUD: React.FC<HUDProps> = ({ player, day, week, weeklyGritGoal, onA
         <button 
           onClick={() => onActionClick('minigame')} 
           className="ios-button flex-shrink-0 flex items-center gap-2 text-sm"
+          title="Keyboard shortcut: M"
         >
-          <MinigameIcon game={nextMinigame} /> Play Game
+          <MinigameIcon game={nextMinigame} /> Play Game <span className="hidden md:inline text-xs opacity-60">[M]</span>
         </button>
         <button 
           onClick={() => onActionClick('store')} 
           className="ios-button-secondary flex-shrink-0 text-sm"
+          title="Keyboard shortcut: S"
         >
-          🛍️ Store
+          🛍️ Store <span className="hidden md:inline text-xs opacity-60">[S]</span>
         </button>
         <button 
           onClick={() => onActionClick('manage')} 
           className="ios-button-secondary flex-shrink-0 text-sm"
+          title="Keyboard shortcut: L"
         >
-          ⚙️ Manage
+          ⚙️ Manage <span className="hidden md:inline text-xs opacity-60">[L]</span>
         </button>
         <button 
           onClick={() => onActionClick('achievements')} 
           className="ios-button-secondary flex-shrink-0 text-sm"
+          title="Keyboard shortcut: A"
         >
-          🏆 Goals
+          🏆 Goals <span className="hidden md:inline text-xs opacity-60">[A]</span>
         </button>
       </div>
     </div>

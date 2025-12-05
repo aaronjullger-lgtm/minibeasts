@@ -7,6 +7,9 @@ import { MessageBubble, Spinner } from './ChatUI';
 import { soundService } from '../services/soundService';
 import { gameEvents } from '../events';
 import { SundayScariesMinigame, CommishChaosMinigame, TyWindowMinigame, BitchlessChroniclesMinigame } from './NewMinigames';
+import { AchievementQueue, StatChangeQueue } from './NotificationQueue';
+import { QuickTipsPanel, useFirstVisit } from './QuickTipsPanel';
+import { useKeyboardShortcut } from '../utils/hooks';
 
 // --- MODAL COMPONENTS ---
 const ModalWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -961,6 +964,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
   const [kickClickCount, setKickClickCount] = useState(0);
   const [tyWindowOpen, setTyWindowOpen] = useState(false);
   const [tyWindowStartTime, setTyWindowStartTime] = useState<number | null>(null);
+  
+  // Notification states for visual feedback
+  const [achievementQueue, setAchievementQueue] = useState<Achievement[]>([]);
+  const [statChangeQueue, setStatChangeQueue] = useState<Array<{ stat: string; value: number; id: string }>>([]);
+  
+  // First-time user experience
+  const { isFirstVisit, markVisited } = useFirstVisit();
+  const [showTips, setShowTips] = useState(false);
 
   const feedEndRef = useRef<HTMLDivElement>(null);
   const isInitialized = useRef(false);
@@ -974,17 +985,23 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
 
   const handleNpcConversation = useCallback(async () => {
     if (typingCharacter) return;
-    const newMessages = await initiateNpcConversation(storyFeed, ranking, playerState.id);
     
-    if (newMessages.length > 0) {
-        for (const msg of newMessages) {
-            const speakerName = characterData[msg.speaker]?.name;
-            setTypingCharacter(speakerName);
-            await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 1000));
-            setTypingCharacter(null);
-            setStoryFeed(prev => [...prev, msg]);
-            soundService.playMessageReceived();
-        }
+    try {
+      const newMessages = await initiateNpcConversation(storyFeed, ranking, playerState.id);
+      
+      if (newMessages.length > 0) {
+          for (const msg of newMessages) {
+              const speakerName = characterData[msg.speaker]?.name;
+              setTypingCharacter(speakerName);
+              await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 1000));
+              setTypingCharacter(null);
+              setStoryFeed(prev => [...prev, msg]);
+              soundService.playMessageReceived();
+          }
+      }
+    } catch (error) {
+      console.error('Error initiating NPC conversation:', error);
+      // Silently fail - don't interrupt gameplay
     }
   }, [playerState.id, storyFeed, typingCharacter, ranking]);
   
@@ -1014,6 +1031,51 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
         ]);
     }
   }, [addSystemMessage, initialData.day, playerState.id]);
+  
+  // Keyboard Shortcuts for better UX
+  useKeyboardShortcut('m', () => {
+    if (!activeModal) {
+      setActiveModal('minigame');
+      soundService.playClick();
+    }
+  });
+  
+  useKeyboardShortcut('s', () => {
+    if (!activeModal) {
+      setActiveModal('store');
+      soundService.playClick();
+    }
+  });
+  
+  useKeyboardShortcut('l', () => {
+    if (!activeModal) {
+      setActiveModal('manage');
+      soundService.playClick();
+    }
+  });
+  
+  useKeyboardShortcut('a', () => {
+    if (!activeModal) {
+      setActiveModal('achievements');
+      soundService.playClick();
+    }
+  });
+  
+  useKeyboardShortcut('Escape', () => {
+    if (activeModal) {
+      setActiveModal(null);
+      soundService.playClick();
+    }
+  });
+  
+  // Show tips for first-time visitors
+  useEffect(() => {
+    if (isFirstVisit && isInitialized.current) {
+      // Wait a bit before showing tips
+      const timer = setTimeout(() => setShowTips(true), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isFirstVisit]);
 
   const runRandomEvent = useCallback(() => {
       for (const event of randomEvents) {
@@ -1248,9 +1310,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
                       
                       if (playerState.grit >= weeklyGritGoal) {
                           addSystemMessage(`WEEKLY GOAL MET! You feel accomplished. [+15 Happiness, +25 Energy]`);
+                          soundService.playWeekComplete();
+                          soundService.playSuccess();
                           setRanking(prev => prev.map(p => p.id === playerState.id ? {...p, happiness: Math.min(100, p.happiness + 15), energy: Math.min(100, p.energy + 25)} : p));
                       } else {
                          addSystemMessage(`You missed your weekly grit goal... try harder. [-15 Happiness]`);
+                         soundService.playError();
                          setRanking(prev => prev.map(p => p.id === playerState.id ? {...p, happiness: Math.max(0, p.happiness - 15)} : p));
                       }
                       setWeeklyGritGoal(g => g + 25);
@@ -1305,11 +1370,26 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
     setTypingCharacter(responder.name);
     await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 1000));
     
-    const responseText = await generateNpcResponse(currentHistory, responder, playerState.id);
-    
-    if (responseText) {
-      setStoryFeed(prev => [...prev, { speaker: responder.id, text: responseText, role: 'model' }]);
-      soundService.playMessageReceived();
+    try {
+      const responseText = await generateNpcResponse(currentHistory, responder, playerState.id);
+      
+      if (responseText) {
+        setStoryFeed(prev => [...prev, { speaker: responder.id, text: responseText, role: 'model' }]);
+        soundService.playMessageReceived();
+      }
+    } catch (error) {
+      console.error('Error generating NPC response:', error);
+      // Fallback response if AI fails
+      const fallbackResponses = [
+        "...",
+        "lol",
+        "what",
+        "bruh",
+        "huh?"
+      ];
+      const fallback = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+      setStoryFeed(prev => [...prev, { speaker: responder.id, text: fallback, role: 'model' }]);
+      soundService.playError();
     }
     setTypingCharacter(null);
     setTimeout(() => setIsSending(false), 5000);
@@ -1326,6 +1406,16 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
                    const currentVal = newStats[statKey] as number | undefined;
                    if (typeof currentVal === 'number') {
                      (newStats[statKey] as number) = Math.max(0, Math.min(100, currentVal + value));
+                     // Add notification for significant stat changes
+                     if (Math.abs(value) >= 5) {
+                       setStatChangeQueue(prev => [...prev, {
+                         stat: String(key),
+                         value: value,
+                         id: `${Date.now()}-${key}`
+                       }]);
+                       if (value > 0) soundService.playSuccess();
+                       else soundService.playError();
+                     }
                   }
               }
               return newStats;
@@ -1370,36 +1460,43 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
 
       if (!roasterData || !targetData) return;
       
-      const roastData = await generateRoastAndReactions(storyFeed, roasterData, targetData, ranking);
+      try {
+        const roastData = await generateRoastAndReactions(storyFeed, roasterData, targetData, ranking);
 
-      if (!roastData) {
-          addSystemMessage("[SYSTEM: Your roast attempt failed. API issue.]");
-          return;
-      }
+        if (!roastData) {
+            addSystemMessage("[SYSTEM: Your roast attempt failed. API issue.]");
+            soundService.playError();
+            return;
+        }
 
-      const { roast, reactions, success } = roastData;
-      setStoryFeed(prev => [...prev, roast]);
-      soundService.playMessageSent();
-      await new Promise(resolve => setTimeout(resolve, 1000));
+        const { roast, reactions, success } = roastData;
+        setStoryFeed(prev => [...prev, roast]);
+        soundService.playMessageSent();
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-      for (const reaction of reactions) {
-          const reactorName = characterData[reaction.speaker]?.name || 'Someone';
-          setTypingCharacter(reactorName);
-          await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 800));
-          setTypingCharacter(null);
-          setStoryFeed(prev => [...prev, reaction]);
-          soundService.playMessageReceived();
-      }
-      
-      const targetName = characterData[targetId].name;
-      if (success) {
-          addSystemMessage(`Your roast on ${targetName} was legendary! [+20 Grit, +10 Happiness]`);
-          setRanking(prev => prev.map(p => p.id === playerState.id ? { ...p, grit: p.grit + 20, happiness: Math.min(100, p.happiness + 10) } : p));
-          soundService.playMinigameWin();
-      } else {
-          addSystemMessage(`Your roast on ${targetName} backfired horribly. [-20 Happiness]`);
-          setRanking(prev => prev.map(p => p.id === playerState.id ? { ...p, happiness: Math.max(0, p.happiness - 20) } : p));
-          soundService.playMinigameLoss();
+        for (const reaction of reactions) {
+            const reactorName = characterData[reaction.speaker]?.name || 'Someone';
+            setTypingCharacter(reactorName);
+            await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 800));
+            setTypingCharacter(null);
+            setStoryFeed(prev => [...prev, reaction]);
+            soundService.playMessageReceived();
+        }
+        
+        const targetName = characterData[targetId].name;
+        if (success) {
+            addSystemMessage(`Your roast on ${targetName} was legendary! [+20 Grit, +10 Happiness]`);
+            setRanking(prev => prev.map(p => p.id === playerState.id ? { ...p, grit: p.grit + 20, happiness: Math.min(100, p.happiness + 10) } : p));
+            soundService.playMinigameWin();
+        } else {
+            addSystemMessage(`Your roast on ${targetName} backfired horribly. [-20 Happiness]`);
+            setRanking(prev => prev.map(p => p.id === playerState.id ? { ...p, happiness: Math.max(0, p.happiness - 20) } : p));
+            soundService.playMinigameLoss();
+        }
+      } catch (error) {
+        console.error('Error generating roast:', error);
+        addSystemMessage("Your roast failed to send. Chat connection issue.");
+        soundService.playError();
       }
   };
 
@@ -1420,16 +1517,21 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
         addSystemMessage(`${npc.name} scored ${npc.score} in the ${gamePlayed} minigame.`);
     });
     
-    const reactions = await generateNpcMinigameReactions(storyFeed, participants, gamePlayed);
+    try {
+      const reactions = await generateNpcMinigameReactions(storyFeed, participants, gamePlayed);
 
-    for (const reaction of reactions) {
-        const speakerName = characterData[reaction.speaker]?.name;
-        if (speakerName) {
-            setTypingCharacter(speakerName);
-            await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 1000));
-            setTypingCharacter(null);
-            setStoryFeed(prev => [...prev, reaction]);
-        }
+      for (const reaction of reactions) {
+          const speakerName = characterData[reaction.speaker]?.name;
+          if (speakerName) {
+              setTypingCharacter(speakerName);
+              await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 1000));
+              setTypingCharacter(null);
+              setStoryFeed(prev => [...prev, reaction]);
+          }
+      }
+    } catch (error) {
+      console.error('Error generating minigame reactions:', error);
+      // Silently fail - scores are already shown
     }
   };
 
@@ -1439,14 +1541,28 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
     setRanking(prev => prev.map(c => c.id === playerState.id ? { ...c, grit: c.grit + grit, energy: Math.max(0, c.energy - 25) } : c));
     
     addSystemMessage(`You scored ${grit} Grit in the ${gamePlayed} minigame!`);
-    if (grit > 0) soundService.playMinigameWin();
-    else soundService.playMinigameLoss();
+    if (grit > 0) {
+      soundService.playMinigameWin();
+      soundService.playGritGain();
+    } else {
+      soundService.playMinigameLoss();
+      soundService.playGritLoss();
+    }
+    
+    // Add visual notification for grit change
+    if (grit !== 0) {
+      setStatChangeQueue(prev => [...prev, {
+        stat: 'Grit',
+        value: grit,
+        id: `${Date.now()}-grit`
+      }]);
+    }
 
     setNextMinigame(MINIGAMES[Math.floor(Math.random() * MINIGAMES.length)]);
     simulateNpcScores(gamePlayed, grit);
   };
 
-  const handlePurchase = (item: StoreItem) => {
+  const handlePurchase = useCallback((item: StoreItem) => {
       // Apply Ty Window discount if active
       const finalCost = tyWindowOpen ? Math.floor(item.cost * 0.5) : item.cost;
       
@@ -1476,7 +1592,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
                   "Hater's Parlay MISSED. [-20 Fandom]");
           }
       }
-  };
+  }, [tyWindowOpen, playerState.grit, inventory, addSystemMessage]);
 
   // --- PROP BET LOGIC ---
     useEffect(() => {
@@ -1637,7 +1753,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
                 const achievement = allAchievements.find(a => a.id === id);
                 if (achievement) {
                     addSystemMessage(`🏆 ACHIEVEMENT UNLOCKED: ${achievement.name}`);
-                    soundService.playGoalComplete();
+                    soundService.playAchievement(); // Use dedicated achievement sound
+                    // Add to notification queue for visual popup
+                    setAchievementQueue(prev => [...prev, achievement]);
                 }
                 achievementsUnlocked = true;
             }
@@ -1806,6 +1924,28 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
               ))}
           </div>
       </div>
+      
+      {/* Achievement Notifications */}
+      <AchievementQueue
+        achievements={achievementQueue}
+        onDismiss={(id) => setAchievementQueue(prev => prev.filter(a => a.id !== id))}
+      />
+      
+      {/* Stat Change Notifications */}
+      <StatChangeQueue
+        changes={statChangeQueue}
+        onDismiss={(id) => setStatChangeQueue(prev => prev.filter(c => c.id !== id))}
+      />
+      
+      {/* Quick Tips for First-Time Visitors */}
+      {showTips && (
+        <QuickTipsPanel
+          onDismiss={() => {
+            setShowTips(false);
+            markVisited();
+          }}
+        />
+      )}
     </div>
   );
 };
