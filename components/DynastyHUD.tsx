@@ -64,11 +64,9 @@ export const DynastyHUD: React.FC<DynastyHUDProps> = ({ player, globalState, wee
             </div>
             <div className="w-full bg-gray-800/80 rounded-full h-5 overflow-hidden border border-gray-700 shadow-inner">
               <div
-                className={`h-full transition-all duration-500 ${getCringeColor(globalState.cringeMeter)} relative`}
+                className={`h-full transition-all duration-500 ${getCringeColor(globalState.cringeMeter)} shimmer`}
                 style={{ width: `${globalState.cringeMeter}%` }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
-              </div>
+              />
             </div>
             <p className="text-xs text-gray-300 mt-2 font-medium">
               {globalState.cringeMeter >= 75 ? '🚨 Critical levels! Chat is dying!' : 
@@ -89,11 +87,9 @@ export const DynastyHUD: React.FC<DynastyHUDProps> = ({ player, globalState, wee
             </div>
             <div className="w-full bg-gray-800/80 rounded-full h-5 overflow-hidden border border-gray-700 shadow-inner">
               <div
-                className={`h-full transition-all duration-500 ${getEntertainmentColor(globalState.entertainmentMeter)} relative`}
+                className={`h-full transition-all duration-500 ${getEntertainmentColor(globalState.entertainmentMeter)} shimmer`}
                 style={{ width: `${globalState.entertainmentMeter}%` }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
-              </div>
+              />
             </div>
             <p className="text-xs text-gray-300 mt-2 font-medium">
               {globalState.entertainmentMeter >= 75 ? '🔥 Chat is popping off!' : 
