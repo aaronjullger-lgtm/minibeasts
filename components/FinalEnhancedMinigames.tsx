@@ -31,8 +31,8 @@ export const UltraBitchlessChroniclesMinigame: React.FC<{
         setGamePhase('playing');
     };
 
-    const chooseOption = (option: any) => {
-        const insecurityGain = option.insecurityGain || 10;
+    const chooseOption = (option: { text: string; response: string; insecurityGain: number }) => {
+        const insecurityGain = option.insecurityGain;
         setInsecurity(prev => Math.min(prev + insecurityGain, 100));
         
         // Check if it's actually a good response (rare!)
@@ -58,15 +58,18 @@ export const UltraBitchlessChroniclesMinigame: React.FC<{
             setTimeout(() => setAaronMessage(''), 4000);
         }
         
-        // Determine path based on performance
-        if (rejectionCount >= 3 && successCount === 0) setCurrentPath('disaster');
-        else if (successCount >= 2) setCurrentPath('breakthrough');
+        // Determine path based on performance (using updated counts)
+        const newRejectionCount = insecurityGain < 5 ? rejectionCount : rejectionCount + 1;
+        const newSuccessCount = insecurityGain < 5 ? successCount + 1 : successCount;
+        
+        if (newRejectionCount >= 3 && newSuccessCount === 0) setCurrentPath('disaster');
+        else if (newSuccessCount >= 2) setCurrentPath('breakthrough');
         
         if (scenarioIndex < scenarios.length - 1) {
             setScenarioIndex(prev => prev + 1);
             
-            // Therapy session every 2 rejections
-            if (rejectionCount > 0 && rejectionCount % 2 === 0) {
+            // Therapy session every 2 rejections (check the current rejection count)
+            if (newRejectionCount > 0 && newRejectionCount % 2 === 0 && insecurityGain >= 5) {
                 setGamePhase('therapy');
             } else {
                 setGamePhase('defense');
@@ -348,7 +351,7 @@ export const UltraBitchlessChroniclesMinigame: React.FC<{
                 <div className="bg-gray-900 p-4 md:p-6 rounded-xl mb-6">
                     <p className="text-lg md:text-2xl mb-4 md:mb-6">{currentScenario.situation}</p>
                     <div className="space-y-2 md:space-y-3">
-                        {currentScenario.options.map((option: any, i: number) => (
+                        {currentScenario.options.map((option: { text: string; response: string; insecurityGain: number }, i: number) => (
                             <button
                                 key={i}
                                 onClick={() => chooseOption(option)}
