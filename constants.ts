@@ -599,6 +599,33 @@ export const commentaryBattleData = [
       { text: "who's his backup??", points: 5 },
       { text: "F", points: 2 },
     ]
+  },
+  {
+    scenario: "The Eagles just won a controversial game on a questionable call.",
+    options: [
+      { text: "The refs handed them that game", points: 10 },
+      { text: "cry more, we're built different", points: 18, for: 'alex' },
+      { text: "classic eagles getting bailed out", points: 14 },
+      { text: "it was a good call actually", points: 4, for: 'alex' },
+    ]
+  },
+  {
+    scenario: "Someone in the group chat is complaining about their parlay losing by ONE leg.",
+    options: [
+      { text: "that's rough buddy", points: 6 },
+      { text: "should've hedged", points: 12 },
+      { text: "you'll get it next time (you won't)", points: 16, for: 'colin' },
+      { text: "why would you even take that leg", points: 10 },
+    ]
+  },
+  {
+    scenario: "Ty just sent his first message in 3 weeks. It says 'lol'.",
+    options: [
+      { text: "THE TY WINDOW IS OPEN", points: 20 },
+      { text: "what does this mean", points: 8 },
+      { text: "he lives!", points: 12 },
+      { text: "*screenshot* for the archives", points: 15, for: 'justin' },
+    ]
   }
 ];
 
@@ -681,6 +708,31 @@ export const triviaData = [
         question: "Which player famously performed the 'Lambeau Leap' after scoring?",
         answers: ["Brett Favre", "Donald Driver", "Aaron Rodgers", "LeRoy Butler"],
         correct: 3,
+    },
+    {
+        question: "What NFL team is known as 'America's Team'?",
+        answers: ["Pittsburgh Steelers", "Dallas Cowboys", "Green Bay Packers", "New England Patriots"],
+        correct: 1,
+    },
+    {
+        question: "Who holds the record for most career touchdown passes?",
+        answers: ["Peyton Manning", "Brett Favre", "Tom Brady", "Drew Brees"],
+        correct: 2,
+    },
+    {
+        question: "Which team has the most losses in Super Bowl history?",
+        answers: ["Buffalo Bills", "Denver Broncos", "New England Patriots", "Minnesota Vikings"],
+        correct: 2,
+    },
+    {
+        question: "What year did the NFL merge with the AFL?",
+        answers: ["1966", "1970", "1972", "1968"],
+        correct: 1,
+    },
+    {
+        question: "Who was the first overall pick in the 1998 NFL Draft?",
+        answers: ["Randy Moss", "Peyton Manning", "Ryan Leaf", "Charles Woodson"],
+        correct: 1,
     }
 ];
 
