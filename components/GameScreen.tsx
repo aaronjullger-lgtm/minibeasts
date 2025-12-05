@@ -183,23 +183,11 @@ const TriviaNightMinigame: React.FC<{ onGameEnd: (grit: number) => void }> = ({ 
     const [timeLeft, setTimeLeft] = useState(15);
     const [feedback, setFeedback] = useState<'' | 'correct' | 'incorrect'>('');
     const [showHint, setShowHint] = useState(false);
+    const timeoutTriggered = useRef(false);
 
-    useEffect(() => {
-        if (feedback || timeLeft <= 0) return;
-        const timer = setInterval(() => {
-            setTimeLeft(t => {
-                if (t <= 1) {
-                    handleAnswer(-1); // Time's up
-                    return 0;
-                }
-                return t - 1;
-            });
-        }, 1000);
-        return () => clearInterval(timer);
-    }, [qIndex, feedback]);
-
-    const handleAnswer = (answerIndex: number) => {
+    const handleAnswer = useCallback((answerIndex: number) => {
         if (feedback) return;
+        timeoutTriggered.current = false;
         let gritGained = 0;
         const isCorrect = answerIndex === questions[qIndex].correct;
         
@@ -225,13 +213,29 @@ const TriviaNightMinigame: React.FC<{ onGameEnd: (grit: number) => void }> = ({ 
             if (qIndex < questions.length - 1) {
                 setQIndex(i => i + 1);
                 setTimeLeft(15);
+                timeoutTriggered.current = false;
             } else {
                 // Streak bonus at end
                 const streakBonus = bestStreak * 10;
                 onGameEnd(score + gritGained + streakBonus);
             }
         }, 1800);
-    };
+    }, [feedback, questions, qIndex, timeLeft, streak, bestStreak, score, onGameEnd]);
+
+    useEffect(() => {
+        if (feedback || timeLeft <= 0 || timeoutTriggered.current) return;
+        const timer = setInterval(() => {
+            setTimeLeft(t => {
+                if (t <= 1 && !timeoutTriggered.current) {
+                    timeoutTriggered.current = true;
+                    handleAnswer(-1); // Time's up
+                    return 0;
+                }
+                return t - 1;
+            });
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [qIndex, feedback, timeLeft, handleAnswer]);
 
     const useHint = () => {
         setShowHint(true);
