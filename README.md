@@ -78,9 +78,75 @@ The following minigames are now playable in Dynasty Mode:
 
 ---
 
+### ✅ 5. "Beer Die Challenge" **[IMPLEMENTED & ENHANCED]**
+**Concept:** Click-based reflex game where you tap die before they disappear. Speed increases as you progress.
+
+**Why it fits:** Classic party game that tests your reflexes and timing under pressure.
+
+**Features:**
+- ✅ Power-ups: Slow motion, multi-dice, shield
+- ✅ Combo system with score multipliers
+- ✅ Golden dice (5x points) and bomb dice (lose life)
+- ✅ Boss rounds every 100 points
+- ✅ Obstacles that block clicks
+- ✅ Progressive difficulty scaling
+
+---
+
+### ✅ 6. "Fantasy Draft Championship Builder" **[IMPLEMENTED & ENHANCED]**
+**Concept:** Draft your fantasy football team, manage it through trades and waivers, simulate the season, and compete for the championship.
+
+**Why it fits:** The group is obsessed with fantasy football. This is their entire personality September through December.
+
+**Features:**
+- ✅ Three draft strategies: Safe, Risky, Balanced
+- ✅ Character-specific special abilities (Eric's "ALL-IN", Elie's overthinking, Justin's screenshots)
+- ✅ Trade system with AI opponents
+- ✅ Waiver wire pickups
+- ✅ Player injuries and boom/bust mechanics
+- ✅ Team synergy bonuses
+- ✅ 13-week season simulation with weekly scores
+- ✅ Playoff bracket and championship game
+
+---
+
+### ✅ 7. "NFL Trivia Night: Brain Battle" **[IMPLEMENTED & ENHANCED]**
+**Concept:** Test your NFL knowledge with trivia questions, use lifelines strategically, and build massive scoring streaks.
+
+**Why it fits:** Perfect for the group to prove who actually knows football vs. who just talks loud.
+
+**Features:**
+- ✅ 10 challenging NFL trivia questions
+- ✅ Three lifelines: 50/50, Ask the Group, Skip
+- ✅ Combo streak system with multipliers
+- ✅ Lightning round (triggered by 3+ streak) with 2x points
+- ✅ Time pressure with countdown timer
+- ✅ Character-specific roasts for wrong answers
+- ✅ Group chat suggestions (sometimes wrong)
+- ✅ Perfect game bonus (100 grit)
+
+---
+
+### ✅ 8. "Commentary Battle: Hot Take Havoc" **[IMPLEMENTED & ENHANCED]**
+**Concept:** Drop your hottest takes on live game situations and NFL drama. Build your reputation or get roasted into oblivion.
+
+**Why it fits:** This IS the group chat. Everyone's got takes. Some are good. Most are terrible. All are entertaining.
+
+**Features:**
+- ✅ Roast meter that tracks how badly you're getting cooked
+- ✅ Character alignment system (who agrees with you)
+- ✅ Hot take multiplier (2x points on next answer)
+- ✅ Viral moments (Justin screenshots your best/worst takes)
+- ✅ Group explosion meter (controversial takes increase it)
+- ✅ Multiple rounds with escalating stakes
+- ✅ BOSS ROUND: Defend your worst take of all time
+- ✅ Three defense strategies: Double Down, Apologize, or Blame Others
+
+---
+
 ## Future Game Ideas
 
-### 5. "All-In Arena: Eric's Grit Battle Royale"
+### 9. "All-In Arena: Eric's Grit Battle Royale"
 **Concept:** A combat game where players fight using "grit" and "that dog in them" as stats. Eric provides real-time commentary on who's got the most heart.
 
 **Why it fits:** Eric is obsessed with "ALL-IN" culture. This turns his football philosophy into actual gameplay.
@@ -94,7 +160,7 @@ The following minigames are now playable in Dynasty Mode:
 
 ---
 
-### 6. "The Eagles Bloc: A Tower Defense Game"
+### 10. "The Eagles Bloc: A Tower Defense Game"
 **Concept:** Alex, Nick, and Justin defend Philadelphia from haters. Deploy Eagles players and defend Jalen Hurts' honor at all costs.
 
 **Why it fits:** These three are die-hard Eagles fans who get weirdly defensive. Perfect for a "defend the base" style game.
@@ -108,7 +174,7 @@ The following minigames are now playable in Dynasty Mode:
 
 ---
 
-### 7. "UConn Hype Generator: Wyatt's Randomizer"
+### 11. "UConn Hype Generator: Wyatt's Randomizer"
 **Concept:** A mini-game where Wyatt texts completely random, out-of-context messages to the group chat. Your job is to guess what he's talking about.
 
 **Why it fits:** Wyatt drops bizarre texts like "BLM✊🏾" with zero context. This captures his chaotic energy.
@@ -122,7 +188,7 @@ The following minigames are now playable in Dynasty Mode:
 
 ---
 
-### 8. "Screenshot Warfare: Justin's Evidence Vault"
+### 12. "Screenshot Warfare: Justin's Evidence Vault"
 **Concept:** A stealth game where you try to say something dumb without Justin screenshotting it. He's always watching. He's always ready.
 
 **Why it fits:** Justin screenshots everything, especially Elie's bad takes. This is his superpower.
