@@ -7,8 +7,7 @@ import { MessageBubble, Spinner } from './ChatUI';
 import { soundService } from '../services/soundService';
 import { gameEvents } from '../events';
 import { SundayScariesMinigame, CommishChaosMinigame, TyWindowMinigame, BitchlessChroniclesMinigame } from './NewMinigames';
-import { AchievementNotification } from './AchievementNotification';
-import { StatChangeNotification } from './StatChangeNotification';
+import { AchievementQueue, StatChangeQueue } from './NotificationQueue';
 import { QuickTipsPanel, useFirstVisit } from './QuickTipsPanel';
 import { useKeyboardShortcut } from '../utils/hooks';
 
@@ -968,7 +967,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
   
   // Notification states for visual feedback
   const [achievementQueue, setAchievementQueue] = useState<Achievement[]>([]);
-  const [statChangeQueue, setStatChangeQueue] = useState<Array<{ stat: string; change: number; id: string }>>([]);
+  const [statChangeQueue, setStatChangeQueue] = useState<Array<{ stat: string; value: number; id: string }>>([]);
   
   // First-time user experience
   const { isFirstVisit, markVisited } = useFirstVisit();
@@ -1411,7 +1410,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
                      if (Math.abs(value) >= 5) {
                        setStatChangeQueue(prev => [...prev, {
                          stat: String(key),
-                         change: value,
+                         value: value,
                          id: `${Date.now()}-${key}`
                        }]);
                        if (value > 0) soundService.playSuccess();
@@ -1554,7 +1553,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
     if (grit !== 0) {
       setStatChangeQueue(prev => [...prev, {
         stat: 'Grit',
-        change: grit,
+        value: grit,
         id: `${Date.now()}-grit`
       }]);
     }
@@ -1927,13 +1926,13 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
       </div>
       
       {/* Achievement Notifications */}
-      <AchievementNotification
+      <AchievementQueue
         achievements={achievementQueue}
         onDismiss={(id) => setAchievementQueue(prev => prev.filter(a => a.id !== id))}
       />
       
       {/* Stat Change Notifications */}
-      <StatChangeNotification
+      <StatChangeQueue
         changes={statChangeQueue}
         onDismiss={(id) => setStatChangeQueue(prev => prev.filter(c => c.id !== id))}
       />
