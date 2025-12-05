@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { sundayScariesTeams, sundayScariesRoasts, commishActions, tyWindowMessages, datingScenarios, ParlayLeg, CommishAction, OldDatingScenario, fantasyDraftPlayers, triviaData, commentaryBattleData } from '../constants';
 import { SundayScariesMinigame as EnhancedSundayScariesMinigame } from './EnhancedMinigames';
 import { UltraBeerDieMinigame, UltraTyWindowMinigame, UltraCommishChaosMinigame } from './SuperEnhancedMinigames';
+import { UltraBitchlessChroniclesMinigame } from './FinalEnhancedMinigames';
 
 // Difficulty scaling constants
 const TY_WINDOW_BASE_WAIT = 3000; // Base wait time in ms
@@ -1116,7 +1117,7 @@ export const NewMinigames: React.FC = () => {
     }
 
     if (selectedGame === 'bitchless_chronicles') {
-        return <BitchlessChroniclesMinigame onGameEnd={handleGameEnd} playerName="Player" />;
+        return <UltraBitchlessChroniclesMinigame onGameEnd={handleGameEnd} playerName="Player" />;
     }
 
     if (selectedGame === 'beer_die') {
@@ -1179,11 +1180,14 @@ export const NewMinigames: React.FC = () => {
 
                 <button
                     onClick={() => setSelectedGame('bitchless_chronicles')}
-                    className="p-6 bg-gradient-to-br from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                    className="p-6 bg-gradient-to-br from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg relative overflow-hidden group"
                 >
-                    <div className="text-4xl mb-3">💔</div>
-                    <div className="text-2xl mb-2">Bitchless Chronicles</div>
-                    <div className="text-sm text-gray-200">Experience dating rejection simulator</div>
+                    <div className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded-full font-bold animate-pulse">
+                        ENHANCED
+                    </div>
+                    <div className="text-4xl mb-3 group-hover:animate-pulse">💔</div>
+                    <div className="text-2xl mb-2">Bitchless Chronicles: ULTIMATE</div>
+                    <div className="text-sm text-gray-200">Therapy sessions, multiple endings, confidence meter!</div>
                 </button>
 
                 <button
