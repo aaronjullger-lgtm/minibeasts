@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { sundayScariesTeams, sundayScariesRoasts, commishActions, tyWindowMessages, datingScenarios, ParlayLeg, CommishAction, OldDatingScenario, fantasyDraftPlayers, triviaData, commentaryBattleData } from '../constants';
+import { SundayScariesMinigame as EnhancedSundayScariesMinigame } from './EnhancedMinigames';
+import { UltraBeerDieMinigame, UltraTyWindowMinigame, UltraCommishChaosMinigame } from './SuperEnhancedMinigames';
+import { UltraBitchlessChroniclesMinigame } from './FinalEnhancedMinigames';
 
 // Difficulty scaling constants
 const TY_WINDOW_BASE_WAIT = 3000; // Base wait time in ms
@@ -1102,23 +1105,23 @@ export const NewMinigames: React.FC = () => {
     }
 
     if (selectedGame === 'sunday_scaries') {
-        return <SundayScariesMinigame onGameEnd={handleGameEnd} playerName="Player" />;
+        return <EnhancedSundayScariesMinigame onGameEnd={handleGameEnd} playerName="Player" />;
     }
 
     if (selectedGame === 'commish_chaos') {
-        return <CommishChaosMinigame onGameEnd={handleGameEnd} />;
+        return <UltraCommishChaosMinigame onGameEnd={handleGameEnd} />;
     }
 
     if (selectedGame === 'ty_window') {
-        return <TyWindowMinigame onGameEnd={handleGameEnd} />;
+        return <UltraTyWindowMinigame onGameEnd={handleGameEnd} />;
     }
 
     if (selectedGame === 'bitchless_chronicles') {
-        return <BitchlessChroniclesMinigame onGameEnd={handleGameEnd} playerName="Player" />;
+        return <UltraBitchlessChroniclesMinigame onGameEnd={handleGameEnd} playerName="Player" />;
     }
 
     if (selectedGame === 'beer_die') {
-        return <BeerDieChallengeMinigame onGameEnd={handleGameEnd} />;
+        return <UltraBeerDieMinigame onGameEnd={handleGameEnd} />;
     }
 
     if (selectedGame === 'fantasy_draft') {
@@ -1141,47 +1144,62 @@ export const NewMinigames: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-6xl">
                 <button
                     onClick={() => setSelectedGame('sunday_scaries')}
-                    className="p-6 bg-gradient-to-br from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                    className="p-6 bg-gradient-to-br from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg relative overflow-hidden group"
                 >
-                    <div className="text-4xl mb-3">🎰</div>
-                    <div className="text-2xl mb-2">Sunday Scaries</div>
-                    <div className="text-sm text-gray-200">Build a parlay and pray it hits</div>
+                    <div className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded-full font-bold animate-pulse">
+                        ENHANCED
+                    </div>
+                    <div className="text-4xl mb-3 group-hover:animate-bounce">🎰</div>
+                    <div className="text-2xl mb-2">ULTRA Parlay Mayhem</div>
+                    <div className="text-sm text-gray-200">8-leg parlays, insurance, hot streaks & MORE!</div>
                 </button>
 
                 <button
                     onClick={() => setSelectedGame('commish_chaos')}
-                    className="p-6 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                    className="p-6 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg relative overflow-hidden group"
                 >
-                    <div className="text-4xl mb-3">👑</div>
-                    <div className="text-2xl mb-2">Commish Chaos</div>
-                    <div className="text-sm text-gray-200">Abuse your power as commissioner</div>
+                    <div className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded-full font-bold animate-pulse">
+                        ENHANCED
+                    </div>
+                    <div className="text-4xl mb-3 group-hover:animate-bounce">👑</div>
+                    <div className="text-2xl mb-2">Commish Chaos DELUXE</div>
+                    <div className="text-sm text-gray-200">Propaganda, conspiracies, DICTATOR MODE!</div>
                 </button>
 
                 <button
                     onClick={() => setSelectedGame('ty_window')}
-                    className="p-6 bg-gradient-to-br from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                    className="p-6 bg-gradient-to-br from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg relative overflow-hidden group"
                 >
-                    <div className="text-4xl mb-3">👻</div>
-                    <div className="text-2xl mb-2">The Ty Window</div>
-                    <div className="text-sm text-gray-200">Catch Ty when he actually messages</div>
+                    <div className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded-full font-bold animate-pulse">
+                        ENHANCED
+                    </div>
+                    <div className="text-4xl mb-3 group-hover:animate-spin">👻</div>
+                    <div className="text-2xl mb-2">Ty Window MASTER</div>
+                    <div className="text-sm text-gray-200">Predict messages, build streaks, perfect runs!</div>
                 </button>
 
                 <button
                     onClick={() => setSelectedGame('bitchless_chronicles')}
-                    className="p-6 bg-gradient-to-br from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                    className="p-6 bg-gradient-to-br from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg relative overflow-hidden group"
                 >
-                    <div className="text-4xl mb-3">💔</div>
-                    <div className="text-2xl mb-2">Bitchless Chronicles</div>
-                    <div className="text-sm text-gray-200">Experience dating rejection simulator</div>
+                    <div className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded-full font-bold animate-pulse">
+                        ENHANCED
+                    </div>
+                    <div className="text-4xl mb-3 group-hover:animate-pulse">💔</div>
+                    <div className="text-2xl mb-2">Bitchless Chronicles: ULTIMATE</div>
+                    <div className="text-sm text-gray-200">Therapy sessions, multiple endings, confidence meter!</div>
                 </button>
 
                 <button
                     onClick={() => setSelectedGame('beer_die')}
-                    className="p-6 bg-gradient-to-br from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                    className="p-6 bg-gradient-to-br from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg relative overflow-hidden group"
                 >
-                    <div className="text-4xl mb-3">🎲</div>
-                    <div className="text-2xl mb-2">Beer Die Challenge</div>
-                    <div className="text-sm text-gray-200">Click the dice before they disappear</div>
+                    <div className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded-full font-bold animate-pulse">
+                        ENHANCED
+                    </div>
+                    <div className="text-4xl mb-3 group-hover:animate-pulse">🎲</div>
+                    <div className="text-2xl mb-2">Beer Die MAYHEM</div>
+                    <div className="text-sm text-gray-200">Power-ups, combos, golden dice, BOSS rounds!</div>
                 </button>
 
                 <button
