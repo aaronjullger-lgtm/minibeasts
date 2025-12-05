@@ -584,3 +584,348 @@ export const UltraTyWindowMinigame: React.FC<{ onGameEnd: (grit: number) => void
     
     return null;
 };
+
+// ============================================================================
+// COMMISH CHAOS DELUXE - ABSOLUTE POWER EDITION
+// ============================================================================
+// New: League satisfaction meter, propaganda system, conspiracy theories, revolution phases
+export const UltraCommishChaosMinigame: React.FC<{ onGameEnd: (grit: number) => void }> = ({ onGameEnd }) => {
+    const [commishPower, setCommishPower] = useState(100);
+    const [chaos, setChaos] = useState(0);
+    const [grit, setGrit] = useState(0);
+    const [leagueSatisfaction, setLeagueSatisfaction] = useState(75);
+    const [message, setMessage] = useState("You're the commissioner. Time to abuse your power... wisely?");
+    const [gameOver, setGameOver] = useState(false);
+    const [jointAdMinigame, setJointAdMinigame] = useState(false);
+    const [adClicks, setAdClicks] = useState(0);
+    const [revolutionPhase, setRevolutionPhase] = useState(0); // 0-3
+    const [propaganda, setPropaganda] = useState(0); // 0-100
+    const [conspiracyTheories, setConspiracyTheories] = useState<string[]>([]);
+    const [actionHistory, setActionHistory] = useState<string[]>([]);
+    const [dictatorMode, setDictatorMode] = useState(false);
+
+    const spreadPropaganda = () => {
+        if (commishPower >= 15) {
+            setCommishPower(prev => prev - 15);
+            setPropaganda(prev => Math.min(100, prev + 20));
+            setLeagueSatisfaction(prev => Math.min(100, prev + 10));
+            setChaos(prev => Math.max(0, prev - 5));
+            setGrit(prev => prev + 8);
+            setMessage("📢 You've spun the narrative! The league is buying your propaganda... for now.");
+        }
+    };
+
+    const triggerConspiracy = () => {
+        const conspiracies = [
+            "Collin is secretly controlling the waiver wire!",
+            "The scoring system is rigged against Elie!",
+            "Justin is screenshotting everything for blackmail!",
+            "Spencer's cat walked across the keyboard during trades!",
+            "The league is actually just a social experiment!"
+        ];
+        
+        if (commishPower >= 20 && propaganda >= 30) {
+            setCommishPower(prev => prev - 20);
+            const theory = conspiracies[Math.floor(Math.random() * conspiracies.length)];
+            setConspiracyTheories(prev => [...prev, theory]);
+            setChaos(prev => Math.min(100, prev + 15));
+            setGrit(prev => prev + 12);
+            setMessage(`🕵️ Conspiracy Theory Launched: "${theory}" - The league is confused!`);
+        }
+    };
+
+    const performAction = (action: any) => {
+        if (commishPower < action.powerCost || gameOver) return;
+        
+        setCommishPower(prev => prev - action.powerCost);
+        const newChaos = chaos + action.chaosGain;
+        setChaos(newChaos);
+        
+        // Calculate satisfaction impact
+        const satisfactionLoss = Math.floor(action.chaosGain * 0.8);
+        setLeagueSatisfaction(prev => Math.max(0, prev - satisfactionLoss));
+        
+        // Revolution phase progression
+        if (leagueSatisfaction < 60 && revolutionPhase === 0) setRevolutionPhase(1);
+        if (leagueSatisfaction < 40 && revolutionPhase === 1) setRevolutionPhase(2);
+        if (leagueSatisfaction < 20 && revolutionPhase === 2) setRevolutionPhase(3);
+        
+        // Escalating grit rewards with propaganda bonus
+        const propagandaMultiplier = 1 + (propaganda / 100);
+        const riskMultiplier = Math.floor(newChaos / 15) + 1;
+        const gritReward = Math.floor(action.gritReward * riskMultiplier * propagandaMultiplier);
+        setGrit(prev => prev + gritReward);
+        
+        // Track action history
+        setActionHistory(prev => [...prev, action.name]);
+        
+        // Dynamic messages based on chaos and satisfaction
+        let messageText = action.description;
+        if (newChaos >= 90) {
+            messageText += " - 🚨 THE LEAGUE IS IN FULL REVOLT MODE!";
+        } else if (newChaos >= 70) {
+            messageText += " - 🔥 The group chat is EXPLODING!";
+        } else if (newChaos >= 50) {
+            messageText += " - ⚠️ People are getting really mad...";
+        }
+        
+        if (leagueSatisfaction <= 25) {
+            messageText += " - 💀 League satisfaction is CRITICAL!";
+        }
+        
+        setMessage(messageText);
+        
+        // Check for different game over conditions
+        if (newChaos >= 100 && leagueSatisfaction < 30) {
+            setGameOver(true);
+            setMessage("🚨 THE LEAGUE HAS COMPLETELY REVOLTED! They're starting a new league called 'Not Spencer's League'!");
+        } else if (dictatorMode && newChaos >= 80) {
+            setGameOver(true);
+            setMessage("👑 ABSOLUTE POWER! You've become a fantasy football dictator! The league fears and respects you!");
+        }
+    };
+
+    const activateDictatorMode = () => {
+        if (propaganda >= 75 && chaos >= 50 && !dictatorMode) {
+            setDictatorMode(true);
+            setGrit(prev => prev + 50);
+            setMessage("👑 DICTATOR MODE ACTIVATED! You now rule with an iron fist! All actions cost 50% less power!");
+        }
+    };
+
+    const playJointAd = () => {
+        setJointAdMinigame(true);
+        setMessage("Click the chiropractic ads to earn emergency commish powers!");
+    };
+
+    const clickAd = () => {
+        setAdClicks(prev => prev + 1);
+        if (adClicks >= 4) {
+            const powerRestore = dictatorMode ? 40 : 30;
+            setCommishPower(prev => Math.min(prev + powerRestore, 100));
+            setGrit(prev => prev + 15);
+            setJointAdMinigame(false);
+            setAdClicks(0);
+            setMessage("🏥 Emergency powers restored! The Joint Chiropractic saves the day (and your spine)!");
+        }
+    };
+
+    const endGame = () => {
+        // Calculate final bonuses
+        let finalGrit = grit;
+        if (propaganda >= 80) finalGrit += 40; // Propaganda master bonus
+        if (conspiracyTheories.length >= 3) finalGrit += 30; // Conspiracy theorist bonus
+        if (dictatorMode) finalGrit = Math.floor(finalGrit * 1.3); // Dictator bonus
+        if (actionHistory.length >= 10) finalGrit += 25; // Action master bonus
+        
+        onGameEnd(finalGrit);
+    };
+
+    if (jointAdMinigame) {
+        return (
+            <div className="glass-dark p-4 md:p-8 rounded-3xl shadow-2xl w-full max-w-3xl text-center border-4 border-purple-500/50">
+                <h2 className="text-3xl md:text-4xl font-orbitron mb-4">🏥 The Joint Chiropractic Ad 🏥</h2>
+                <p className="text-lg md:text-xl mb-6">Click the ad 5 times to earn emergency powers!</p>
+                <p className="text-2xl md:text-3xl font-bold mb-6">Clicks: {adClicks}/5</p>
+                <button
+                    onClick={clickAd}
+                    className="px-12 md:px-20 py-6 md:py-10 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 rounded-2xl font-bold text-xl md:text-3xl transform hover:scale-105 transition-all shadow-2xl"
+                >
+                    🦴 ADJUST YOUR SPINE 🦴
+                </button>
+                <p className="mt-4 text-sm text-gray-400">
+                    "Your spine will thank you!" - Definitely not Spencer
+                </p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="glass-dark p-4 md:p-8 rounded-3xl shadow-2xl w-full max-w-4xl text-center border-4 border-purple-500/50 relative overflow-hidden">
+            {dictatorMode && (
+                <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-yellow-500/20 to-transparent h-32 animate-pulse" />
+            )}
+            
+            <div className="relative z-10">
+                <h2 className="text-3xl md:text-5xl font-orbitron mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                    {dictatorMode ? '👑 DICTATOR MODE' : '⚖️ Commish Chaos DELUXE'}
+                </h2>
+                
+                {/* Enhanced Stats Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4 text-sm">
+                    <div className="bg-blue-900/50 p-2 md:p-3 rounded-lg border border-blue-500">
+                        <p className="text-xs font-bold text-blue-300">Power</p>
+                        <p className="text-xl md:text-2xl font-bold">{commishPower}</p>
+                        <div className="h-1 bg-blue-900 rounded-full mt-1">
+                            <div className="h-full bg-blue-400 rounded-full transition-all" style={{width: `${commishPower}%`}} />
+                        </div>
+                    </div>
+                    <div className="bg-red-900/50 p-2 md:p-3 rounded-lg border border-red-500">
+                        <p className="text-xs font-bold text-red-300">Chaos</p>
+                        <p className="text-xl md:text-2xl font-bold">{chaos}/100</p>
+                        <div className="h-1 bg-red-900 rounded-full mt-1">
+                            <div className="h-full bg-red-500 rounded-full transition-all" style={{width: `${chaos}%`}} />
+                        </div>
+                    </div>
+                    <div className="bg-yellow-900/50 p-2 md:p-3 rounded-lg border border-yellow-500">
+                        <p className="text-xs font-bold text-yellow-300">Grit</p>
+                        <p className="text-xl md:text-2xl font-bold">{grit}</p>
+                    </div>
+                    <div className={`bg-green-900/50 p-2 md:p-3 rounded-lg border ${leagueSatisfaction < 30 ? 'border-red-500 animate-pulse' : 'border-green-500'}`}>
+                        <p className="text-xs font-bold text-green-300">Satisfaction</p>
+                        <p className="text-xl md:text-2xl font-bold">{leagueSatisfaction}%</p>
+                        <div className="h-1 bg-green-900 rounded-full mt-1">
+                            <div className="h-full bg-green-400 rounded-full transition-all" style={{width: `${leagueSatisfaction}%`}} />
+                        </div>
+                    </div>
+                    <div className="bg-purple-900/50 p-2 md:p-3 rounded-lg border border-purple-500">
+                        <p className="text-xs font-bold text-purple-300">Propaganda</p>
+                        <p className="text-xl md:text-2xl font-bold">{propaganda}%</p>
+                        <div className="h-1 bg-purple-900 rounded-full mt-1">
+                            <div className="h-full bg-purple-400 rounded-full transition-all" style={{width: `${propaganda}%`}} />
+                        </div>
+                    </div>
+                </div>
+                
+                {/* Revolution Phase Indicator */}
+                {revolutionPhase > 0 && (
+                    <div className={`mb-4 p-3 rounded-lg border-2 ${
+                        revolutionPhase === 3 ? 'bg-red-900/50 border-red-500 animate-pulse' :
+                        revolutionPhase === 2 ? 'bg-orange-900/50 border-orange-500' :
+                        'bg-yellow-900/50 border-yellow-500'
+                    }`}>
+                        <p className="font-bold">
+                            {revolutionPhase === 3 && '🚨 REVOLUTION PHASE 3: TOTAL ANARCHY'}
+                            {revolutionPhase === 2 && '⚠️ REVOLUTION PHASE 2: ACTIVE RESISTANCE'}
+                            {revolutionPhase === 1 && '😤 REVOLUTION PHASE 1: GROWING DISCONTENT'}
+                        </p>
+                    </div>
+                )}
+                
+                {/* Conspiracy Theories */}
+                {conspiracyTheories.length > 0 && (
+                    <div className="mb-4 bg-gray-800/50 p-3 rounded-lg">
+                        <p className="text-sm font-bold mb-2">🕵️ Active Conspiracy Theories:</p>
+                        <div className="text-xs space-y-1">
+                            {conspiracyTheories.map((theory, i) => (
+                                <div key={i} className="text-yellow-300">• {theory}</div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                
+                <div className="bg-gray-900/80 p-3 md:p-4 rounded-xl mb-4 min-h-[60px] border border-gray-700">
+                    <p className="text-sm md:text-lg italic">{message}</p>
+                </div>
+                
+                {!gameOver ? (
+                    <>
+                        {/* Special Actions */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                            <button
+                                onClick={spreadPropaganda}
+                                disabled={commishPower < 15}
+                                className="p-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:from-gray-700 disabled:to-gray-700 rounded-xl font-bold disabled:opacity-50 transition-all transform hover:scale-105"
+                            >
+                                <div className="text-2xl mb-1">📢</div>
+                                <div className="text-sm">Spread Propaganda</div>
+                                <div className="text-xs text-blue-200">Power: 15 | +10 Satisfaction</div>
+                            </button>
+                            
+                            <button
+                                onClick={triggerConspiracy}
+                                disabled={commishPower < 20 || propaganda < 30}
+                                className="p-3 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 disabled:from-gray-700 disabled:to-gray-700 rounded-xl font-bold disabled:opacity-50 transition-all transform hover:scale-105"
+                            >
+                                <div className="text-2xl mb-1">🕵️</div>
+                                <div className="text-sm">Launch Conspiracy</div>
+                                <div className="text-xs text-yellow-200">Power: 20 | Need 30 Propaganda</div>
+                            </button>
+                            
+                            <button
+                                onClick={activateDictatorMode}
+                                disabled={propaganda < 75 || chaos < 50 || dictatorMode}
+                                className={`p-3 rounded-xl font-bold disabled:opacity-50 transition-all transform hover:scale-105 ${
+                                    dictatorMode 
+                                        ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 animate-pulse' 
+                                        : 'bg-gradient-to-r from-purple-600 to-red-600 hover:from-purple-500 hover:to-red-500 disabled:from-gray-700 disabled:to-gray-700'
+                                }`}
+                            >
+                                <div className="text-2xl mb-1">👑</div>
+                                <div className="text-sm">{dictatorMode ? 'ACTIVE' : 'Dictator Mode'}</div>
+                                <div className="text-xs text-purple-200">75 Propaganda + 50 Chaos</div>
+                            </button>
+                        </div>
+                        
+                        {/* Regular Actions */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                            {commishActions.map((action, i) => {
+                                const cost = dictatorMode ? Math.floor(action.powerCost * 0.5) : action.powerCost;
+                                return (
+                                    <button
+                                        key={i}
+                                        onClick={() => performAction({...action, powerCost: cost})}
+                                        disabled={commishPower < cost}
+                                        className="p-3 md:p-4 bg-purple-600 hover:bg-purple-700 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-102 text-left"
+                                    >
+                                        <div className="text-base md:text-lg mb-2">{action.name}</div>
+                                        <div className="text-xs md:text-sm text-gray-300 mb-2">{action.description}</div>
+                                        <div className="text-xs">
+                                            Power: {cost} | Chaos: +{action.chaosGain} | Grit: +{action.gritReward}
+                                            {dictatorMode && <span className="text-yellow-400 ml-2">💪 50% OFF</span>}
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        
+                        {/* Bottom Actions */}
+                        <div className="flex flex-wrap gap-3 justify-center">
+                            <button
+                                onClick={playJointAd}
+                                disabled={commishPower > 40}
+                                className="px-4 md:px-6 py-2 md:py-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all"
+                            >
+                                🏥 Emergency Joint Ad
+                            </button>
+                            <button
+                                onClick={endGame}
+                                className="px-4 md:px-6 py-2 md:py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold transform hover:scale-105 transition-all"
+                            >
+                                💰 Cash Out ({grit} Grit)
+                            </button>
+                        </div>
+                        
+                        <div className="mt-4 text-xs text-gray-400">
+                            Actions Taken: {actionHistory.length} | Conspiracies Active: {conspiracyTheories.length}
+                        </div>
+                    </>
+                ) : (
+                    <div className="py-6">
+                        <h3 className="text-2xl md:text-3xl font-bold mb-4">Game Over!</h3>
+                        <div className="text-lg mb-4">{message}</div>
+                        <div className="grid grid-cols-2 gap-4 mb-6 max-w-md mx-auto">
+                            <div className="bg-purple-900/50 p-3 rounded-lg">
+                                <div className="text-sm text-purple-300">Actions Taken</div>
+                                <div className="text-2xl font-bold">{actionHistory.length}</div>
+                            </div>
+                            <div className="bg-yellow-900/50 p-3 rounded-lg">
+                                <div className="text-sm text-yellow-300">Conspiracies</div>
+                                <div className="text-2xl font-bold">{conspiracyTheories.length}</div>
+                            </div>
+                        </div>
+                        {dictatorMode && <div className="text-xl text-yellow-400 mb-4">👑 DICTATOR MODE BONUS: +30%</div>}
+                        {propaganda >= 80 && <div className="text-lg text-blue-400 mb-2">📢 Propaganda Master: +40 Grit</div>}
+                        {conspiracyTheories.length >= 3 && <div className="text-lg text-yellow-400 mb-2">🕵️ Conspiracy Pro: +30 Grit</div>}
+                        <button
+                            onClick={endGame}
+                            className="px-8 py-4 bg-red-600 hover:bg-red-700 rounded-xl font-bold text-xl transform hover:scale-105 transition-all"
+                        >
+                            Accept Your Fate
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};

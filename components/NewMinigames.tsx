@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { sundayScariesTeams, sundayScariesRoasts, commishActions, tyWindowMessages, datingScenarios, ParlayLeg, CommishAction, OldDatingScenario, fantasyDraftPlayers, triviaData, commentaryBattleData } from '../constants';
 import { SundayScariesMinigame as EnhancedSundayScariesMinigame } from './EnhancedMinigames';
-import { UltraBeerDieMinigame, UltraTyWindowMinigame } from './SuperEnhancedMinigames';
+import { UltraBeerDieMinigame, UltraTyWindowMinigame, UltraCommishChaosMinigame } from './SuperEnhancedMinigames';
 
 // Difficulty scaling constants
 const TY_WINDOW_BASE_WAIT = 3000; // Base wait time in ms
@@ -1108,7 +1108,7 @@ export const NewMinigames: React.FC = () => {
     }
 
     if (selectedGame === 'commish_chaos') {
-        return <CommishChaosMinigame onGameEnd={handleGameEnd} />;
+        return <UltraCommishChaosMinigame onGameEnd={handleGameEnd} />;
     }
 
     if (selectedGame === 'ty_window') {
@@ -1155,11 +1155,14 @@ export const NewMinigames: React.FC = () => {
 
                 <button
                     onClick={() => setSelectedGame('commish_chaos')}
-                    className="p-6 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                    className="p-6 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg relative overflow-hidden group"
                 >
-                    <div className="text-4xl mb-3">👑</div>
-                    <div className="text-2xl mb-2">Commish Chaos</div>
-                    <div className="text-sm text-gray-200">Abuse your power as commissioner</div>
+                    <div className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded-full font-bold animate-pulse">
+                        ENHANCED
+                    </div>
+                    <div className="text-4xl mb-3 group-hover:animate-bounce">👑</div>
+                    <div className="text-2xl mb-2">Commish Chaos DELUXE</div>
+                    <div className="text-sm text-gray-200">Propaganda, conspiracies, DICTATOR MODE!</div>
                 </button>
 
                 <button
