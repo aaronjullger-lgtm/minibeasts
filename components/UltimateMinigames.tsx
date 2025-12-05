@@ -1,5 +1,16 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { fantasyDraftPlayers, triviaData, commentaryBattleData } from '../constants';
+
+// Game Constants
+const FANTASY_DRAFT_NUM_ROUNDS = 3;
+const FANTASY_DRAFT_TRADE_OFFERS_COUNT = 2;
+const TRIVIA_LIGHTNING_STREAK_TRIGGER = 3;
+const TRIVIA_PERFECT_BONUS = 100;
+const COMMENTARY_SCENARIOS_PER_ROUND = 3;
+const WAIVER_PLAYERS = [
+    { name: "Breakout RB", type: "High-Ceiling", projection: 25, risk: 35, notes: "Backup who might start" },
+    { name: "Consistent WR3", type: "Safe Stud", projection: 12, risk: 10, notes: "Always good for 8-10 points" },
+];
 
 // ============================================================================
 // FANTASY DRAFT: CHAMPIONSHIP BUILDER - ULTIMATE EDITION
@@ -108,9 +119,10 @@ export const UltraFantasyDraftMinigame: React.FC<{
     };
 
     const generateTradeOffers = (currentTeam: typeof fantasyDraftPlayers[0]) => {
-        const offers = currentTeam.slice(0, 2).map(player => ({
+        const availablePlayers = ['DeAndre Hopkins', 'Travis Kelce', 'Saquon Barkley'];
+        const offers = currentTeam.slice(0, FANTASY_DRAFT_TRADE_OFFERS_COUNT).map(player => ({
             player: player.name,
-            for: ['DeAndre Hopkins', 'Travis Kelce', 'Saquon Barkley'][Math.floor(Math.random() * 3)]
+            for: availablePlayers[Math.floor(Math.random() * availablePlayers.length)]
         }));
         setTradeOffers(offers);
         setMessage('📊 Trade offers are in! Accept one or move to waivers?');
@@ -128,11 +140,7 @@ export const UltraFantasyDraftMinigame: React.FC<{
     };
 
     const addWaiverWirePlayer = () => {
-        const waiverPlayers = [
-            { name: "Breakout RB", type: "High-Ceiling", projection: 25, risk: 35, notes: "Backup who might start" },
-            { name: "Consistent WR3", type: "Safe Stud", projection: 12, risk: 10, notes: "Always good for 8-10 points" },
-        ];
-        const pick = waiverPlayers[Math.floor(Math.random() * waiverPlayers.length)];
+        const pick = WAIVER_PLAYERS[Math.floor(Math.random() * WAIVER_PLAYERS.length)];
         setBenchedPlayers(prev => [...prev, pick as any]);
         setMessage(`📥 Added ${pick.name} from waivers!`);
         setGrit(prev => prev + 10);
@@ -465,7 +473,7 @@ export const UltraTriviaNightMinigame: React.FC<{
     const question = triviaData[currentQuestion];
 
     useEffect(() => {
-        if (!answered && !lightningRound) {
+        if (!answered) {
             timerRef.current = setInterval(() => {
                 setTimeLeft(prev => {
                     if (prev <= 1) {
@@ -480,11 +488,11 @@ export const UltraTriviaNightMinigame: React.FC<{
         return () => {
             if (timerRef.current) clearInterval(timerRef.current);
         };
-    }, [answered, currentQuestion, lightningRound]);
+    }, [answered, currentQuestion]);
 
     // Trigger lightning round after question 3
     useEffect(() => {
-        if (currentQuestion === 3 && streak >= 3) {
+        if (currentQuestion === 3 && streak >= TRIVIA_LIGHTNING_STREAK_TRIGGER) {
             setLightningRound(true);
             setTimeLeft(10);
             setRoastMessage('⚡ LIGHTNING ROUND! Streak bonus activated! 2x multiplier!');
@@ -594,7 +602,7 @@ export const UltraTriviaNightMinigame: React.FC<{
             setRoastMessage('');
         } else {
             // Perfect game bonus
-            const perfectBonus = maxStreak === triviaData.length ? 100 : 0;
+            const perfectBonus = maxStreak === triviaData.length ? TRIVIA_PERFECT_BONUS : 0;
             onGameEnd(score + perfectBonus);
         }
     };
@@ -786,8 +794,8 @@ export const UltraCommentaryBattleMinigame: React.FC<{
                 setCurrentScenario(prev => prev + 1);
                 setMessage('');
                 
-                // Advance round every 3 scenarios
-                if ((currentScenario + 1) % 3 === 0) {
+                // Advance round every N scenarios
+                if ((currentScenario + 1) % COMMENTARY_SCENARIOS_PER_ROUND === 0) {
                     setRound(prev => prev + 1);
                     setMessage('🎉 Round complete! Stakes are getting higher!');
                 }
