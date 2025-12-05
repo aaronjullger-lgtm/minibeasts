@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { commishActions, tyWindowMessages, datingScenarios, fantasyDraftPlayers, triviaData, commentaryBattleData } from '../constants';
 
+// Game Constants
+const TY_MESSAGE_LENGTH_THRESHOLD = 25;
+const TY_WINDOW_BASE_TIME = 30;
+const DICTATOR_MODE_DISCOUNT = 0.5;
+
 // ============================================================================
 // BEER DIE MAYHEM - ULTIMATE EDITION
 // ============================================================================
@@ -324,7 +329,7 @@ export const UltraTyWindowMinigame: React.FC<{ onGameEnd: (grit: number) => void
             setTyMessage(message);
             
             // Check prediction
-            const isLong = message.length > 25;
+            const isLong = message.length > TY_MESSAGE_LENGTH_THRESHOLD;
             const correct = (prediction === 'long' && isLong) || (prediction === 'short' && !isLong);
             setPredictionCorrect(correct);
             
@@ -479,7 +484,7 @@ export const UltraTyWindowMinigame: React.FC<{ onGameEnd: (grit: number) => void
                         Correct predictions give bonus points and extra time!
                     </p>
                     <p className="text-xs text-gray-500">
-                        Short = Under 25 characters | Long = 25+ characters
+                        Short = Under {TY_MESSAGE_LENGTH_THRESHOLD} characters | Long = {TY_MESSAGE_LENGTH_THRESHOLD}+ characters
                     </p>
                 </div>
                 
@@ -490,7 +495,7 @@ export const UltraTyWindowMinigame: React.FC<{ onGameEnd: (grit: number) => void
                     >
                         <div className="text-3xl mb-2">💬</div>
                         <div>SHORT Message</div>
-                        <div className="text-xs mt-1 text-blue-200">&lt; 25 chars</div>
+                        <div className="text-xs mt-1 text-blue-200">&lt; {TY_MESSAGE_LENGTH_THRESHOLD} chars</div>
                     </button>
                     
                     <button

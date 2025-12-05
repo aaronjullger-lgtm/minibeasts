@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { sundayScariesTeams, sundayScariesRoasts, commishActions, tyWindowMessages, datingScenarios, ParlayLeg, CommishAction, fantasyDraftPlayers, triviaData, commentaryBattleData } from '../constants';
 
+// Game Constants
+const MAX_PARLAY_LEGS = 8;
+const DIFFICULTY_PENALTY_PER_LEG = 0.09;
+const TILT_PENALTY_DIVISOR = 200;
+
 // ============================================================================
 // SUNDAY SCARIES: ULTRA PARLAY MAYHEM - COMPLETE REVAMP
 // ============================================================================
@@ -45,7 +50,7 @@ export const EnhancedSundayScariesMinigame: React.FC<{
 
     // Enhanced leg adding with team matchups
     const addLegToParlay = () => {
-        if (parlayLegs.length >= 8) return; // Increased from 5 to 8
+        if (parlayLegs.length >= MAX_PARLAY_LEGS) return;
         
         const team = sundayScariesTeams[Math.floor(Math.random() * sundayScariesTeams.length)];
         const opponent = sundayScariesTeams[Math.floor(Math.random() * sundayScariesTeams.length)];
@@ -100,8 +105,8 @@ export const EnhancedSundayScariesMinigame: React.FC<{
         parlayLegs.forEach((leg, index) => {
             setTimeout(() => {
                 // Progressive difficulty with chaos
-                const difficultyPenalty = index * 0.09;
-                const tiltPenalty = tiltMeter / 200; // 0 to 0.5 penalty
+                const difficultyPenalty = index * DIFFICULTY_PENALTY_PER_LEG;
+                const tiltPenalty = tiltMeter / TILT_PENALTY_DIVISOR;
                 const baseSuccessChance = isHatersMode ? 0.42 : 0.54;
                 const successChance = Math.max(0.15, baseSuccessChance - difficultyPenalty - tiltPenalty);
                 const success = Math.random() < successChance;
