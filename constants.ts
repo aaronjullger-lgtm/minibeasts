@@ -399,7 +399,27 @@ export const conversationTopics = [
     "debating the MVP race",
     "a fantasy football trade that just went down",
     "roasting a rival NFL team's fanbase",
-    "who the most overrated QB in the league is"
+    "who the most overrated QB in the league is",
+    "somebody's terrible fantasy team name",
+    "the worst waiver wire pickup of the week",
+    "somebody starting the wrong player and costing themselves the matchup",
+    "arguing about who has the worst draft in league history",
+    "a coach that should be fired immediately",
+    "somebody's kicker outscoring their entire team",
+    "whether injuries are ruining the season or just excuses",
+    "that one guy who never checks his lineup",
+    "debating the all-time worst NFL take in the group chat",
+    "somebody's girlfriend/dating situation (usually Elie or Craif)",
+    "Ty texting for the first time in a week",
+    "Spencer's latest failed attempt to exercise commissioner power",
+    "Justin screenshotting something embarrassing",
+    "Eric going on an ALL-IN rant about grit and heart",
+    "someone accidentally replying in the wrong group chat",
+    "arguing about whose NFL team is the most dysfunctional",
+    "the most cursed fantasy matchup of the week",
+    "somebody dropping a player who immediately blows up",
+    "conspiracy theories about the NFL being rigged",
+    "whether someone's 'championship window' is already closed"
 ];
 
 export const randomEvents: RandomEvent[] = [

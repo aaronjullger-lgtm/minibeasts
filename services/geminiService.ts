@@ -103,7 +103,9 @@ export const initiateNpcConversation = async (history: Message[], ranking: Playe
     if (potentialSpeakers.length < 2) return [];
 
     const shuffled = [...potentialSpeakers].sort(() => 0.5 - Math.random());
-    const participants = shuffled.slice(0, Math.random() > 0.7 ? 3 : 2); // 2 or 3 participants
+    // More varied conversation sizes - 2-4 participants, with emphasis on 2-3
+    const participantCount = Math.random() > 0.85 ? 4 : Math.random() > 0.5 ? 3 : 2;
+    const participants = shuffled.slice(0, participantCount);
     const participantInfo = participants.map(p => `- ${p.name} (${p.id}): Persona: ${getAiPersona(p.id)} Current State: ${getCharacterStateString(p)}`).join('\n');
     const topic = conversationTopics[Math.floor(Math.random() * conversationTopics.length)];
 
@@ -119,16 +121,18 @@ export const initiateNpcConversation = async (history: Message[], ranking: Playe
 
     The general topic is: **${topic}**.
 
-    Here is the most recent chat history for context. The conversation should flow NATURALLY from this history. NPCs should react to what other people just said and their current state should influence their tone (e.g., low happiness = irritable, high ego = boastful).
+    Here is the most recent chat history for context. The conversation should flow NATURALLY from this history. NPCs should react to what other people just said and their current state should influence their tone (e.g., low happiness = irritable, high ego = boastful, low energy = brief/dismissive).
     ---
     ${historyString}
     ---
 
     Instructions:
-    1.  Create a conversation that is 2 to 4 messages long.
-    2.  **CRITICAL**: The conversation MUST be a direct, fluid, and logical continuation of the last few messages in the history. It must feel real.
-    3.  Messages MUST be short, lowercase, authentic texts. Use slang, be edgy, stay in character.
-    4.  The conversation should be about the given topic OR a direct reaction to the latest message in the history.
+    1.  Create a conversation that is 2 to 5 messages long depending on how engaging the topic is and how the conversation flows.
+    2.  **CRITICAL**: The conversation MUST feel like real friends texting. Messages should have personality, use actual slang, and flow naturally.
+    3.  Messages MUST be short, lowercase, authentic texts. Use slang, abbreviations, be edgy, stay in character. No corporate speak or formality.
+    4.  Make the conversation feel ALIVE - add reactions like "lmao", "bruh", "fr", emojis where natural, and let people interrupt or pile on.
+    5.  The conversation should be about the given topic OR a direct reaction to the latest message in the history - but it should feel organic, not forced.
+    6.  Let characters' current emotional states affect their tone naturally (happy = enthusiastic, low happiness = salty/irritable, high ego = arrogant).
     
     Format your response STRICTLY as a JSON object with a "conversation" key, an array of objects, each with a "speaker" (the character's ID) and "text" property.
 

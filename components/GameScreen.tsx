@@ -22,60 +22,66 @@ const ModalWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
 const BeerDieChallengeMinigame: React.FC<{ onGameEnd: (grit: number) => void }> = ({ onGameEnd }) => {
     const [score, setScore] = useState(0);
-    const [misses, setMisses] = useState(3);
+    const [misses, setMisses] = useState(5); // More lives for better gameplay
+    const [combo, setCombo] = useState(0);
+    const [bestCombo, setBestCombo] = useState(0);
     const [die, setDie] = useState<{ id: number; x: number; y: number, startTime: number, duration: number } | null>(null);
-    // FIX: useRef must be called with an initial value.
     const gameLoopRef = useRef<number | null>(null);
     
-    // Use refs to hold mutable state for stable callbacks, preventing re-renders from breaking the game loop
-    const gameState = useRef({ score, misses, onGameEnd, isOver: false });
+    const gameState = useRef({ score, misses, combo, onGameEnd, isOver: false });
 
     useEffect(() => {
-        // Keep the ref updated with the latest state values without causing effects to re-run
         gameState.current.score = score;
         gameState.current.misses = misses;
+        gameState.current.combo = combo;
         gameState.current.onGameEnd = onGameEnd;
-    }, [score, misses, onGameEnd]);
+    }, [score, misses, combo, onGameEnd]);
 
     const endGame = useCallback(() => {
         if (!gameState.current.isOver) {
             gameState.current.isOver = true;
             if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
-            gameState.current.onGameEnd(gameState.current.score);
+            // Bonus points for combos and high scores
+            const bonusPoints = Math.floor(bestCombo * 3);
+            gameState.current.onGameEnd(gameState.current.score + bonusPoints);
         }
-    }, []);
+    }, [bestCombo]);
 
     const spawnDie = useCallback(() => {
         if (gameState.current.isOver || gameState.current.misses <= 0) {
             endGame();
             return;
         }
-        const duration = Math.max(400, 1200 - (gameState.current.score * 8));
+        // Progressive difficulty with combo system
+        const baseDuration = 1800;
+        const comboPenalty = Math.min(gameState.current.combo * 50, 600);
+        const duration = Math.max(600, baseDuration - comboPenalty);
+        
         setDie({
             id: Date.now(),
-            x: Math.random() * 80 + 10,
-            y: Math.random() * 80 + 10,
+            x: Math.random() * 75 + 12.5,
+            y: Math.random() * 75 + 12.5,
             startTime: performance.now(),
             duration: duration,
         });
     }, [endGame]);
 
     useEffect(() => {
-        // This effect runs only once to start the game loop
         const loop = () => {
             if (gameState.current.isOver) return;
             
             setDie(currentDie => {
                 if (currentDie && performance.now() - currentDie.startTime > currentDie.duration) {
                     setMisses(m => m - 1);
-                    return null; // This will trigger the spawning effect below
+                    setCombo(0); // Reset combo on miss
+                    return null;
                 }
                 return currentDie;
             });
             gameLoopRef.current = requestAnimationFrame(loop);
         };
         
-        spawnDie(); // Initial spawn
+        spawnDie();
         gameLoopRef.current = requestAnimationFrame(loop);
         
         return () => {
@@ -85,117 +91,228 @@ const BeerDieChallengeMinigame: React.FC<{ onGameEnd: (grit: number) => void }> 
     }, [spawnDie]);
 
     useEffect(() => {
-        // This effect handles game over condition
         if (misses <= 0) {
             endGame();
         }
     }, [misses, endGame]);
 
     useEffect(() => {
-        // This effect handles spawning new dice after a miss or a hit
         if (die === null && !gameState.current.isOver) {
-            const timer = setTimeout(spawnDie, 300); // Brief pause before next die
+            const timer = setTimeout(spawnDie, 250);
             return () => clearTimeout(timer);
         }
     }, [die, spawnDie]);
 
     const handleClickDie = () => {
         if (die && !gameState.current.isOver) {
-            setScore(s => s + 8);
-            setDie(null); // Setting die to null triggers the spawn effect
+            const newCombo = combo + 1;
+            setCombo(newCombo);
+            if (newCombo > bestCombo) {
+                setBestCombo(newCombo);
+            }
+            // Combo multiplier for score
+            const points = 5 + Math.floor(newCombo / 2);
+            setScore(s => s + points);
+            setDie(null);
         }
     };
     
     const progress = die ? Math.min(1, (performance.now() - die.startTime) / die.duration) : 0;
 
     return (
-        <div className="glass-dark p-8 rounded-3xl shadow-2xl w-full max-w-2xl text-center border-4 border-cyan-500/50 neon-blue">
-            <h2 className="text-5xl font-orbitron mb-4 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">🎲 Beer Die Challenge</h2>
-            <div className="flex justify-between items-center mb-6 text-2xl">
-                <p className="font-orbitron">Grit: <span className="font-bold text-yellow-400">{score}</span></p>
-                <p className="font-orbitron">Lives: <span className="font-bold text-red-500 text-3xl">{'❤️'.repeat(misses)}</span></p>
+        <div className="glass-dark p-6 rounded-3xl shadow-2xl w-full max-w-3xl text-center border-4 border-cyan-500/50 neon-blue">
+            <h2 className="text-4xl font-orbitron mb-3 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">🎲 Beer Die Challenge</h2>
+            <p className="text-sm text-gray-400 mb-4">Click the dice before time runs out! Build combos for bonus points!</p>
+            <div className="grid grid-cols-3 gap-4 mb-4 text-lg">
+                <div className="bg-gray-900/50 p-3 rounded-xl border border-cyan-500/30">
+                    <p className="text-xs text-gray-400 mb-1">Score</p>
+                    <p className="font-bold text-yellow-400 text-2xl">{score}</p>
+                </div>
+                <div className="bg-gray-900/50 p-3 rounded-xl border border-purple-500/30">
+                    <p className="text-xs text-gray-400 mb-1">Combo</p>
+                    <p className="font-bold text-purple-400 text-2xl">{combo}x</p>
+                </div>
+                <div className="bg-gray-900/50 p-3 rounded-xl border border-red-500/30">
+                    <p className="text-xs text-gray-400 mb-1">Lives</p>
+                    <p className="font-bold text-red-400 text-2xl">{'❤️'.repeat(misses)}</p>
+                </div>
             </div>
-            <div className="bg-gradient-to-br from-gray-900 to-gray-800 w-full h-80 rounded-2xl relative cursor-crosshair border-2 border-cyan-500/30 shadow-inner">
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 w-full h-96 rounded-2xl relative cursor-crosshair border-2 border-cyan-500/30 shadow-inner overflow-hidden">
+                {combo >= 5 && <div className="absolute inset-0 pointer-events-none animate-pulse bg-purple-500/10" />}
                 {die && (
                     <button
                         onClick={handleClickDie}
-                        className="absolute text-4xl transition-transform hover:scale-110"
+                        className="absolute text-4xl transition-all hover:scale-125 active:scale-95"
                         style={{ left: `${die.x}%`, top: `${die.y}%`, transform: 'translate(-50%, -50%)' }}
                     >
                         <div className="relative">
-                            <svg width="60" height="60" viewBox="0 0 100 100">
+                            <svg width="70" height="70" viewBox="0 0 100 100">
                                 <circle cx="50" cy="50" r="45" fill="none" stroke="#1f2937" strokeWidth="10" />
                                 <circle 
                                     cx="50" cy="50" r="45" 
-                                    fill="none" stroke="cyan" strokeWidth="10"
+                                    fill="none" stroke={combo >= 5 ? "#a855f7" : "cyan"} strokeWidth="10"
                                     strokeDasharray="282.7"
                                     strokeDashoffset={282.7 * progress}
                                     transform="rotate(-90 50 50)"
-                                    style={{filter: 'drop-shadow(0 0 10px cyan)'}}
+                                    style={{filter: `drop-shadow(0 0 ${combo >= 5 ? 15 : 10}px ${combo >= 5 ? '#a855f7' : 'cyan'})`}}
                                 />
                             </svg>
-                            <span className="absolute inset-0 flex items-center justify-center" style={{filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))'}}>🎲</span>
+                            <span className="absolute inset-0 flex items-center justify-center text-5xl" style={{filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5))'}}>🎲</span>
                         </div>
                     </button>
                 )}
-                 {misses <= 0 && <div className="absolute inset-0 flex items-center justify-center text-5xl font-orbitron text-red-500 bg-black/50 rounded-2xl backdrop-blur-sm">GAME OVER</div>}
+                {misses <= 0 && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black/70 rounded-2xl backdrop-blur-sm">
+                        <p className="text-5xl font-orbitron text-red-500 mb-4">GAME OVER</p>
+                        <p className="text-xl">Final Score: <span className="text-yellow-400 font-bold">{score}</span></p>
+                        <p className="text-lg">Best Combo: <span className="text-purple-400 font-bold">{bestCombo}x</span></p>
+                    </div>
+                )}
             </div>
+            {combo >= 10 && <p className="mt-3 text-lg text-purple-400 font-bold animate-pulse">🔥 ON FIRE! 🔥</p>}
         </div>
     );
 };
 
 const TriviaNightMinigame: React.FC<{ onGameEnd: (grit: number) => void }> = ({ onGameEnd }) => {
-    const [questions] = useState(() => [...triviaData].sort(() => 0.5 - Math.random()).slice(0, 3));
+    const [questions] = useState(() => [...triviaData].sort(() => 0.5 - Math.random()).slice(0, 5));
     const [qIndex, setQIndex] = useState(0);
     const [score, setScore] = useState(0);
+    const [streak, setStreak] = useState(0);
+    const [bestStreak, setBestStreak] = useState(0);
+    const [timeLeft, setTimeLeft] = useState(15);
     const [feedback, setFeedback] = useState<'' | 'correct' | 'incorrect'>('');
+    const [showHint, setShowHint] = useState(false);
+
+    useEffect(() => {
+        if (feedback || timeLeft <= 0) return;
+        const timer = setInterval(() => {
+            setTimeLeft(t => {
+                if (t <= 1) {
+                    handleAnswer(-1); // Time's up
+                    return 0;
+                }
+                return t - 1;
+            });
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [qIndex, feedback]);
 
     const handleAnswer = (answerIndex: number) => {
         if (feedback) return;
         let gritGained = 0;
-        if (answerIndex === questions[qIndex].correct) {
-            gritGained = 15;
+        const isCorrect = answerIndex === questions[qIndex].correct;
+        
+        if (isCorrect) {
+            // Time bonus - faster answers worth more
+            const timeBonus = Math.floor(timeLeft / 2);
+            gritGained = 15 + timeBonus + (streak * 3);
             setScore(s => s + gritGained);
+            setStreak(s => {
+                const newStreak = s + 1;
+                if (newStreak > bestStreak) setBestStreak(newStreak);
+                return newStreak;
+            });
             setFeedback('correct');
         } else {
             setFeedback('incorrect');
+            setStreak(0);
         }
 
         setTimeout(() => {
             setFeedback('');
+            setShowHint(false);
             if (qIndex < questions.length - 1) {
                 setQIndex(i => i + 1);
+                setTimeLeft(15);
             } else {
-                onGameEnd(score + gritGained);
+                // Streak bonus at end
+                const streakBonus = bestStreak * 10;
+                onGameEnd(score + gritGained + streakBonus);
             }
-        }, 1500);
+        }, 1800);
+    };
+
+    const useHint = () => {
+        setShowHint(true);
+        setTimeLeft(t => Math.max(3, t - 5)); // Hint costs 5 seconds
     };
 
     const currentQuestion = questions[qIndex];
+    const progress = (qIndex / questions.length) * 100;
 
     return (
-        <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-2xl text-center border-4 border-white">
-            <h2 className="text-3xl font-graduate mb-2">Trivia Night</h2>
-            <p className="font-bold text-lg mb-4">Total Grit: {score}</p>
-            <div className="bg-gray-900 p-4 rounded-lg mb-4 min-h-[80px]">
-                <p className="text-xl italic">"{currentQuestion.question}"</p>
+        <div className="glass-dark p-6 rounded-3xl shadow-2xl w-full max-w-3xl text-center border-4 border-purple-500/50">
+            <h2 className="text-4xl font-orbitron mb-3 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">🧠 NFL Trivia Night</h2>
+            
+            <div className="grid grid-cols-4 gap-3 mb-4">
+                <div className="bg-gray-900/50 p-2 rounded-xl border border-purple-500/30">
+                    <p className="text-xs text-gray-400">Score</p>
+                    <p className="font-bold text-yellow-400 text-xl">{score}</p>
+                </div>
+                <div className="bg-gray-900/50 p-2 rounded-xl border border-green-500/30">
+                    <p className="text-xs text-gray-400">Streak</p>
+                    <p className="font-bold text-green-400 text-xl">{streak}🔥</p>
+                </div>
+                <div className="bg-gray-900/50 p-2 rounded-xl border border-blue-500/30">
+                    <p className="text-xs text-gray-400">Question</p>
+                    <p className="font-bold text-blue-400 text-xl">{qIndex + 1}/{questions.length}</p>
+                </div>
+                <div className={`bg-gray-900/50 p-2 rounded-xl border ${timeLeft <= 5 ? 'border-red-500 animate-pulse' : 'border-orange-500/30'}`}>
+                    <p className="text-xs text-gray-400">Time</p>
+                    <p className={`font-bold text-xl ${timeLeft <= 5 ? 'text-red-400' : 'text-orange-400'}`}>{timeLeft}s</p>
+                </div>
             </div>
+
+            <div className="w-full h-2 bg-gray-900 rounded-full mb-4 overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300" style={{width: `${progress}%`}} />
+            </div>
+
+            <div className="bg-gray-900/70 p-6 rounded-2xl mb-4 min-h-[120px] border border-gray-700">
+                <p className="text-xl font-medium text-white leading-relaxed">{currentQuestion.question}</p>
+                {showHint && <p className="text-sm text-yellow-400 mt-3 italic">💡 Hint: Think about recent NFL trends and stats!</p>}
+            </div>
+            
+            {!feedback && !showHint && timeLeft > 5 && (
+                <button
+                    onClick={useHint}
+                    className="mb-3 px-4 py-2 bg-yellow-600/20 hover:bg-yellow-600/40 border border-yellow-500/50 rounded-lg text-sm text-yellow-300 transition-all"
+                >
+                    💡 Use Hint (-5s)
+                </button>
+            )}
+
             <div className="grid grid-cols-2 gap-4">
                 {currentQuestion.answers.map((answer, i) => (
                     <button
                         key={i}
                         onClick={() => handleAnswer(i)}
                         disabled={!!feedback}
-                        className={`p-4 rounded font-semibold text-lg h-24 flex items-center justify-center transition-colors ${
-                            feedback && i === currentQuestion.correct ? 'bg-green-600' :
-                            feedback && i !== currentQuestion.correct ? 'bg-red-600' :
-                            'bg-blue-600 hover:bg-blue-700'
-                        }`}
+                        className={`p-4 rounded-xl font-semibold text-lg min-h-[90px] flex items-center justify-center transition-all transform ${
+                            feedback === 'correct' && i === currentQuestion.correct 
+                                ? 'bg-green-600 scale-105 shadow-lg shadow-green-500/50' :
+                            feedback === 'incorrect' && i === currentQuestion.correct
+                                ? 'bg-green-600/50' :
+                            feedback && i !== currentQuestion.correct 
+                                ? 'bg-red-600/30 scale-95' :
+                            'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 hover:scale-105 hover:shadow-lg'
+                        } ${!feedback && 'active:scale-95'}`}
                     >
                         {answer}
                     </button>
                 ))}
             </div>
+
+            {feedback === 'correct' && (
+                <p className="mt-4 text-2xl text-green-400 font-bold animate-bounce">
+                    ✅ Correct! {streak > 1 && `${streak} in a row! 🔥`}
+                </p>
+            )}
+            {feedback === 'incorrect' && (
+                <p className="mt-4 text-2xl text-red-400 font-bold">
+                    ❌ Wrong! {streak > 0 && 'Streak broken 💔'}
+                </p>
+            )}
         </div>
     );
 };
@@ -993,10 +1110,13 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
           for (const msg of newMessages) {
               const speakerName = characterData[msg.speaker]?.name;
               setTypingCharacter(speakerName);
-              await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 1000));
+              // Faster typing delays for more natural conversation flow
+              await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500));
               setTypingCharacter(null);
               setStoryFeed(prev => [...prev, msg]);
               soundService.playMessageReceived();
+              // Small delay between messages in conversation
+              await new Promise(resolve => setTimeout(resolve, 300));
           }
       }
     } catch (error) {
@@ -1338,7 +1458,8 @@ export const GameScreen: React.FC<GameScreenProps> = ({ initialData, onGameEnd, 
               return newDay;
           });
       }, DAY_DURATION_MS);
-    const chatTimer = setInterval(() => { if (Math.random() < 0.25 && !typingCharacter && !activeModal) { handleNpcConversation(); } }, 25 * 1000);
+    // More frequent and dynamic conversations - 60% chance every 15 seconds for more lively chat
+    const chatTimer = setInterval(() => { if (Math.random() < 0.6 && !typingCharacter && !activeModal) { handleNpcConversation(); } }, 15 * 1000);
     const eventTimer = setInterval(runRandomEvent, 20 * 1000);
     const dynastyEventTimer = setInterval(triggerDynastyEvent, 30 * 1000); // Dynasty events every 30 seconds
 
