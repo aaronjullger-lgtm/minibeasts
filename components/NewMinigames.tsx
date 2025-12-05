@@ -3,6 +3,7 @@ import { sundayScariesTeams, sundayScariesRoasts, commishActions, tyWindowMessag
 import { SundayScariesMinigame as EnhancedSundayScariesMinigame } from './EnhancedMinigames';
 import { UltraBeerDieMinigame, UltraTyWindowMinigame, UltraCommishChaosMinigame } from './SuperEnhancedMinigames';
 import { UltraBitchlessChroniclesMinigame } from './FinalEnhancedMinigames';
+import { UltraFantasyDraftMinigame, UltraTriviaNightMinigame, UltraCommentaryBattleMinigame } from './UltimateMinigames';
 
 // Difficulty scaling constants
 const TY_WINDOW_BASE_WAIT = 3000; // Base wait time in ms
@@ -1125,15 +1126,15 @@ export const NewMinigames: React.FC = () => {
     }
 
     if (selectedGame === 'fantasy_draft') {
-        return <FantasyDraftMinigame onGameEnd={handleGameEnd} />;
+        return <UltraFantasyDraftMinigame onGameEnd={handleGameEnd} playerName="Player" />;
     }
 
     if (selectedGame === 'trivia_night') {
-        return <TriviaNightMinigame onGameEnd={handleGameEnd} />;
+        return <UltraTriviaNightMinigame onGameEnd={handleGameEnd} playerName="Player" />;
     }
 
     if (selectedGame === 'commentary_battle') {
-        return <CommentaryBattleMinigame onGameEnd={handleGameEnd} />;
+        return <UltraCommentaryBattleMinigame onGameEnd={handleGameEnd} playerName="Player" />;
     }
 
     return (
@@ -1204,29 +1205,38 @@ export const NewMinigames: React.FC = () => {
 
                 <button
                     onClick={() => setSelectedGame('fantasy_draft')}
-                    className="p-6 bg-gradient-to-br from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                    className="p-6 bg-gradient-to-br from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg relative overflow-hidden group"
                 >
-                    <div className="text-4xl mb-3">📈</div>
-                    <div className="text-2xl mb-2">Fantasy Draft</div>
-                    <div className="text-sm text-gray-200">Build your championship roster</div>
+                    <div className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded-full font-bold animate-pulse">
+                        ENHANCED
+                    </div>
+                    <div className="text-4xl mb-3 group-hover:animate-bounce">📈</div>
+                    <div className="text-2xl mb-2">Fantasy Draft ULTIMATE</div>
+                    <div className="text-sm text-gray-200">Trades, waivers, injuries, playoffs & championships!</div>
                 </button>
 
                 <button
                     onClick={() => setSelectedGame('trivia_night')}
-                    className="p-6 bg-gradient-to-br from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                    className="p-6 bg-gradient-to-br from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg relative overflow-hidden group"
                 >
-                    <div className="text-4xl mb-3">🧠</div>
-                    <div className="text-2xl mb-2">Trivia Night</div>
-                    <div className="text-sm text-gray-200">Test your NFL knowledge</div>
+                    <div className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded-full font-bold animate-pulse">
+                        ENHANCED
+                    </div>
+                    <div className="text-4xl mb-3 group-hover:animate-bounce">🧠</div>
+                    <div className="text-2xl mb-2">Trivia Night MASTER</div>
+                    <div className="text-sm text-gray-200">Lifelines, streaks, lightning round, time pressure!</div>
                 </button>
 
                 <button
                     onClick={() => setSelectedGame('commentary_battle')}
-                    className="p-6 bg-gradient-to-br from-slate-600 to-gray-600 hover:from-slate-700 hover:to-gray-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg"
+                    className="p-6 bg-gradient-to-br from-slate-600 to-gray-600 hover:from-slate-700 hover:to-gray-700 rounded-2xl font-bold text-xl transform hover:scale-105 transition-all shadow-lg relative overflow-hidden group"
                 >
-                    <div className="text-4xl mb-3">🎙️</div>
-                    <div className="text-2xl mb-2">Commentary Battle</div>
-                    <div className="text-sm text-gray-200">Drop the best takes</div>
+                    <div className="absolute top-2 right-2 text-xs bg-yellow-500 text-black px-2 py-1 rounded-full font-bold animate-pulse">
+                        ENHANCED
+                    </div>
+                    <div className="text-4xl mb-3 group-hover:animate-bounce">🎙️</div>
+                    <div className="text-2xl mb-2">Commentary Battle PRO</div>
+                    <div className="text-sm text-gray-200">Hot takes, roast meter, viral moments, BOSS round!</div>
                 </button>
             </div>
         </div>
