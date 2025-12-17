@@ -67,15 +67,15 @@ const AppContent: React.FC = () => {
   if (gameState === "select") {
     return (
       <div className="min-h-screen bg-black">
-        <div className="max-w-7xl mx-auto p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-6xl font-bold text-green-400 mb-4" style={{ fontFamily: 'monospace' }}>
+        <div className="px-3 py-6 md:px-8 md:py-8">
+          <div className="text-center mb-6 md:mb-8">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-green-400 mb-3 md:mb-4" style={{ fontFamily: 'monospace' }}>
               👁️ THE OVERSEER
             </h1>
-            <p className="text-2xl text-gray-400 mb-2">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-400 mb-2">
               AI-Driven Social Betting Game
             </p>
-            <p className="text-lg text-gray-500">
+            <p className="text-sm sm:text-base md:text-lg text-gray-500">
               Select Your Character to Enter the Underground Casino
             </p>
           </div>

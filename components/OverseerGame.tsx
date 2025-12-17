@@ -192,123 +192,141 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
     }
 
     return (
-        <div className="min-h-screen bg-black text-white p-4">
-            {/* Header with Phase Info */}
-            <div className="max-w-7xl mx-auto mb-6">
-                <div className="bg-gray-900 border-4 border-green-500 rounded-lg p-6">
-                    <div className="flex justify-between items-start mb-4">
-                        <div>
-                            <h1 className="text-4xl font-bold text-green-400 mb-2" style={{ fontFamily: 'monospace' }}>
-                                👁️ THE OVERSEER
-                            </h1>
-                            <p className="text-gray-400">
-                                AI-Driven Social Betting Game • Week {phaseInfo.weekNumber}
-                            </p>
-                        </div>
-                        <button
-                            onClick={onExit}
-                            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-                        >
-                            EXIT
-                        </button>
-                    </div>
-
-                    {/* Current Phase */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-gray-800 rounded-lg p-4">
-                            <p className="text-gray-400 text-sm mb-1">Current Phase</p>
-                            <p className="text-2xl font-bold text-green-400">
-                                {phaseInfo.icon} {phaseInfo.phase.toUpperCase().replace('_', ' ')}
-                            </p>
-                            <p className="text-sm text-gray-400 mt-2">{phaseInfo.description}</p>
-                            <p className="text-green-300 mt-2">
-                                Time Remaining: {formatTime(
-                                    phaseInfo.timeRemaining.hours,
-                                    phaseInfo.timeRemaining.minutes,
-                                    phaseInfo.timeRemaining.seconds
-                                )}
-                            </p>
-                        </div>
-
-                        <div className="bg-gray-800 rounded-lg p-4">
-                            <p className="text-gray-400 text-sm mb-1">Player Stats</p>
-                            <p className="text-3xl font-bold text-green-400">{player.grit} GRIT</p>
-                            <div className="text-sm text-gray-400 mt-2 space-y-1">
-                                <p>Items Owned: {player.ownedItems.length}</p>
-                                <p>Items Equipped: {player.equippedItems.length}/3</p>
-                                <p>Active Power-Ups: {player.activePowerUps.length}</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-gray-800 rounded-lg p-4">
-                            <p className="text-gray-400 text-sm mb-1">Weekly Stats</p>
-                            <div className="text-sm text-gray-300 space-y-1">
-                                <p>Wagered: {player.weeklyStats.gritWagered} grit</p>
-                                <p className="text-green-400">Won: {player.weeklyStats.gritWon} grit</p>
-                                <p className="text-red-400">Lost: {player.weeklyStats.gritLost} grit</p>
-                                <p>Win Rate: {player.weeklyStats.betsPlaced > 0 
-                                    ? Math.round((player.weeklyStats.betsWon / player.weeklyStats.betsPlaced) * 100)
-                                    : 0}%
+        <div className="min-h-screen bg-black text-white">
+            {/* Header with Phase Info - Mobile optimized */}
+            <div className="sticky top-0 z-20 bg-black/95 backdrop-blur-sm border-b border-green-500/30">
+                <div className="px-3 py-3 md:px-6 md:py-4">
+                    <div className="flex flex-col gap-3">
+                        {/* Title and Exit */}
+                        <div className="flex justify-between items-center">
+                            <div className="flex-1 min-w-0">
+                                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-green-400 truncate" style={{ fontFamily: 'monospace' }}>
+                                    👁️ THE OVERSEER
+                                </h1>
+                                <p className="text-xs sm:text-sm text-gray-400 truncate">
+                                    Week {phaseInfo.weekNumber} • {phaseInfo.phase.toUpperCase().replace('_', ' ')}
                                 </p>
+                            </div>
+                            <button
+                                onClick={onExit}
+                                className="bg-red-500 active:bg-red-600 text-white font-bold py-2 px-3 sm:px-4 rounded text-sm min-h-[44px] transition-colors"
+                            >
+                                EXIT
+                            </button>
+                        </div>
+
+                        {/* Quick Stats - Horizontal scroll on mobile */}
+                        <div className="flex gap-3 overflow-x-auto pb-2 -mx-3 px-3 snap-x snap-mandatory scrollbar-hide">
+                            <div className="flex-shrink-0 bg-gray-900/80 rounded-lg p-3 min-w-[280px] sm:min-w-0 sm:flex-1 snap-start border border-gray-700/50">
+                                <p className="text-gray-400 text-xs mb-1">Current Phase</p>
+                                <p className="text-lg sm:text-xl font-bold text-green-400 mb-1">
+                                    {phaseInfo.icon} {phaseInfo.phase.toUpperCase().replace('_', ' ')}
+                                </p>
+                                <p className="text-xs text-gray-400 mb-1 line-clamp-2">{phaseInfo.description}</p>
+                                <p className="text-xs sm:text-sm text-green-300 font-mono">
+                                    {formatTime(
+                                        phaseInfo.timeRemaining.hours,
+                                        phaseInfo.timeRemaining.minutes,
+                                        phaseInfo.timeRemaining.seconds
+                                    )}
+                                </p>
+                            </div>
+
+                            <div className="flex-shrink-0 bg-gray-900/80 rounded-lg p-3 min-w-[200px] sm:min-w-0 sm:flex-1 snap-start border border-gray-700/50">
+                                <p className="text-gray-400 text-xs mb-1">Your Stats</p>
+                                <p className="text-2xl sm:text-3xl font-bold text-green-400">{player.grit}</p>
+                                <p className="text-xs text-gray-500">GRIT</p>
+                                <div className="text-xs text-gray-400 mt-2 space-y-0.5">
+                                    <p>Items: {player.ownedItems.length} • Equipped: {player.equippedItems.length}/3</p>
+                                    <p>Power-Ups: {player.activePowerUps.length}</p>
+                                </div>
+                            </div>
+
+                            <div className="flex-shrink-0 bg-gray-900/80 rounded-lg p-3 min-w-[200px] sm:min-w-0 sm:flex-1 snap-start border border-gray-700/50">
+                                <p className="text-gray-400 text-xs mb-1">This Week</p>
+                                <div className="text-xs text-gray-300 space-y-1">
+                                    <p className="flex justify-between">
+                                        <span>Wagered:</span>
+                                        <span className="text-gray-400">{player.weeklyStats.gritWagered}</span>
+                                    </p>
+                                    <p className="flex justify-between">
+                                        <span>Won:</span>
+                                        <span className="text-green-400">+{player.weeklyStats.gritWon}</span>
+                                    </p>
+                                    <p className="flex justify-between">
+                                        <span>Lost:</span>
+                                        <span className="text-red-400">-{player.weeklyStats.gritLost}</span>
+                                    </p>
+                                    <p className="flex justify-between font-semibold">
+                                        <span>Win Rate:</span>
+                                        <span>{player.weeklyStats.betsPlaced > 0 
+                                            ? Math.round((player.weeklyStats.betsWon / player.weeklyStats.betsPlaced) * 100)
+                                            : 0}%</span>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Navigation */}
-            <div className="max-w-7xl mx-auto mb-6">
-                <div className="flex gap-4 overflow-x-auto pb-2">
-                    <button
-                        onClick={() => setCurrentView('main')}
-                        className={`px-6 py-3 rounded font-bold whitespace-nowrap ${
-                            currentView === 'main'
-                                ? 'bg-green-500 text-black'
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        }`}
-                    >
-                        📊 DASHBOARD
-                    </button>
-                    <button
-                        onClick={() => setCurrentView('tribunal')}
-                        className={`px-6 py-3 rounded font-bold whitespace-nowrap ${
-                            currentView === 'tribunal'
-                                ? 'bg-purple-500 text-white'
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        }`}
-                    >
-                        ⚖️ TRIBUNAL
-                    </button>
-                    <button
-                        onClick={() => setCurrentView('bodega')}
-                        className={`px-6 py-3 rounded font-bold whitespace-nowrap ${
-                            currentView === 'bodega'
-                                ? 'bg-green-500 text-black'
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        }`}
-                    >
-                        🛍️ BODEGA
-                    </button>
-                    <button
-                        onClick={() => setCurrentView('trading')}
-                        className={`px-6 py-3 rounded font-bold whitespace-nowrap ${
-                            currentView === 'trading'
-                                ? 'bg-blue-500 text-white'
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        }`}
-                    >
-                        🏪 TRADING FLOOR
-                    </button>
+                {/* Navigation - Bottom tabs on mobile */}
+                <div className="border-t border-gray-800">
+                    <div className="flex overflow-x-auto scrollbar-hide">
+                        <button
+                            onClick={() => setCurrentView('main')}
+                            className={`flex-1 min-w-[100px] px-4 py-3 text-xs sm:text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${
+                                currentView === 'main'
+                                    ? 'bg-green-500/20 text-green-400 border-green-500'
+                                    : 'text-gray-400 border-transparent active:bg-gray-800'
+                            }`}
+                        >
+                            <span className="block">📊</span>
+                            <span className="block text-[10px] sm:text-xs mt-0.5">DASHBOARD</span>
+                        </button>
+                        <button
+                            onClick={() => setCurrentView('tribunal')}
+                            className={`flex-1 min-w-[100px] px-4 py-3 text-xs sm:text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${
+                                currentView === 'tribunal'
+                                    ? 'bg-purple-500/20 text-purple-400 border-purple-500'
+                                    : 'text-gray-400 border-transparent active:bg-gray-800'
+                            }`}
+                        >
+                            <span className="block">⚖️</span>
+                            <span className="block text-[10px] sm:text-xs mt-0.5">TRIBUNAL</span>
+                        </button>
+                        <button
+                            onClick={() => setCurrentView('bodega')}
+                            className={`flex-1 min-w-[100px] px-4 py-3 text-xs sm:text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${
+                                currentView === 'bodega'
+                                    ? 'bg-green-500/20 text-green-400 border-green-500'
+                                    : 'text-gray-400 border-transparent active:bg-gray-800'
+                            }`}
+                        >
+                            <span className="block">🛍️</span>
+                            <span className="block text-[10px] sm:text-xs mt-0.5">BODEGA</span>
+                        </button>
+                        <button
+                            onClick={() => setCurrentView('trading')}
+                            className={`flex-1 min-w-[100px] px-4 py-3 text-xs sm:text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${
+                                currentView === 'trading'
+                                    ? 'bg-blue-500/20 text-blue-400 border-blue-500'
+                                    : 'text-gray-400 border-transparent active:bg-gray-800'
+                            }`}
+                        >
+                            <span className="block">🏪</span>
+                            <span className="block text-[10px] sm:text-xs mt-0.5">TRADING</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto">
+            <div className="px-3 py-4 md:px-6 pb-safe">
                 {currentView === 'main' && (
-                    <div className="space-y-6">
-                        <div className="bg-gray-900 border-2 border-gray-700 rounded-lg p-6">
-                            <h2 className="text-2xl font-bold text-white mb-4">Week {phaseInfo.weekNumber} Overview</h2>
-                            <p className="text-gray-400 mb-4">
+                    <div className="space-y-4">
+                        <div className="bg-gray-900/80 border border-gray-700 rounded-lg p-4 md:p-6">
+                            <h2 className="text-xl md:text-2xl font-bold text-white mb-3">Week {phaseInfo.weekNumber} Overview</h2>
+                            <p className="text-sm md:text-base text-gray-400 mb-4">
                                 The Overseer is analyzing chat history and generating betting lines.
                             </p>
                             
@@ -317,14 +335,14 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                                 {weeklyScheduleService.getWeeklySchedule().map((phase, index) => (
                                     <div
                                         key={index}
-                                        className={`p-3 rounded ${
+                                        className={`p-3 rounded-lg transition-colors ${
                                             phase.phase === phaseInfo.phase
-                                                ? 'bg-green-900 border-2 border-green-500'
-                                                : 'bg-gray-800'
+                                                ? 'bg-green-900/50 border border-green-500'
+                                                : 'bg-gray-800/50'
                                         }`}
                                     >
-                                        <p className="font-bold text-white">{phase.day}</p>
-                                        <p className="text-sm text-gray-400">{phase.description}</p>
+                                        <p className="text-sm md:text-base font-semibold text-white">{phase.day}</p>
+                                        <p className="text-xs md:text-sm text-gray-400 mt-1">{phase.description}</p>
                                     </div>
                                 ))}
                             </div>
