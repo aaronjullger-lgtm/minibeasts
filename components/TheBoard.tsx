@@ -16,6 +16,7 @@ import { bettingService } from '../services/bettingService';
 
 const DIGIT_HEIGHT = 32;
 const ANIMATION_DURATION = 600;
+const ANIMATION_SECONDS = ANIMATION_DURATION / 1000;
 
 const OdometerDisplay: React.FC<{ value: number }> = ({ value }) => {
     const digits = value.toLocaleString().split('');
@@ -27,8 +28,11 @@ const OdometerDisplay: React.FC<{ value: number }> = ({ value }) => {
             ) : (
                 <div key={`digit-${idx}`} className="relative overflow-hidden h-8 w-5 bg-black/50 border border-board-muted-blue/40 rounded-sm">
                     <div
-                        className="flex flex-col transition-transform duration-500 ease-out"
-                        style={{ transform: `translateY(-${Number(char) * DIGIT_HEIGHT}px)` }}
+                        className="flex flex-col transition-transform ease-out"
+                        style={{ 
+                            transform: `translateY(-${Number(char) * DIGIT_HEIGHT}px)`,
+                            transitionDuration: `${ANIMATION_DURATION}ms`
+                        }}
                     >
                         {Array.from({ length: 10 }).map((_, digit) => (
                             <span
@@ -409,7 +413,7 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                 }
 
                 .shake-animation {
-                    animation: board-shake 0.6s ease both;
+                    animation: board-shake ${ANIMATION_SECONDS}s ease both;
                 }
 
                 @keyframes stamp-in {
@@ -424,7 +428,7 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                     padding: 1rem 1.5rem;
                     border-radius: 0.25rem;
                     box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(255, 51, 51, 0.35);
-                    animation: stamp-in 0.5s ease forwards;
+                    animation: stamp-in ${ANIMATION_SECONDS}s ease forwards;
                     transform-origin: center;
                 }
             `}</style>

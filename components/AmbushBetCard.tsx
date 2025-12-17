@@ -23,7 +23,6 @@ export const AmbushBetCard: React.FC<AmbushBetCardProps> = ({
     targetBetCount = 0
 }) => {
     const [showDetails, setShowDetails] = useState(false);
-    const evidenceButtonClass = "btn-evidence";
 
     const getOddsLabel = (odds: number): string => {
         return odds > 0 ? `+${odds}` : `${odds}`;
@@ -196,7 +195,7 @@ export const AmbushBetCard: React.FC<AmbushBetCardProps> = ({
                         <div className="mt-3 pt-3 border-t border-board-muted-blue/50">
                             <button
                                 onClick={() => setShowDetails(!showDetails)}
-                                className={evidenceButtonClass}
+                                className="btn-evidence"
                             >
                                 {showDetails ? '▼ Hide' : '▶ Evidence'} ({bet.evidence.length})
                             </button>
