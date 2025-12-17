@@ -65,7 +65,7 @@ class JudgmentDayService {
             .filter(bet => bet.evidence && bet.evidence.length > 0)
             .map(bet => ({
                 betId: bet.id,
-                evidence: bet.evidence?.[0] || 'No evidence provided',
+                evidence: bet.evidence?.[0] || 'No evidence provided', // First evidence string
                 outcome: bet.won ? 'CONFIRMED' : 'DENIED',
                 timestamp: new Date(bet.resolvedAt || Date.now()).toLocaleString(),
                 verdict: bet.won ? 'Trigger phrase confirmed' : 'Behavior did not occur'
@@ -278,6 +278,7 @@ class JudgmentDayService {
 
     /**
      * Generate shareable receipt image data
+     * TODO: Implement actual canvas-based image generation
      */
     generateShareableReceipt(
         playerName: string,
@@ -285,8 +286,8 @@ class JudgmentDayService {
         itemsPulled: number,
         weekNumber: number
     ): string {
-        // Return data URL for shareable image
-        // In real implementation, would use canvas to generate image
+        // Placeholder: Return 1x1 transparent PNG
+        // In production, use canvas to generate styled receipt image
         return `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==`;
     }
 }

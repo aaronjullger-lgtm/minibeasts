@@ -12,6 +12,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { OverseerPlayerState, AmbushBet, JudgmentRecap } from '../types';
+import { judgmentDayService } from '../services/judgmentDayService';
 
 interface JudgmentDayRecapProps {
     player: OverseerPlayerState;
@@ -66,7 +67,7 @@ export const JudgmentDayRecap: React.FC<JudgmentDayRecapProps> = ({
             title: 'THE STAT SHEET',
             background: 'gradient',
             content: {
-                biggestPayout: recapData.winners[0],
+                biggestPayout: recapData.winners && recapData.winners.length > 0 ? recapData.winners[0] : null,
                 whaleOfWeek: recapData.whaleOfWeek,
                 gulagInmate: recapData.gulagInmate
             }
@@ -84,9 +85,9 @@ export const JudgmentDayRecap: React.FC<JudgmentDayRecapProps> = ({
             title: 'YOUR FINAL TALLY',
             background: 'vault',
             content: {
-                previousBalance: player.grit,
+                previousBalance: recapData.playerNewBalance ? player.grit - ((recapData.playerNewBalance || player.grit) - player.grit) : player.grit,
                 newBalance: recapData.playerNewBalance || player.grit,
-                profitLoss: (recapData.playerNewBalance || player.grit) - player.grit,
+                profitLoss: recapData.playerNewBalance ? (recapData.playerNewBalance - player.grit) : 0,
                 itemsPulled: recapData.playerItemsPulled || 0
             }
         }
@@ -265,12 +266,12 @@ export const JudgmentDayRecap: React.FC<JudgmentDayRecapProps> = ({
                                             {slide.content.biggestPayout.playerName}
                                         </p>
                                         <p className="text-sm text-gray-400 mt-1">
-                                            {slide.content.biggestPayout.description}
+                                            {slide.content.biggestPayout.biggestWin?.description || 'No description'}
                                         </p>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-4xl font-board-grit text-green-400">
-                                            +{slide.content.biggestPayout.payout}
+                                            +{slide.content.biggestPayout.biggestWin?.payout || slide.content.biggestPayout.totalWinnings}
                                         </p>
                                         <p className="text-sm text-gray-400">GRIT</p>
                                     </div>
@@ -382,7 +383,17 @@ export const JudgmentDayRecap: React.FC<JudgmentDayRecapProps> = ({
                         {/* Download Receipt Button */}
                         {showDownload && (
                             <button
-                                onClick={() => {/* Download logic */}}
+                                onClick={() => {
+                                    // Generate and download receipt image
+                                    const receiptData = judgmentDayService.generateShareableReceipt(
+                                        player.name,
+                                        slide.content.profitLoss,
+                                        slide.content.itemsPulled,
+                                        recapData.weekNumber
+                                    );
+                                    // In real implementation, would trigger download
+                                    console.log('Receipt generated:', receiptData);
+                                }}
                                 className="bg-board-red hover:bg-red-600 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all transform hover:scale-105 animate-fade-in"
                             >
                                 📸 DOWNLOAD RECEIPT
