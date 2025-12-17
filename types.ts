@@ -79,9 +79,9 @@ export interface EndGameReport {
     isEnd: boolean;
 }
 
-export type GameState = 'intro' | 'select' | 'playing' | 'datingSim' | 'ended';
+export type GameState = 'intro' | 'select' | 'playing' | 'datingSim' | 'ended' | 'overseer';
 
-export type MinigameType = 'kicking' | 'quarterback' | 'play_calling' | 'running_back' | 'fantasy_draft' | 'commentary_battle' | 'trivia_night' | 'beer_die' | 'sunday_scaries' | 'commish_chaos' | 'ty_window' | 'bitchless_chronicles';
+export type MinigameType = 'kicking' | 'quarterback' | 'play_calling' | 'running_back' | 'fantasy_draft' | 'commentary_battle' | 'trivia_night' | 'beer_die' | 'sunday_scaries' | 'commish_chaos' | 'ty_window' | 'bitchless_chronicles' | 'overseer';
 
 export interface SeasonGoal {
   id: string;
