@@ -164,7 +164,7 @@ export const WaiverWire: React.FC<WaiverWireProps> = ({
                                 <input
                                     type="number"
                                     value={bidAmount}
-                                    onChange={(e) => setBidAmount(parseInt(e.target.value) || 0)}
+                                    onChange={(e) => setBidAmount(parseInt(e.target.value, 10) || 0)}
                                     className="w-full bg-gray-800 border-2 border-gray-700 rounded px-4 py-3 text-board-off-white font-board-grit text-xl focus:border-board-red outline-none"
                                     min="1"
                                     max={player.grit}
