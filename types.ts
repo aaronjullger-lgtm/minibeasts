@@ -25,6 +25,7 @@ export interface CharacterData {
 
 export interface PlayerState extends CharacterData {
   grit: number; // Currency
+  lockedGrit?: number; // Grit locked in escrow for squad rides
   loveLife: number; // 0-100
   fandom: number; // 0-100
   uniqueStatValue: number; // 0-100, the value of their character-specific unique stat
@@ -178,13 +179,16 @@ export interface WeeklySchedule {
 }
 
 // Item Rarity System
-export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythic';
+export type ItemRarity = 'brick' | 'mid' | 'heat' | 'grail'; // Grey, Blue, Gold, Red
+
+export type ItemRarityLegacy = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythic';
 
 export interface RarityConfig {
     rarity: ItemRarity;
-    color: string;
+    color: string; // 'grey', 'blue', 'gold', 'red'
     dropRate: number; // Percentage chance
-    label: string;
+    label: string; // 'Brick', 'Mid', 'Heat', 'Grail'
+    utility: 'none' | 'minor' | 'high' | 'grail'; // Utility level
 }
 
 // Lore Items & Power-Ups
@@ -205,9 +209,21 @@ export interface LoreItem {
             amount: number;
         };
     };
+    passiveBuff?: {
+        type: 'payout_multiplier' | 'grit_earnings_boost' | 'win_rate_boost' | 'waiver_discount' | 'penalty_block' | 'tribunal_immunity';
+        value: number;
+        description: string;
+    };
+    metadata?: {
+        slotType?: 'offensive' | 'defensive' | 'utility';
+        [key: string]: any;
+    };
     type: 'lore' | 'consumable' | 'powerup';
     characterId?: string; // Optional character this belongs to
 }
+
+// Type alias for equipment-compatible items
+export type InventoryItem = LoreItem;
 
 export interface PowerUp {
     id: string;
@@ -246,8 +262,47 @@ export interface TradeOffer {
     status: 'active' | 'sold' | 'cancelled';
 }
 
+// Waiver Wire (Blind-Bid Liquidations)
+export interface WaiverListing {
+    id: string;
+    itemId: string;
+    originalOwnerId: string;
+    originalOwnerName: string;
+    listedAt: number;
+    expiresAt: number; // 24 hours after listing
+    status: 'active' | 'resolved' | 'cancelled';
+    winningBid?: WaiverBid;
+}
+
+export interface WaiverBid {
+    id: string;
+    waiverListingId: string;
+    bidderId: string;
+    bidderName: string;
+    bidAmount: number; // Grit amount (hidden until resolution)
+    placedAt: number;
+    won?: boolean; // Set when waiver resolves
+}
+
+// Multi-Item Trade System
+export interface MultiItemTrade {
+    id: string;
+    proposerId: string;
+    proposerName: string;
+    proposerItems: string[]; // Up to 5 item IDs
+    recipientId: string;
+    recipientName: string;
+    recipientItems: string[]; // Up to 5 item IDs
+    proposedAt: number;
+    status: 'pending' | 'accepted' | 'confirmed' | 'rejected' | 'cancelled' | 'completed';
+    acceptedAt?: number; // First step lock
+    confirmedAt?: number; // Second step lock (both parties must confirm)
+}
+
 export interface TradingFloor {
     offers: TradeOffer[];
+    waiverListings: WaiverListing[];
+    multiItemTrades: MultiItemTrade[];
     houseTaxRate: number; // Percentage (e.g., 0.05 for 5%)
 }
 
@@ -351,6 +406,70 @@ export interface CustomPropBet {
     evidence?: string[]; // Video clips, timestamps, etc.
 }
 
+// The Ambush System (Information Asymmetry Betting)
+export interface AmbushBet {
+    id: string;
+    bettorId: string;
+    bettorName: string;
+    targetUserId: string; // The person being bet on (target of the ambush)
+    targetUserName: string;
+    description: string; // e.g., "Will Wyatt mention the Ravens 3x today?"
+    category: 'social' | 'behavior' | 'prop'; // Type of ambush bet
+    odds: number; // American odds
+    wager: number; // Grit wagered
+    potentialPayout: number;
+    isResolved: boolean;
+    won?: boolean;
+    createdAt: number;
+    resolvedAt?: number;
+    evidence?: string[]; // Chat receipts or proof
+}
+
+// Ambush Bets Filtered View
+export interface AmbushBetsFilteredView {
+    bettorBets: AmbushBet[]; // Bets where user is the bettor (full details)
+    targetBets: {
+        totalGritAgainst: number; // Total grit wagered against the target
+        betCount: number; // Number of active bets against the target
+        bets: Array<Omit<AmbushBet, 'description' | 'category'>>; // Redacted bet details
+    };
+}
+
+// Activity Monitoring for Anti-Ghosting
+export interface PlayerActivityBaseline {
+    playerId: string;
+    baselineMessageCount: number; // Messages during surveillance phase (Mon-Wed)
+    surveillanceStartTime: number;
+    surveillanceEndTime: number;
+}
+
+export interface PlayerActivityCheck {
+    playerId: string;
+    currentMessageCount: number; // Messages during betting window (Fri-Sun)
+    baselineCount: number;
+    activityDropPercentage: number; // How much activity dropped
+    isGhosting: boolean; // True if activity dropped >70%
+    checkTime: number;
+}
+
+// Ambush Resolution Result
+export interface AmbushResolutionResult {
+    betId: string;
+    bettorsWon: boolean; // True if bettors won, false if subject won
+    totalPot: number; // Total grit in the pot
+    commishCut: number; // 5% league fee
+    netPayout: number; // Amount after commish cut
+    payouts: {
+        playerId: string;
+        playerName: string;
+        amount: number;
+    }[];
+    subjectPayout?: number; // Only set if subject won
+    ghostingDetected: boolean; // True if anti-ghosting triggered
+    evidence: string[]; // Receipt links from Locker Room
+    resolvedAt: number;
+}
+
 // Chat Monitoring & Evidence System
 export interface ChatMessage {
     id: string;
@@ -380,27 +499,65 @@ export interface EvidenceLocker {
     receipts: { [betId: string]: string[] }; // Bet ID -> Evidence IDs
 }
 
+// Payday/Bankrupt Notification Events
+export interface PaydayNotification {
+    type: 'VAULT_TRANSFER';
+    recipientId: string;
+    recipientName: string;
+    amount: number;
+    message: string; // e.g., "YOU JUST TAXED THE BOYS FOR [X] GRIT"
+    timestamp: number;
+}
+
+export interface BankruptNotification {
+    type: 'AMBUSH_LOSS';
+    loserId: string;
+    loserName: string;
+    amount: number;
+    subjectId: string;
+    subjectName: string;
+    message: string; // e.g., "YOU GOT AMBUSHED. [SUBJECT] TOOK YOUR GRIT"
+    timestamp: number;
+}
+
 // The Gulag (Punishment System)
 export interface GulagState {
     playerId: string;
     playerName: string;
-    inGulag: boolean;
+    inGulag: boolean; // True when grit hits 0
     gulagStartedAt?: number;
     banExpiresAt?: number; // For 7-day bans
-    gulagBet?: GulagBet;
+    gulagBet?: GulagBet; // The "Hail Mary" redemption bet
     previousBankruptcies: number;
+    bailoutOffered?: boolean; // True if someone offered to bail them out
+    bailoutAmount?: number; // Amount needed for bailout
+    irlPunishment?: string; // "The Tab" - voted IRL punishment
+    rapSheet: string[]; // History of shame - previous gulag entries
 }
 
 export interface GulagBet {
     id: string;
     playerId: string;
-    description: string;
-    odds: number; // High-risk odds generated by AI
-    wager: number; // Usually a fixed amount
+    description: string; // AI-generated high-risk bet
+    odds: number; // High-risk odds generated by AI (e.g., +500)
+    wager: number; // Usually a fixed amount (starter pack size)
     isResolved: boolean;
     won?: boolean;
-    redemptionAmount?: number; // Grit received if won
-    irlPunishment?: string; // Description if lost
+    redemptionAmount?: number; // Grit received if won (starter pack)
+    irlPunishment?: string; // "The Tab" - IRL punishment if lost
+    generatedAt: number; // Timestamp of generation (ensures uniqueness)
+    type: 'exact_score' | 'social_prop' | 'multi_leg' | 'custom'; // Type of Hail Mary bet
+}
+
+export interface GulagBailout {
+    id: string;
+    prisonerId: string;
+    prisonerName: string;
+    bailerId: string;
+    bailerName: string;
+    bailAmount: number; // Massive grit amount
+    timestamp: number;
+    accepted: boolean;
 }
 
 // Judgment Day Recap
@@ -428,8 +585,10 @@ export interface JudgmentRecap {
     }[];
     receipts: {
         betId: string;
-        evidence: string[]; // Chat message IDs
+        evidence: string[]; // Chat message IDs or screenshots
         outcome: string;
+        timestamp: string;
+        verdict: string;
     }[];
     stats: {
         totalGritWagered: number;
@@ -438,6 +597,29 @@ export interface JudgmentRecap {
         mostPopularBet: string;
         biggestUpset: string;
     };
+    // New fields for Judgment Day Recap
+    shadowLockReveals?: {
+        targetName: string;
+        triggerPhrase: string;
+        success: boolean;
+        bettorCount: number;
+        totalGrit: number;
+    }[];
+    whaleOfWeek?: {
+        playerName: string;
+        totalWagered: number;
+    };
+    gulagInmate?: {
+        playerName: string;
+    };
+    indictmentWinners?: {
+        category: string;
+        winnerName: string;
+        votes: number;
+        reason: string;
+    }[];
+    playerNewBalance?: number;
+    playerItemsPulled?: number;
 }
 
 // AI Overseer State
@@ -459,11 +641,14 @@ export interface OverseerState {
 export interface OverseerPlayerState extends PlayerState {
     ownedItems: LoreItem[];
     equippedItems: string[]; // Item IDs
+    equipmentSlots?: EquipmentSlot[]; // New equipment system
     activePowerUps: PowerUp[];
     tradeOffers: string[]; // TradeOffer IDs
     tribunalBets: TribunalBet[];
     squadRideBets: SquadRider[];
     sportsbookBets: SportsbookBet[];
+    ambushBets: AmbushBet[]; // Bets placed on others (as bettor)
+    ambushTargetBets: AmbushBet[]; // Bets where this player is the target (redacted details)
     gulagState?: GulagState;
     weeklyStats: {
         gritWagered: number;
@@ -473,3 +658,105 @@ export interface OverseerPlayerState extends PlayerState {
         betsWon: number;
     };
 }
+
+// Player Card & Rap Sheet System
+export interface PlayerCardData {
+    playerId: string;
+    playerName: string;
+    avatarUrl: string;
+    currentGrit: number;
+    totalItems: number;
+    winRate: number; // 0-100
+    streak: PlayerStreak;
+    equipmentSlots: EquipmentSlot[];
+    passiveBuffs: PlayerPassiveBuff[];
+    rapSheet: RapSheetEntry[];
+    totalGulagDays: number;
+    bankruptcyCount: number;
+    hasGrail: boolean;
+}
+
+export interface PlayerStreak {
+    type: 'win' | 'loss' | 'none';
+    count: number;
+}
+
+export interface EquipmentSlot {
+    slotId: string;
+    slotName: string;
+    slotType: 'offensive' | 'defensive' | 'utility';
+    equippedItem: InventoryItem | null;
+}
+
+export interface PlayerPassiveBuff {
+    itemId: string;
+    itemName: string;
+    buffType: 'payout_multiplier' | 'grit_earnings_boost' | 'win_rate_boost' | 'waiver_discount' | 'penalty_block' | 'tribunal_immunity';
+    value: number; // Percentage (0.10 = 10%) or count (1 = 1 block)
+    description: string;
+}
+
+export interface RapSheetEntry {
+    type: 'loss' | 'gulag' | 'squad_failure';
+    date: string; // ISO timestamp
+    description: string;
+    amount: number; // Grit lost (for losses)
+    linkedVerdictId?: string; // Link to ambush bet or gulag entry
+    badge?: 'Fumbled the Squad' | 'Squad Captain'; // Special badges for squad rides
+}
+
+export interface RoastReaction {
+    id: string;
+    fromPlayerId: string;
+    toPlayerId: string;
+    reactionType: '🤓' | 'L';
+    createdAt: string;
+    expiresAt: string; // 10 seconds from creation
+}
+
+// Squad Ride Co-op Parlay System
+export interface SquadRide {
+    id: string;
+    driverId: string;
+    driverName: string;
+    parlayLegs: ParlayLeg[];
+    passengers: SquadRidePassenger[];
+    status: SquadRideStatus;
+    createdAt: number;
+    expiresAt: number;
+    totalPot: number;
+    nitroBoostMultiplier: number;
+    minStake: number;
+}
+
+export interface SquadRidePassenger {
+    playerId: string;
+    playerName: string;
+    stake: number;
+    joinedAt: number;
+    isDriver: boolean;
+}
+
+export interface ParlayLeg {
+    gameId: string;
+    teamName: string;
+    betType: string; // e.g., "Spread -3.5", "Over 47.5", "Moneyline"
+    odds: number; // American odds
+    gameStartTime?: number;
+    status: 'pending' | 'won' | 'lost';
+    resolvedAt?: number;
+}
+
+export type SquadRideStatus = 'open' | 'locked' | 'in_progress' | 'completed' | 'failed';
+
+export interface NitroBoostLevel {
+    tier: 'WARMING UP' | 'ROLLING' | 'HOT' | 'ON FIRE' | 'NITRO MAXED';
+    emoji: string;
+    multiplier: number;
+    color: string;
+    minPassengers: number;
+    maxPassengers: number;
+}
+
+// Inventory Item type alias for equipment
+export type InventoryItem = LoreItem;

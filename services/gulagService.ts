@@ -9,7 +9,7 @@
  * - Tracks IRL punishments
  */
 
-import { GulagState, GulagBet, OverseerPlayerState } from '../types';
+import { GulagState, GulagBet, GulagBailout, OverseerPlayerState } from '../types';
 import { GULAG_CONFIG } from '../constants-overseer';
 import { generateText } from './geminiService';
 
@@ -272,6 +272,219 @@ Respond with JSON:
      */
     resetAllGulag(): void {
         this.gulagPlayers.clear();
+    }
+
+    /**
+     * Offer bailout to a player in The Gulag
+     * Costs massive amount of grit to instantly free a friend
+     */
+    offerBailout(
+        prisoner: OverseerPlayerState,
+        bailer: OverseerPlayerState,
+        bailAmount: number
+    ): { success: boolean; message: string } {
+        if (!prisoner.gulagState?.inGulag) {
+            return { success: false, message: 'Player is not in The Gulag' };
+        }
+
+        if (bailer.grit < bailAmount) {
+            return { success: false, message: 'Insufficient grit for bailout' };
+        }
+
+        // Bailout cost should be massive (e.g., 2000+ grit)
+        const minBailoutCost = GULAG_CONFIG.bailoutCost || 2000;
+        if (bailAmount < minBailoutCost) {
+            return { success: false, message: `Bailout requires at least ${minBailoutCost} grit` };
+        }
+
+        // Execute bailout
+        bailer.grit -= bailAmount;
+        prisoner.grit = Math.floor(bailAmount * 0.5); // Prisoner gets 50% as starter pack
+        this.releaseFromGulag(prisoner);
+
+        // Add to rap sheet
+        if (!prisoner.gulagState.rapSheet) {
+            prisoner.gulagState.rapSheet = [];
+        }
+        prisoner.gulagState.rapSheet.push(
+            `Bailed out by ${bailer.name} for ${bailAmount} grit on ${new Date().toLocaleDateString()}`
+        );
+
+        return {
+            success: true,
+            message: `${bailer.name} bailed out ${prisoner.name} for ${bailAmount} grit!`
+        };
+    }
+
+    /**
+     * Add entry to player's rap sheet
+     */
+    addToRapSheet(player: OverseerPlayerState, entry: string): void {
+        if (!player.gulagState) {
+            player.gulagState = {
+                playerId: player.id,
+                playerName: player.name,
+                inGulag: false,
+                previousBankruptcies: 0,
+                rapSheet: []
+            };
+        }
+
+        if (!player.gulagState.rapSheet) {
+            player.gulagState.rapSheet = [];
+        }
+
+        player.gulagState.rapSheet.push(entry);
+    }
+
+    /**
+     * Generate unique AI-powered Hail Mary bet (enhanced version)
+     */
+    async generateUniqueHailMary(
+        player: OverseerPlayerState,
+        betType: 'exact_score' | 'social_prop' | 'multi_leg' | 'custom' = 'custom'
+    ): Promise<GulagBet> {
+        if (!player.gulagState?.inGulag) {
+            throw new Error('Player is not in The Gulag');
+        }
+
+        let prompt = '';
+        const timestamp = Date.now();
+
+        switch (betType) {
+            case 'exact_score':
+                prompt = `Generate a Hail Mary bet for ${player.name} to predict the EXACT final score of Monday Night Football. Include both team names and exact scores (e.g., "Chiefs 27, Bills 24"). Odds should be +800 to +1500.`;
+                break;
+
+            case 'social_prop':
+                prompt = `Generate a niche social prop bet for ${player.name} based on group chat behavior (e.g., "Predict who will send the most messages in the group chat this week"). Odds should be +400 to +800.`;
+                break;
+
+            case 'multi_leg':
+                prompt = `Generate a 4-5 leg parlay for ${player.name} with all underdogs or unlikely outcomes. Each leg should be specific. Odds should be +600 to +1200.`;
+                break;
+
+            default:
+                prompt = `Generate a creative, unique Hail Mary bet for ${player.name} who just went bankrupt. It should be difficult but not impossible, and specific to them. Odds +500 to +1000.`;
+        }
+
+        try {
+            const response = await generateText(prompt);
+            const data = JSON.parse(response);
+
+            const bet: GulagBet = {
+                id: `hail_mary_${timestamp}_${player.id}`,
+                playerId: player.id,
+                description: data.description,
+                odds: data.odds || 600,
+                wager: 0, // No wager needed - this is redemption
+                isResolved: false,
+                redemptionAmount: GULAG_CONFIG.redemptionReward || 100,
+                generatedAt: timestamp,
+                type: betType
+            };
+
+            player.gulagState.gulagBet = bet;
+            return bet;
+        } catch (error) {
+            // Fallback based on type
+            return this.generateFallbackHailMary(player, betType, timestamp);
+        }
+    }
+
+    /**
+     * Fallback Hail Mary generator
+     */
+    private generateFallbackHailMary(
+        player: OverseerPlayerState,
+        betType: string,
+        timestamp: number
+    ): GulagBet {
+        const fallbacks: { [key: string]: { description: string; odds: number } } = {
+            exact_score: {
+                description: 'Predict the exact final score of Monday Night Football',
+                odds: 1000
+            },
+            social_prop: {
+                description: 'Predict who will send the most messages in group chat this week',
+                odds: 600
+            },
+            multi_leg: {
+                description: 'Hit a 5-leg parlay with all underdogs',
+                odds: 800
+            },
+            custom: {
+                description: 'Win a high-stakes prop bet determined by The Commish',
+                odds: 700
+            }
+        };
+
+        const fallback = fallbacks[betType] || fallbacks.custom;
+
+        return {
+            id: `hail_mary_${timestamp}_${player.id}`,
+            playerId: player.id,
+            description: fallback.description,
+            odds: fallback.odds,
+            wager: 0,
+            isResolved: false,
+            redemptionAmount: GULAG_CONFIG.redemptionReward || 100,
+            generatedAt: timestamp,
+            type: betType as any
+        };
+    }
+
+    /**
+     * Check if player should see lockout UI
+     */
+    shouldShowLockoutUI(player: OverseerPlayerState): boolean {
+        return player.grit <= 0 || this.isInGulag(player) || this.isBanned(player);
+    }
+
+    /**
+     * Get lockout UI state
+     */
+    getLockoutUIState(player: OverseerPlayerState): {
+        showLockout: boolean;
+        reason: 'bankrupt' | 'gulag' | 'banned' | null;
+        canGenerateHailMary: boolean;
+        bailoutAvailable: boolean;
+        banTimeRemaining?: number;
+    } {
+        if (this.isBanned(player)) {
+            return {
+                showLockout: true,
+                reason: 'banned',
+                canGenerateHailMary: false,
+                bailoutAvailable: false,
+                banTimeRemaining: this.getRemainingBanTime(player)
+            };
+        }
+
+        if (this.isInGulag(player)) {
+            return {
+                showLockout: true,
+                reason: 'gulag',
+                canGenerateHailMary: !player.gulagState?.gulagBet,
+                bailoutAvailable: true
+            };
+        }
+
+        if (player.grit <= 0) {
+            return {
+                showLockout: true,
+                reason: 'bankrupt',
+                canGenerateHailMary: false,
+                bailoutAvailable: false
+            };
+        }
+
+        return {
+            showLockout: false,
+            reason: null,
+            canGenerateHailMary: false,
+            bailoutAvailable: false
+        };
     }
 }
 

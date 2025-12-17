@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { OverseerPlayerState, TribunalSuperlative, SquadRideParlay, TradeOffer, LoreItem } from '../types';
+import { OverseerPlayerState, TribunalSuperlative, SquadRideParlay, TradeOffer, LoreItem, AmbushBet } from '../types';
 import { weeklyScheduleService } from '../services/weeklyScheduleService';
 import { overseerService } from '../services/overseerService';
 import { bettingService } from '../services/bettingService';
@@ -14,6 +14,9 @@ import { gulagService } from '../services/gulagService';
 import { BodegaShop } from './BodegaShop';
 import { TradingFloor } from './TradingFloor';
 import { TribunalPanel } from './TribunalPanel';
+import { TheBoard } from './TheBoard';
+import { PaydayScreen } from './PaydayScreen';
+import { BankruptScreen } from './BankruptScreen';
 
 interface OverseerGameProps {
     initialPlayer: OverseerPlayerState;
@@ -22,10 +25,62 @@ interface OverseerGameProps {
 
 export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExit }) => {
     const [player, setPlayer] = useState<OverseerPlayerState>(initialPlayer);
-    const [currentView, setCurrentView] = useState<'main' | 'bodega' | 'trading' | 'tribunal'>('main');
+    const [currentView, setCurrentView] = useState<'main' | 'board' | 'bodega' | 'trading' | 'tribunal'>('main');
     const [phaseInfo, setPhaseInfo] = useState(weeklyScheduleService.getPhaseInfo());
     const [superlatives, setSuperlatives] = useState<TribunalSuperlative[]>([]);
     const [tradeOffers, setTradeOffers] = useState<TradeOffer[]>([]);
+    const [globalAmbushBets, setGlobalAmbushBets] = useState<AmbushBet[]>([]);
+    const [showPayday, setShowPayday] = useState(false);
+    const [showBankrupt, setShowBankrupt] = useState(false);
+
+    // Demo mode: Add sample ambush bets targeting the current player
+    const addDemoBets = () => {
+        const demoBets: AmbushBet[] = [
+            {
+                id: 'demo_1',
+                bettorId: 'anonymous_1',
+                bettorName: 'ANONYMOUS',
+                targetUserId: player.id,
+                targetUserName: player.name,
+                description: 'Will mention their favorite team 3x in chat',
+                category: 'social',
+                odds: 150,
+                wager: 500,
+                potentialPayout: 1250,
+                isResolved: false,
+                createdAt: Date.now() - 3600000
+            },
+            {
+                id: 'demo_2',
+                bettorId: 'anonymous_2',
+                bettorName: 'ANONYMOUS',
+                targetUserId: player.id,
+                targetUserName: player.name,
+                description: 'Will make a bold prediction within 24 hours',
+                category: 'behavior',
+                odds: 200,
+                wager: 1000,
+                potentialPayout: 3000,
+                isResolved: false,
+                createdAt: Date.now() - 7200000
+            },
+            {
+                id: 'demo_3',
+                bettorId: 'anonymous_3',
+                bettorName: 'ANONYMOUS',
+                targetUserId: player.id,
+                targetUserName: player.name,
+                description: 'Will defend a controversial take',
+                category: 'social',
+                odds: 125,
+                wager: 750,
+                potentialPayout: 1687,
+                isResolved: false,
+                createdAt: Date.now() - 1800000
+            }
+        ];
+        setGlobalAmbushBets(prev => [...prev, ...demoBets]);
+    };
 
     // Update phase info every second
     useEffect(() => {
@@ -127,6 +182,35 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
             } catch (error) {
                 alert(error instanceof Error ? error.message : 'Failed to vote');
             }
+        }
+    };
+
+    const handlePlaceAmbushBet = (
+        targetUserId: string,
+        targetUserName: string,
+        description: string,
+        category: 'social' | 'behavior' | 'prop',
+        odds: number,
+        wager: number
+    ) => {
+        try {
+            const bet = bettingService.placeAmbushBet(
+                player,
+                targetUserId,
+                targetUserName,
+                description,
+                category,
+                odds,
+                wager
+            );
+            
+            // Add to global ambush bets
+            setGlobalAmbushBets(prev => [...prev, bet]);
+            
+            // Update player state
+            setPlayer({ ...player });
+        } catch (error) {
+            alert(error instanceof Error ? error.message : 'Failed to place ambush bet');
         }
     };
 
@@ -276,6 +360,20 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                             Dashboard
                         </button>
                         <button
+                            onClick={() => setCurrentView('board')}
+                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all btn-glow focus-ring border-b-2 ${
+                                currentView === 'board'
+                                    ? 'glow-red'
+                                    : ''
+                            }`}
+                            style={{
+                                color: currentView === 'board' ? 'var(--bright-red)' : 'var(--beige)',
+                                borderBottomColor: currentView === 'board' ? 'var(--bright-red)' : 'transparent'
+                            }}
+                        >
+                            The Board
+                        </button>
+                        <button
                             onClick={() => setCurrentView('tribunal')}
                             className={`flex-1 px-4 py-3 text-sm font-medium transition-all btn-glow focus-ring border-b-2 ${
                                 currentView === 'tribunal'
@@ -356,6 +454,44 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                     </div>
                 )}
 
+                {currentView === 'board' && (
+                    <div>
+                        <div className="max-w-7xl mx-auto px-4 mb-4 flex gap-2">
+                            <button
+                                onClick={addDemoBets}
+                                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded text-sm"
+                            >
+                                🎭 DEMO: Add Shadow Locks (See what targets see)
+                            </button>
+                            <button
+                                onClick={() => setShowPayday(true)}
+                                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm"
+                            >
+                                💰 DEMO: Show Payday (Subject wins)
+                            </button>
+                            <button
+                                onClick={() => setShowBankrupt(true)}
+                                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm"
+                            >
+                                💀 DEMO: Show Bankrupt (Bettor loses)
+                            </button>
+                        </div>
+                        <TheBoard
+                            player={player}
+                            onPlaceAmbushBet={handlePlaceAmbushBet}
+                            allPlayers={[
+                                player,
+                                // Mock players for demo (in real implementation, these would be actual players)
+                                { ...player, id: 'wyatt', name: 'Wyatt' },
+                                { ...player, id: 'alex', name: 'Alex' },
+                                { ...player, id: 'colin', name: 'Colin' },
+                                { ...player, id: 'spencer', name: 'Spencer' }
+                            ]}
+                            globalAmbushBets={globalAmbushBets}
+                        />
+                    </div>
+                )}
+
                 {currentView === 'tribunal' && (
                     <TribunalPanel
                         superlatives={superlatives}
@@ -385,6 +521,38 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                     onPurchaseItem={handlePurchaseItem}
                     onCancelListing={handleCancelListing}
                     onClose={() => setCurrentView('main')}
+                />
+            )}
+
+            {/* Payday Notification */}
+            {showPayday && (
+                <PaydayScreen
+                    notification={{
+                        type: 'VAULT_TRANSFER',
+                        recipientId: player.id,
+                        recipientName: player.name,
+                        amount: 2250,
+                        message: `YOU JUST TAXED THE BOYS FOR 2,250 GRIT.`,
+                        timestamp: Date.now()
+                    }}
+                    onClose={() => setShowPayday(false)}
+                />
+            )}
+
+            {/* Bankrupt Notification */}
+            {showBankrupt && (
+                <BankruptScreen
+                    notification={{
+                        type: 'AMBUSH_LOSS',
+                        loserId: player.id,
+                        loserName: player.name,
+                        amount: 1000,
+                        subjectId: 'wyatt',
+                        subjectName: 'Wyatt',
+                        message: `YOU GOT AMBUSHED. WYATT TOOK YOUR GRIT.`,
+                        timestamp: Date.now()
+                    }}
+                    onClose={() => setShowBankrupt(false)}
                 />
             )}
         </div>
