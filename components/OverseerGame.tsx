@@ -463,7 +463,14 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                         <TheBoard
                             player={player}
                             onPlaceAmbushBet={handlePlaceAmbushBet}
-                            allPlayers={[player]} // TODO: Add other players when multiplayer is implemented
+                            allPlayers={[
+                                player,
+                                // Mock players for demo (in real implementation, these would be actual players)
+                                { ...player, id: 'wyatt', name: 'Wyatt' },
+                                { ...player, id: 'alex', name: 'Alex' },
+                                { ...player, id: 'colin', name: 'Colin' },
+                                { ...player, id: 'spencer', name: 'Spencer' }
+                            ]}
                             globalAmbushBets={globalAmbushBets}
                         />
                     </div>

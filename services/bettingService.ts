@@ -17,6 +17,7 @@ import {
     ParlayLeg,
     SportsbookBet,
     AmbushBet,
+    AmbushBetsFilteredView,
     OverseerPlayerState
 } from '../types';
 
@@ -408,7 +409,7 @@ class BettingService {
         }
 
         const bet: AmbushBet = {
-            id: `ambush_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            id: `ambush_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
             bettorId: bettor.id,
             bettorName: bettor.name,
             targetUserId,
@@ -439,7 +440,7 @@ class BettingService {
     getAmbushBetsForUser(
         currentUserId: string,
         allAmbushBets: AmbushBet[]
-    ): { bettorBets: AmbushBet[]; targetBets: { totalGritAgainst: number; betCount: number; bets: Array<Omit<AmbushBet, 'description' | 'category'>> } } {
+    ): AmbushBetsFilteredView {
         // Bets where current user is the bettor (full details)
         const bettorBets = allAmbushBets.filter(bet => bet.bettorId === currentUserId);
 

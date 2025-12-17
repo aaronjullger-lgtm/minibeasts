@@ -310,7 +310,7 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                             🔒 Shadow Locks
                         </h2>
                         <div className="space-y-4">
-                            {targetBets.betCount === 0 ? (
+                            {targetBets.betCount === 0 || targetBets.bets.length === 0 ? (
                                 <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 text-center text-gray-500">
                                     No shadow locks detected
                                 </div>

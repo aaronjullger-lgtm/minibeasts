@@ -370,6 +370,16 @@ export interface AmbushBet {
     evidence?: string[]; // Chat receipts or proof
 }
 
+// Ambush Bets Filtered View
+export interface AmbushBetsFilteredView {
+    bettorBets: AmbushBet[]; // Bets where user is the bettor (full details)
+    targetBets: {
+        totalGritAgainst: number; // Total grit wagered against the target
+        betCount: number; // Number of active bets against the target
+        bets: Array<Omit<AmbushBet, 'description' | 'category'>>; // Redacted bet details
+    };
+}
+
 // Chat Monitoring & Evidence System
 export interface ChatMessage {
     id: string;

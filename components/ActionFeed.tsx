@@ -146,7 +146,7 @@ export const createActionFeedMessage = (
     type: ActionFeedMessage['type'] = 'general'
 ): ActionFeedMessage => {
     return {
-        id: `feed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: `feed_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
         message,
         timestamp: Date.now(),
         type
