@@ -11,7 +11,7 @@
 
 import { GulagState, GulagBet, OverseerPlayerState } from '../types';
 import { GULAG_CONFIG } from '../constants-overseer';
-import { geminiService } from './geminiService';
+import { generateText } from './geminiService';
 
 class GulagService {
     private gulagPlayers: Map<string, GulagState> = new Map();
@@ -77,7 +77,7 @@ Respond with JSON:
 }`;
 
         try {
-            const response = await geminiService.generateText(prompt);
+            const response = await generateText(prompt);
             const data = JSON.parse(response);
 
             // Clamp odds to allowed range

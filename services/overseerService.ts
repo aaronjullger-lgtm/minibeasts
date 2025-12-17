@@ -16,7 +16,7 @@ import {
     BettingLine,
     TownHallSuggestion 
 } from '../types';
-import { geminiService } from './geminiService';
+import { generateText } from './geminiService';
 
 class OverseerService {
     private state: OverseerState = {
@@ -88,7 +88,7 @@ Format your response as JSON:
 }`;
 
         try {
-            const response = await geminiService.generateText(prompt);
+            const response = await generateText(prompt);
             const analysis = JSON.parse(response);
             
             // Update detected trends
@@ -139,7 +139,7 @@ Format as JSON:
 }`;
 
         try {
-            const response = await geminiService.generateText(prompt);
+            const response = await generateText(prompt);
             const data = JSON.parse(response);
             
             const superlatives: TribunalSuperlative[] = data.superlatives.map((s: any, index: number) => {
@@ -200,7 +200,7 @@ Format as JSON:
 }`;
 
         try {
-            const response = await geminiService.generateText(prompt);
+            const response = await generateText(prompt);
             const data = JSON.parse(response);
             
             const lines: BettingLine[] = data.lines.map((line: any, index: number) => ({
@@ -256,7 +256,7 @@ ${evidence.map(m => `${m.senderName}: ${m.content}`).join('\n')}
 Respond with only "TRUE" or "FALSE" and a brief explanation.`;
 
         try {
-            const response = await geminiService.generateText(prompt);
+            const response = await generateText(prompt);
             const outcome = response.toLowerCase().includes('true');
             
             // Mark bet as resolved
@@ -312,7 +312,7 @@ Should this be approved as a bet? Consider:
 Respond with "APPROVE" or "REJECT" and a brief reason.`;
 
         try {
-            const response = await geminiService.generateText(prompt);
+            const response = await generateText(prompt);
             return response.toLowerCase().includes('approve') ? 'approved' : 'rejected';
         } catch (error) {
             console.error('Error processing suggestion:', error);
