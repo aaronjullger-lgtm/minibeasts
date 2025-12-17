@@ -61,10 +61,29 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <div className="app-grain min-h-screen bg-stadium-gradient">
+    <div className="app-grain app-scanlines min-h-screen bg-stadium-gradient">
       <ErrorBoundary>
         <ToastProvider>
-          <AppContent />
+          <div className="pb-16 md:pb-0">
+            <AppContent />
+          </div>
+          <nav className="fixed bottom-0 inset-x-0 z-40 bg-black/70 backdrop-blur-md border-t border-board-muted-blue/50 flex justify-around py-3 md:hidden">
+            {[
+              { label: 'Board', icon: '🎯' },
+              { label: 'Wiretap', icon: '📡' },
+              { label: 'Locker', icon: '🗄️' },
+              { label: 'Trades', icon: '📈' },
+              { label: 'Profile', icon: '👤' },
+            ].map((item, idx) => (
+              <button
+                key={item.label}
+                className={`flex flex-col items-center gap-1 text-xs font-semibold ${idx === 0 ? 'text-board-red scale-110' : 'text-board-off-white/70'}`}
+              >
+                <span className={`${idx === 0 ? 'board-red-glow' : ''}`}>{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </nav>
         </ToastProvider>
       </ErrorBoundary>
     </div>

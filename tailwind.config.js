@@ -21,7 +21,7 @@ export default {
         'board-grit': ['Courier New', 'monospace'],
       },
       backgroundImage: {
-        'stadium-gradient': 'radial-gradient(circle at 50% 0%, rgba(255, 51, 51, 0.08) 0%, rgba(5, 10, 20, 1) 70%)',
+        'stadium-gradient': 'linear-gradient(#050a14, #050a14)',
       },
     },
   },

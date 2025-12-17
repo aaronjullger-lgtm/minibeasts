@@ -890,6 +890,21 @@
     z-index: 2;
   }
 
+  .app-scanlines::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.05) 1px,
+      rgba(0, 0, 0, 0) 4px
+    );
+    background-size: 100% 4px;
+    z-index: 1;
+    mix-blend-mode: multiply;
+  }
+
   /* ============================================
      CINEMATIC ANIMATION SUITE
      ============================================ */
