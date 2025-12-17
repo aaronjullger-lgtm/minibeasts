@@ -8,7 +8,7 @@
  * - All betting types in one view
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { OverseerPlayerState, AmbushBet } from '../types';
 import { ActionFeed, ActionFeedMessage, generateBetNotification } from './ActionFeed';
 import { AmbushBetCard } from './AmbushBetCard';
@@ -80,6 +80,7 @@ export const TheBoard: React.FC<TheBoardProps> = ({
     });
     const [shake, setShake] = useState(false);
     const [showStamp, setShowStamp] = useState(false);
+    const timeouts = useRef<number[]>([]);
 
     // Get filtered ambush bets for current user
     const { bettorBets, targetBets } = bettingService.getAmbushBetsForUser(
@@ -102,6 +103,12 @@ export const TheBoard: React.FC<TheBoardProps> = ({
             }
         }
     }, [globalAmbushBets]);
+
+    useEffect(() => {
+        return () => {
+            timeouts.current.forEach(clearTimeout);
+        };
+    }, []);
 
     const handlePlaceBet = () => {
         if (!betSlipData.targetUserId || !betSlipData.description) {
@@ -126,8 +133,8 @@ export const TheBoard: React.FC<TheBoardProps> = ({
 
             setShake(true);
             setShowStamp(true);
-            setTimeout(() => setShake(false), 600);
-            setTimeout(() => setShowStamp(false), 600);
+            timeouts.current.push(window.setTimeout(() => setShake(false), 600));
+            timeouts.current.push(window.setTimeout(() => setShowStamp(false), 600));
 
             // Reset bet slip
             setBetSlipData({
@@ -388,6 +395,18 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                 
                 .animate-slide-up {
                     animation: slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+
+                @keyframes board-shake {
+                    0%, 100% { transform: translateX(0); }
+                    20% { transform: translateX(-8px); }
+                    40% { transform: translateX(8px); }
+                    60% { transform: translateX(-6px); }
+                    80% { transform: translateX(6px); }
+                }
+
+                .shake-animation {
+                    animation: board-shake 0.6s ease both;
                 }
 
                 @keyframes stamp-in {

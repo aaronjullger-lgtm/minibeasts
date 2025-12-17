@@ -99,9 +99,20 @@ export const ActionFeed: React.FC<ActionFeedProps> = ({ messages }) => {
                                     key={msg.id} 
                                     className={`flex items-center gap-3 whitespace-nowrap px-3 py-2 rounded border border-board-muted-blue/60 bg-black/40 ${msg.isWhale ? 'whale-flash' : ''}`}
                                 >
-                                    <span className={`text-sm font-board-grit ${msg.direction === 'down' ? 'text-board-red' : 'text-green-400'}`}>
-                                        {msg.direction === 'down' ? '−' : '+'}
-                                    </span>
+                                    {(() => {
+                                        const direction = msg.direction ?? 'neutral';
+                                        const directionSymbol = direction === 'down' ? '−' : direction === 'up' ? '+' : '•';
+                                        const directionClass = direction === 'down'
+                                            ? 'text-board-red'
+                                            : direction === 'up'
+                                                ? 'text-green-400'
+                                                : 'text-board-off-white/60';
+                                        return (
+                                            <span className={`text-sm font-board-grit ${directionClass}`}>
+                                                {directionSymbol}
+                                            </span>
+                                        );
+                                    })()}
                                     <span className="text-lg">{getMessageIcon(msg.type)}</span>
                                     <span className={`text-sm font-medium ${getMessageColor(msg.type, msg.isWhale)}`}>
                                         {msg.message}
@@ -191,7 +202,7 @@ export const generateBetNotification = (
     const isWhale = wager >= 1000;
     const extras: Partial<ActionFeedMessage> = {
         isWhale,
-        direction: 'down',
+        direction: betType === 'squad_ride' ? 'up' : 'down',
     };
     
     if (isWhale) {
