@@ -202,6 +202,49 @@ The following minigames are now playable in Dynasty Mode:
 
 ---
 
+## 👁️ NEW: The Overseer - AI Game Master Mode **[IMPLEMENTED]**
+
+**Concept:** An AI-driven social betting game that transforms your group chat into an underground casino. The Overseer analyzes chat logs, generates betting lines, and runs a weekly game loop with mystery boxes, trading, and brutal punishments.
+
+**Why it's revolutionary:** This isn't just a minigame - it's a complete social betting ecosystem. The AI learns your group's inside jokes, generates superlatives, and creates custom prop bets based on your actual behavior.
+
+**Core Features:**
+- 👁️ **AI-Driven Game Master** - Analyzes chat to generate betting content
+- 📅 **Weekly Game Loop** - Real-time phases (Surveillance, Lines Drop, Action, Climax, Judgment Day)
+- ⚖️ **The Tribunal** - Bet on AI-generated superlatives, vote on winners
+- 🚀 **The Squad Ride** - Co-op parlays with multiplier bonuses (+10% per rider)
+- 🏈 **The Sportsbook** - Standard NFL betting with custom prop bets
+- 🛍️ **The Bodega** - Mystery boxes with 100+ lore-based collectible items
+- 🏪 **Trading Floor** - Player-to-player marketplace with 5% house tax
+- 💎 **6 Rarity Tiers** - Common to Mythic items with passive bonuses
+- ⛓️ **The Gulag** - Brutal punishment system for bankrupt players
+- ⚡ **Power-Ups** - 15 consumables with 7-day durations
+
+**The Economy:**
+- Currency: **Grit** (earned from wins, lost on bets)
+- **Mystery Boxes**: Brown Paper Bag (50 grit) or Evidence Locker (200 grit)
+- **100+ Lore Items**: Character-specific collectibles based on inside jokes
+  - 🏈 Signed Terry Jersey (Mythic, 1 of 1)
+  - 💔 Liberal GF Ultimatum (Mythic, 1 of 1)
+  - 🎯 Eric's ALL-IN Headband (Legendary)
+  - 🤓 Nerd Emoji (Uncommon, 100 supply)
+- **Equipment System**: Equip 3 items for stacking bonuses
+
+**Game Modes:**
+1. **The Tribunal** - Vote on superlatives like "Most Delusional Take"
+2. **The Squad Ride** - Create 3-leg parlays, others join for multipliers
+3. **The Sportsbook** - Bet on NFL spreads, totals, and custom props
+
+**The Gulag:**
+- Hit 0 grit = instant lockout
+- Get ONE high-risk redemption bet (+300 to +1000 odds)
+- Win: 100 grit and freedom
+- Lose: 7-day ban or IRL punishment (escalates with repeat visits)
+
+**See [OVERSEER_GUIDE.md](./OVERSEER_GUIDE.md) for full documentation.**
+
+---
+
 ## Current Game Status
 
 This repository contains the **Dynasty Mode** life simulator - the OG Mini Beasts experience. Pick your character, manage your stats, survive the NFL season, and try not to get roasted into oblivion by your friends.
