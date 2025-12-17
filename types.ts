@@ -25,6 +25,7 @@ export interface CharacterData {
 
 export interface PlayerState extends CharacterData {
   grit: number; // Currency
+  lockedGrit?: number; // Grit locked in escrow for squad rides
   loveLife: number; // 0-100
   fandom: number; // 0-100
   uniqueStatValue: number; // 0-100, the value of their character-specific unique stat
@@ -696,11 +697,12 @@ export interface PlayerPassiveBuff {
 }
 
 export interface RapSheetEntry {
-    type: 'loss' | 'gulag';
+    type: 'loss' | 'gulag' | 'squad_failure';
     date: string; // ISO timestamp
     description: string;
     amount: number; // Grit lost (for losses)
     linkedVerdictId?: string; // Link to ambush bet or gulag entry
+    badge?: 'Fumbled the Squad' | 'Squad Captain'; // Special badges for squad rides
 }
 
 export interface RoastReaction {
@@ -711,3 +713,50 @@ export interface RoastReaction {
     createdAt: string;
     expiresAt: string; // 10 seconds from creation
 }
+
+// Squad Ride Co-op Parlay System
+export interface SquadRide {
+    id: string;
+    driverId: string;
+    driverName: string;
+    parlayLegs: ParlayLeg[];
+    passengers: SquadRidePassenger[];
+    status: SquadRideStatus;
+    createdAt: number;
+    expiresAt: number;
+    totalPot: number;
+    nitroBoostMultiplier: number;
+    minStake: number;
+}
+
+export interface SquadRidePassenger {
+    playerId: string;
+    playerName: string;
+    stake: number;
+    joinedAt: number;
+    isDriver: boolean;
+}
+
+export interface ParlayLeg {
+    gameId: string;
+    teamName: string;
+    betType: string; // e.g., "Spread -3.5", "Over 47.5", "Moneyline"
+    odds: number; // American odds
+    gameStartTime?: number;
+    status: 'pending' | 'won' | 'lost';
+    resolvedAt?: number;
+}
+
+export type SquadRideStatus = 'open' | 'locked' | 'in_progress' | 'completed' | 'failed';
+
+export interface NitroBoostLevel {
+    tier: 'WARMING UP' | 'ROLLING' | 'HOT' | 'ON FIRE' | 'NITRO MAXED';
+    emoji: string;
+    multiplier: number;
+    color: string;
+    minPassengers: number;
+    maxPassengers: number;
+}
+
+// Inventory Item type alias for equipment
+export type InventoryItem = LoreItem;
