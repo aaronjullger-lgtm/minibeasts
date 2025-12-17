@@ -885,4 +885,5 @@ export const GULAG_CONFIG = {
     redemptionReward: 100, // Grit received if won
     minOdds: 300, // Minimum +300 American odds (high risk)
     maxOdds: 1000, // Maximum +1000 American odds (insane risk)
+    bailoutCost: 2000, // Minimum grit cost to bail someone out
 };
