@@ -29,6 +29,55 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
     const [tradeOffers, setTradeOffers] = useState<TradeOffer[]>([]);
     const [globalAmbushBets, setGlobalAmbushBets] = useState<AmbushBet[]>([]);
 
+    // Demo mode: Add sample ambush bets targeting the current player
+    const addDemoBets = () => {
+        const demoBets: AmbushBet[] = [
+            {
+                id: 'demo_1',
+                bettorId: 'anonymous_1',
+                bettorName: 'ANONYMOUS',
+                targetUserId: player.id,
+                targetUserName: player.name,
+                description: 'Will mention their favorite team 3x in chat',
+                category: 'social',
+                odds: 150,
+                wager: 500,
+                potentialPayout: 1250,
+                isResolved: false,
+                createdAt: Date.now() - 3600000
+            },
+            {
+                id: 'demo_2',
+                bettorId: 'anonymous_2',
+                bettorName: 'ANONYMOUS',
+                targetUserId: player.id,
+                targetUserName: player.name,
+                description: 'Will make a bold prediction within 24 hours',
+                category: 'behavior',
+                odds: 200,
+                wager: 1000,
+                potentialPayout: 3000,
+                isResolved: false,
+                createdAt: Date.now() - 7200000
+            },
+            {
+                id: 'demo_3',
+                bettorId: 'anonymous_3',
+                bettorName: 'ANONYMOUS',
+                targetUserId: player.id,
+                targetUserName: player.name,
+                description: 'Will defend a controversial take',
+                category: 'social',
+                odds: 125,
+                wager: 750,
+                potentialPayout: 1687,
+                isResolved: false,
+                createdAt: Date.now() - 1800000
+            }
+        ];
+        setGlobalAmbushBets(prev => [...prev, ...demoBets]);
+    };
+
     // Update phase info every second
     useEffect(() => {
         const interval = setInterval(() => {
@@ -402,12 +451,22 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                 )}
 
                 {currentView === 'board' && (
-                    <TheBoard
-                        player={player}
-                        onPlaceAmbushBet={handlePlaceAmbushBet}
-                        allPlayers={[player]} // TODO: Add other players when multiplayer is implemented
-                        globalAmbushBets={globalAmbushBets}
-                    />
+                    <div>
+                        <div className="max-w-7xl mx-auto px-4 mb-4">
+                            <button
+                                onClick={addDemoBets}
+                                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded text-sm"
+                            >
+                                🎭 DEMO: Add Shadow Locks (See what targets see)
+                            </button>
+                        </div>
+                        <TheBoard
+                            player={player}
+                            onPlaceAmbushBet={handlePlaceAmbushBet}
+                            allPlayers={[player]} // TODO: Add other players when multiplayer is implemented
+                            globalAmbushBets={globalAmbushBets}
+                        />
+                    </div>
                 )}
 
                 {currentView === 'tribunal' && (
