@@ -380,6 +380,41 @@ export interface AmbushBetsFilteredView {
     };
 }
 
+// Activity Monitoring for Anti-Ghosting
+export interface PlayerActivityBaseline {
+    playerId: string;
+    baselineMessageCount: number; // Messages during surveillance phase (Mon-Wed)
+    surveillanceStartTime: number;
+    surveillanceEndTime: number;
+}
+
+export interface PlayerActivityCheck {
+    playerId: string;
+    currentMessageCount: number; // Messages during betting window (Fri-Sun)
+    baselineCount: number;
+    activityDropPercentage: number; // How much activity dropped
+    isGhosting: boolean; // True if activity dropped >70%
+    checkTime: number;
+}
+
+// Ambush Resolution Result
+export interface AmbushResolutionResult {
+    betId: string;
+    bettorsWon: boolean; // True if bettors won, false if subject won
+    totalPot: number; // Total grit in the pot
+    commishCut: number; // 5% league fee
+    netPayout: number; // Amount after commish cut
+    payouts: {
+        playerId: string;
+        playerName: string;
+        amount: number;
+    }[];
+    subjectPayout?: number; // Only set if subject won
+    ghostingDetected: boolean; // True if anti-ghosting triggered
+    evidence: string[]; // Receipt links from Locker Room
+    resolvedAt: number;
+}
+
 // Chat Monitoring & Evidence System
 export interface ChatMessage {
     id: string;
@@ -407,6 +442,27 @@ export interface EvidenceLocker {
     messages: ChatMessage[];
     screenshots: string[]; // URLs or base64 data
     receipts: { [betId: string]: string[] }; // Bet ID -> Evidence IDs
+}
+
+// Payday/Bankrupt Notification Events
+export interface PaydayNotification {
+    type: 'VAULT_TRANSFER';
+    recipientId: string;
+    recipientName: string;
+    amount: number;
+    message: string; // e.g., "YOU JUST TAXED THE BOYS FOR [X] GRIT"
+    timestamp: number;
+}
+
+export interface BankruptNotification {
+    type: 'AMBUSH_LOSS';
+    loserId: string;
+    loserName: string;
+    amount: number;
+    subjectId: string;
+    subjectName: string;
+    message: string; // e.g., "YOU GOT AMBUSHED. [SUBJECT] TOOK YOUR GRIT"
+    timestamp: number;
 }
 
 // The Gulag (Punishment System)
