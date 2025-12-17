@@ -61,11 +61,13 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <ErrorBoundary>
-      <ToastProvider>
-        <AppContent />
-      </ToastProvider>
-    </ErrorBoundary>
+    <div className="app-grain min-h-screen bg-stadium-gradient">
+      <ErrorBoundary>
+        <ToastProvider>
+          <AppContent />
+        </ToastProvider>
+      </ErrorBoundary>
+    </div>
   );
 };
 

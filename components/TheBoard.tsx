@@ -14,6 +14,40 @@ import { ActionFeed, ActionFeedMessage, generateBetNotification } from './Action
 import { AmbushBetCard } from './AmbushBetCard';
 import { bettingService } from '../services/bettingService';
 
+const DIGIT_HEIGHT = 32;
+
+const OdometerDisplay: React.FC<{ value: number }> = ({ value }) => {
+    const digits = value.toLocaleString().split('');
+
+    return (
+        <div className="flex items-end gap-[6px] font-board-grit text-board-red">
+            {digits.map((char, idx) => char === ',' ? (
+                <span key={`comma-${idx}`} className="text-lg text-board-off-white/70">,</span>
+            ) : (
+                <div key={`digit-${idx}`} className="relative overflow-hidden h-8 w-5 bg-black/50 border border-board-muted-blue/40 rounded-sm">
+                    <div
+                        className="flex flex-col transition-transform duration-500 ease-out"
+                        style={{ transform: `translateY(-${Number(char) * DIGIT_HEIGHT}px)` }}
+                    >
+                        {Array.from({ length: 10 }).map((_, digit) => (
+                            <span
+                                key={digit}
+                                className="flex items-center justify-center text-lg leading-none text-board-off-white/90"
+                                style={{ height: `${DIGIT_HEIGHT}px` }}
+                            >
+                                {digit}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            ))}
+            <span className="ml-2 text-sm text-board-off-white/70 tracking-tight">
+                GRIT
+            </span>
+        </div>
+    );
+};
+
 interface TheBoardProps {
     player: OverseerPlayerState;
     onPlaceAmbushBet: (
@@ -33,7 +67,7 @@ export const TheBoard: React.FC<TheBoardProps> = ({
     onPlaceAmbushBet,
     allPlayers,
     globalAmbushBets
-}) => {
+    }) => {
     const [actionFeedMessages, setActionFeedMessages] = useState<ActionFeedMessage[]>([]);
     const [showBetSlip, setShowBetSlip] = useState(false);
     const [betSlipData, setBetSlipData] = useState({
@@ -44,6 +78,8 @@ export const TheBoard: React.FC<TheBoardProps> = ({
         odds: 150,
         wager: 50
     });
+    const [shake, setShake] = useState(false);
+    const [showStamp, setShowStamp] = useState(false);
 
     // Get filtered ambush bets for current user
     const { bettorBets, targetBets } = bettingService.getAmbushBetsForUser(
@@ -88,6 +124,11 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                 betSlipData.wager
             );
 
+            setShake(true);
+            setShowStamp(true);
+            setTimeout(() => setShake(false), 600);
+            setTimeout(() => setShowStamp(false), 600);
+
             // Reset bet slip
             setBetSlipData({
                 targetUserId: '',
@@ -113,9 +154,19 @@ export const TheBoard: React.FC<TheBoardProps> = ({
     };
 
     return (
-        <div className="min-h-screen bg-stadium-gradient">
+        <div className={`min-h-screen bg-stadium-gradient ${shake ? 'shake-animation' : ''}`}>
             {/* Action Feed Ticker */}
             <ActionFeed messages={actionFeedMessages} />
+
+            {showStamp && (
+                <div className="fixed inset-0 z-40 pointer-events-none flex items-center justify-center">
+                    <div className="stamp-confirmation">
+                        <span className="font-board-grit text-board-off-white tracking-tight text-sm">
+                            Bet Stamped
+                        </span>
+                    </div>
+                </div>
+            )}
 
             {/* Main Board Container */}
             <div className="container mx-auto px-4 py-6">
@@ -129,13 +180,11 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                     </p>
                     
                     {/* Grit Balance */}
-                    <div className="mt-4 inline-block bg-black/60 border-2 border-board-red rounded-lg px-6 py-3">
-                        <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">
+                    <div className="mt-4 inline-block noir-card border border-board-muted-blue/60 rounded-lg px-6 py-3">
+                        <div className="text-xs text-board-off-white/60 uppercase tracking-wider mb-1">
                             Your Balance
                         </div>
-                        <div className="text-3xl font-board-grit font-bold text-board-red">
-                            {player.grit.toLocaleString()} GRIT
-                        </div>
+                        <OdometerDisplay value={player.grit} />
                     </div>
                 </div>
 
@@ -143,7 +192,7 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                 <div className="flex justify-center mb-8">
                     <button
                         onClick={() => setShowBetSlip(!showBetSlip)}
-                        className="bg-board-red hover:bg-red-600 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg transition-all transform hover:scale-105"
+                        className="bg-board-red hover:bg-red-600 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg transition-all transform hover:scale-105 board-red-glow"
                     >
                         🎯 PLACE AMBUSH BET
                     </button>
@@ -267,11 +316,11 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                                         </span>
                                     </div>
                                 </div>
-
+                                
                                 {/* Submit Button */}
                                 <button
                                     onClick={handlePlaceBet}
-                                    className="w-full bg-board-red hover:bg-red-600 text-white font-bold py-3 rounded-lg text-lg transition-all transform hover:scale-105"
+                                    className="w-full bg-board-red hover:bg-red-600 text-white font-bold py-3 rounded-none text-lg transition-all transform hover:scale-105 board-red-glow"
                                 >
                                     PLACE BET
                                 </button>
@@ -339,6 +388,22 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                 
                 .animate-slide-up {
                     animation: slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+
+                @keyframes stamp-in {
+                    0% { transform: scale(1.5); opacity: 0; }
+                    60% { transform: scale(0.96); opacity: 1; }
+                    100% { transform: scale(1); opacity: 0.95; }
+                }
+
+                .stamp-confirmation {
+                    background: rgba(5, 10, 20, 0.9);
+                    border: 2px solid rgba(255, 51, 51, 0.8);
+                    padding: 1rem 1.5rem;
+                    border-radius: 0.25rem;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(255, 51, 51, 0.35);
+                    animation: stamp-in 0.5s ease forwards;
+                    transform-origin: center;
                 }
             `}</style>
         </div>

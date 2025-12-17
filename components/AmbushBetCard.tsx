@@ -60,61 +60,70 @@ export const AmbushBetCard: React.FC<AmbushBetCardProps> = ({
         const paranoiaInfo = getParanoiaLevel(totalGritAgainstTarget);
         
         return (
-            <div className="relative bg-board-off-white border border-board-crimson rounded-lg p-4 overflow-hidden shadow-lg">
-                {/* Crimson blur overlay */}
-                <div className="absolute inset-0 bg-board-crimson opacity-20 backdrop-blur-sm rounded-lg"></div>
-                
+            <div className="relative noir-card border border-board-crimson/60 rounded-xl p-4 overflow-hidden shadow-lg locked-glitch">
+                <div className="absolute inset-0 bg-gradient-to-b from-board-crimson/10 via-board-navy/60 to-board-navy/90" />
+
                 {/* Content */}
-                <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-3">
+                <div className="relative z-10 space-y-4">
+                    <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 bg-board-crimson rounded-full animate-pulse"></div>
-                            <h3 className="text-lg font-board-header italic text-board-crimson uppercase tracking-wider">
+                            <div className="w-3 h-3 bg-board-red rounded-full board-red-glow animate-pulse" />
+                            <h3 className="text-lg font-board-header text-board-off-white uppercase tracking-wider">
                                 🎯 Shadow Lock Detected
                             </h3>
                         </div>
+                        <div className="flex items-center gap-2 text-xs md:text-sm font-board-grit text-board-red">
+                            <svg className="w-5 h-5 text-board-red surveillance-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                                <path d="M1.5 12s3.5-6.5 10.5-6.5S22.5 12 22.5 12s-3.5 6.5-10.5 6.5S1.5 12 1.5 12Z" />
+                                <circle cx="12" cy="12" r="3.5" />
+                            </svg>
+                            <span className="text-board-off-white/90">
+                                {bet.targetUserName || 'YOU'}
+                            </span>
+                        </div>
                     </div>
 
-                    <div className="bg-black/80 rounded p-4 mb-4">
-                        <p className="text-board-red font-bold text-center text-sm md:text-base mb-2">
-                            ⚠️ YOU ARE THE TARGET ⚠️
-                        </p>
-                        <p className="text-gray-300 text-xs md:text-sm text-center">
-                            Someone is watching. Details have been redacted for your protection.
+                    <div className="relative noir-card border border-board-crimson/30 rounded-lg overflow-hidden">
+                        <div className="absolute inset-0 bg-board-navy/70 backdrop-blur-xl" />
+                        <div className="absolute inset-x-6 top-1/2 -translate-y-1/2 redaction-bar text-white font-board-grit text-xs text-center py-2 uppercase">
+                            DATABASE_LOCKED
+                        </div>
+                        <p className="relative z-10 text-board-off-white/70 text-xs md:text-sm text-center px-4 py-8">
+                            {bet.description || 'SNITCH WIRE REDACTED'}
                         </p>
                     </div>
 
                     {/* Paranoia Meter */}
                     <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                            <span className="text-xs font-bold text-gray-700 uppercase">
+                        <div className="flex justify-between items-center text-board-off-white/80">
+                            <span className="text-xs font-bold uppercase">
                                 Paranoia Meter
                             </span>
-                            <span className="text-xs font-bold text-board-crimson">
+                            <span className="text-xs font-board-grit text-board-red">
                                 {paranoiaInfo.level}
                             </span>
                         </div>
                         
-                        <div className="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
+                        <div className="w-full bg-board-navy/80 border border-board-crimson/40 rounded-full h-4 overflow-hidden">
                             <div 
                                 className={`h-full ${paranoiaInfo.color} transition-all duration-500 ease-out flex items-center justify-end pr-2`}
                                 style={{ width: paranoiaInfo.width }}
                             >
-                                <span className="text-xs font-bold text-white">
+                                <span className="text-[10px] font-board-grit text-white">
                                     {totalGritAgainstTarget}
                                 </span>
                             </div>
                         </div>
                         
-                        <div className="flex justify-between text-xs text-gray-600">
+                        <div className="flex justify-between text-xs text-board-off-white/80">
                             <span>Total Grit Wagered Against You</span>
-                            <span className="font-board-grit font-bold text-board-crimson">
+                            <span className="font-board-grit text-board-crimson">
                                 {totalGritAgainstTarget.toLocaleString()} GRIT
                             </span>
                         </div>
                         
-                        <div className="text-xs text-gray-600 text-center">
-                            Active Ambush Bets: <span className="font-bold text-board-crimson">{targetBetCount}</span>
+                        <div className="text-xs text-center text-board-off-white/70">
+                            Active Ambush Bets: <span className="font-board-grit text-board-crimson">{targetBetCount}</span>
                         </div>
                     </div>
                 </div>
@@ -124,40 +133,47 @@ export const AmbushBetCard: React.FC<AmbushBetCardProps> = ({
 
     // Render for BETTOR user (full details - "Snitch Wire")
     return (
-        <div className="bg-board-off-white border border-board-muted-blue rounded-lg p-4 shadow-md hover:shadow-xl transition-shadow">
-            <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded text-xs font-bold text-white ${getCategoryColor(bet.category)}`}>
+        <div className="relative noir-card border border-board-muted-blue rounded-xl p-4 shadow-lg hover:shadow-xl transition-all">
+            <div className="absolute top-2 right-3 text-board-muted-blue/80 text-lg">
+                📎
+            </div>
+
+            <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                    <span className={`px-2 py-1 rounded text-[11px] font-board-grit text-white ${getCategoryColor(bet.category)}`}>
                         {bet.category.toUpperCase()}
                     </span>
-                    <h3 className="text-sm font-bold text-gray-800">
-                        Ambush on {bet.targetUserName}
-                    </h3>
+                    <div>
+                        <p className="text-xs uppercase text-board-muted-blue/80">Dossier</p>
+                        <h3 className="text-base font-board-header text-board-off-white leading-tight">
+                            Ambush on {bet.targetUserName}
+                        </h3>
+                    </div>
                 </div>
-                
+
                 {bet.isResolved && (
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${bet.won ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
+                    <span className={`px-3 py-1 text-xs font-board-grit rounded-none border ${bet.won ? 'bg-green-600 text-white border-green-400' : 'bg-board-crimson text-white border-board-crimson/70'}`}>
                         {bet.won ? '✓ WON' : '✗ LOST'}
                     </span>
                 )}
             </div>
 
             {/* Snitch Wire Logic */}
-            <div className="bg-gray-100 rounded p-3 mb-3">
-                <p className="text-sm text-gray-800 font-medium mb-2">
-                    <span className="font-bold text-board-red">📡 SNITCH WIRE:</span> {bet.description}
+            <div className="noir-card border border-white/5 rounded-lg p-3 mb-3">
+                <p className="text-sm text-board-off-white/90 font-medium mb-2">
+                    <span className="font-board-grit text-board-red">📡 SNITCH WIRE:</span> {bet.description}
                 </p>
                 
-                <div className="flex items-center gap-4 text-xs text-gray-700">
-                    <div>
-                        <span className="font-bold">Odds:</span>{' '}
-                        <span className="font-board-grit text-board-red font-bold">
+                <div className="flex items-center gap-6 text-xs text-board-off-white/70">
+                    <div className="flex flex-col">
+                        <span className="font-bold">Odds</span>
+                        <span className="font-board-grit text-board-red">
                             {getOddsLabel(bet.odds)}
                         </span>
                     </div>
-                    <div>
-                        <span className="font-bold">Wagered:</span>{' '}
-                        <span className="font-board-grit font-bold">
+                    <div className="flex flex-col">
+                        <span className="font-bold">Wagered</span>
+                        <span className="font-board-grit">
                             {bet.wager.toLocaleString()} GRIT
                         </span>
                     </div>
@@ -165,29 +181,29 @@ export const AmbushBetCard: React.FC<AmbushBetCardProps> = ({
             </div>
 
             {/* Payout Info */}
-            <div className="flex justify-between items-center">
-                <div className="text-xs text-gray-600">
+            <div className="flex justify-between items-center bg-board-navy/60 border border-board-muted-blue/50 rounded-lg px-3 py-2">
+                <div className="text-xs text-board-off-white/70 uppercase">
                     Potential Payout
                 </div>
-                <div className="text-sm font-board-grit font-bold text-green-600">
+                <div className="text-lg font-board-grit text-green-400">
                     {bet.potentialPayout.toLocaleString()} GRIT
                 </div>
             </div>
 
             {/* Evidence (if resolved) */}
             {bet.isResolved && bet.evidence && bet.evidence.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-gray-300">
+                <div className="mt-3 pt-3 border-t border-board-muted-blue/50">
                     <button
                         onClick={() => setShowDetails(!showDetails)}
-                        className="text-xs text-blue-600 hover:text-blue-800 font-bold"
+                        className="inline-flex items-center gap-2 bg-board-red text-white border border-board-red px-3 py-2 text-xs font-board-grit uppercase rounded-none hover:bg-white hover:text-board-red transition-none"
                     >
-                        {showDetails ? '▼' : '▶'} Evidence ({bet.evidence.length})
+                        {showDetails ? '▼ Hide' : '▶ Evidence'} ({bet.evidence.length})
                     </button>
                     
                     {showDetails && (
-                        <div className="mt-2 space-y-1">
+                        <div className="mt-2 space-y-2">
                             {bet.evidence.map((ev, idx) => (
-                                <div key={idx} className="text-xs text-gray-600 bg-white p-2 rounded">
+                                <div key={idx} className="text-xs text-board-off-white/80 bg-board-navy/60 border border-board-muted-blue/40 p-2 rounded">
                                     {ev}
                                 </div>
                             ))}
@@ -197,8 +213,11 @@ export const AmbushBetCard: React.FC<AmbushBetCardProps> = ({
             )}
 
             {/* Timestamp */}
-            <div className="mt-2 text-xs text-gray-500">
-                Created: {new Date(bet.createdAt).toLocaleString()}
+            <div className="mt-3 text-[11px] text-board-off-white/60 flex items-center justify-between">
+                <span>Created: {new Date(bet.createdAt).toLocaleString()}</span>
+                <span className="font-board-grit text-board-muted-blue">
+                    Bettor: {bet.bettorName}
+                </span>
             </div>
         </div>
     );

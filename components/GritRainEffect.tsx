@@ -87,14 +87,21 @@ export const GritRainEffect: React.FC<GritRainEffectProps> = ({ amount, onComple
             <style>{`
                 @keyframes grit-fall {
                     0% {
-                        transform: translateY(0) rotate(0deg);
+                        transform: translateY(-10%) rotate(0deg) scale(1);
                         opacity: 1;
                     }
-                    70% {
+                    65% {
+                        transform: translateY(82vh) rotate(200deg) scale(1);
                         opacity: 1;
+                    }
+                    80% {
+                        transform: translateY(70vh) rotate(260deg) scale(0.95);
+                    }
+                    90% {
+                        transform: translateY(88vh) rotate(320deg) scale(0.92);
                     }
                     100% {
-                        transform: translateY(110vh) rotate(360deg);
+                        transform: translateY(100vh) rotate(360deg) scale(0.9);
                         opacity: 0;
                     }
                 }
@@ -121,7 +128,7 @@ export const GritRainEffect: React.FC<GritRainEffectProps> = ({ amount, onComple
                 }
                 
                 .animate-grit-fall {
-                    animation: grit-fall 2s ease-in forwards;
+                    animation: grit-fall 2.2s cubic-bezier(0.25, 0.8, 0.4, 1) forwards;
                 }
                 
                 .animate-fade-in-out {
