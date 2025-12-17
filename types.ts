@@ -208,9 +208,21 @@ export interface LoreItem {
             amount: number;
         };
     };
+    passiveBuff?: {
+        type: 'payout_multiplier' | 'grit_earnings_boost' | 'win_rate_boost' | 'waiver_discount' | 'penalty_block' | 'tribunal_immunity';
+        value: number;
+        description: string;
+    };
+    metadata?: {
+        slotType?: 'offensive' | 'defensive' | 'utility';
+        [key: string]: any;
+    };
     type: 'lore' | 'consumable' | 'powerup';
     characterId?: string; // Optional character this belongs to
 }
+
+// Type alias for equipment-compatible items
+export type InventoryItem = LoreItem;
 
 export interface PowerUp {
     id: string;
@@ -628,6 +640,7 @@ export interface OverseerState {
 export interface OverseerPlayerState extends PlayerState {
     ownedItems: LoreItem[];
     equippedItems: string[]; // Item IDs
+    equipmentSlots?: EquipmentSlot[]; // New equipment system
     activePowerUps: PowerUp[];
     tradeOffers: string[]; // TradeOffer IDs
     tribunalBets: TribunalBet[];
@@ -643,4 +656,58 @@ export interface OverseerPlayerState extends PlayerState {
         betsPlaced: number;
         betsWon: number;
     };
+}
+
+// Player Card & Rap Sheet System
+export interface PlayerCardData {
+    playerId: string;
+    playerName: string;
+    avatarUrl: string;
+    currentGrit: number;
+    totalItems: number;
+    winRate: number; // 0-100
+    streak: PlayerStreak;
+    equipmentSlots: EquipmentSlot[];
+    passiveBuffs: PlayerPassiveBuff[];
+    rapSheet: RapSheetEntry[];
+    totalGulagDays: number;
+    bankruptcyCount: number;
+    hasGrail: boolean;
+}
+
+export interface PlayerStreak {
+    type: 'win' | 'loss' | 'none';
+    count: number;
+}
+
+export interface EquipmentSlot {
+    slotId: string;
+    slotName: string;
+    slotType: 'offensive' | 'defensive' | 'utility';
+    equippedItem: InventoryItem | null;
+}
+
+export interface PlayerPassiveBuff {
+    itemId: string;
+    itemName: string;
+    buffType: 'payout_multiplier' | 'grit_earnings_boost' | 'win_rate_boost' | 'waiver_discount' | 'penalty_block' | 'tribunal_immunity';
+    value: number; // Percentage (0.10 = 10%) or count (1 = 1 block)
+    description: string;
+}
+
+export interface RapSheetEntry {
+    type: 'loss' | 'gulag';
+    date: string; // ISO timestamp
+    description: string;
+    amount: number; // Grit lost (for losses)
+    linkedVerdictId?: string; // Link to ambush bet or gulag entry
+}
+
+export interface RoastReaction {
+    id: string;
+    fromPlayerId: string;
+    toPlayerId: string;
+    reactionType: '🤓' | 'L';
+    createdAt: string;
+    expiresAt: string; // 10 seconds from creation
 }
