@@ -55,6 +55,30 @@ export const generateSpeech = async (text: string): Promise<string | null> => {
     }
 };
 
+/**
+ * Generic text generation method for The Overseer system
+ * @param prompt The prompt to send to the AI
+ * @param systemInstruction Optional system instruction to guide the AI
+ * @returns A promise that resolves to the generated text
+ */
+export const generateText = async (prompt: string, systemInstruction?: string): Promise<string> => {
+  try {
+    if (!ai) {
+      throw new Error('Gemini API not initialized');
+    }
+
+    const response = await ai.models.generateContent({
+      model: COMPLEX_API_MODEL,
+      contents: [{ parts: [{ text: prompt }] }],
+      config: systemInstruction ? { systemInstruction } : {},
+    });
+    
+    return response.text.trim();
+  } catch (e) {
+    console.error("Error generating text:", e);
+    throw e;
+  }
+};
 
 /**
  * Generates a response from a specific NPC based on the conversation history.
