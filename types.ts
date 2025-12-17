@@ -572,8 +572,10 @@ export interface JudgmentRecap {
     }[];
     receipts: {
         betId: string;
-        evidence: string[]; // Chat message IDs
+        evidence: string[]; // Chat message IDs or screenshots
         outcome: string;
+        timestamp: string;
+        verdict: string;
     }[];
     stats: {
         totalGritWagered: number;
@@ -582,6 +584,29 @@ export interface JudgmentRecap {
         mostPopularBet: string;
         biggestUpset: string;
     };
+    // New fields for Judgment Day Recap
+    shadowLockReveals?: {
+        targetName: string;
+        triggerPhrase: string;
+        success: boolean;
+        bettorCount: number;
+        totalGrit: number;
+    }[];
+    whaleOfWeek?: {
+        playerName: string;
+        totalWagered: number;
+    };
+    gulagInmate?: {
+        playerName: string;
+    };
+    indictmentWinners?: {
+        category: string;
+        winnerName: string;
+        votes: number;
+        reason: string;
+    }[];
+    playerNewBalance?: number;
+    playerItemsPulled?: number;
 }
 
 // AI Overseer State
