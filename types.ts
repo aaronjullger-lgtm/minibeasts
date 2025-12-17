@@ -351,6 +351,25 @@ export interface CustomPropBet {
     evidence?: string[]; // Video clips, timestamps, etc.
 }
 
+// The Ambush System (Information Asymmetry Betting)
+export interface AmbushBet {
+    id: string;
+    bettorId: string;
+    bettorName: string;
+    targetUserId: string; // The person being bet on (target of the ambush)
+    targetUserName: string;
+    description: string; // e.g., "Will Wyatt mention the Ravens 3x today?"
+    category: 'social' | 'behavior' | 'prop'; // Type of ambush bet
+    odds: number; // American odds
+    wager: number; // Grit wagered
+    potentialPayout: number;
+    isResolved: boolean;
+    won?: boolean;
+    createdAt: number;
+    resolvedAt?: number;
+    evidence?: string[]; // Chat receipts or proof
+}
+
 // Chat Monitoring & Evidence System
 export interface ChatMessage {
     id: string;
@@ -464,6 +483,8 @@ export interface OverseerPlayerState extends PlayerState {
     tribunalBets: TribunalBet[];
     squadRideBets: SquadRider[];
     sportsbookBets: SportsbookBet[];
+    ambushBets: AmbushBet[]; // Bets placed on others (as bettor)
+    ambushTargetBets: AmbushBet[]; // Bets where this player is the target (redacted details)
     gulagState?: GulagState;
     weeklyStats: {
         gritWagered: number;

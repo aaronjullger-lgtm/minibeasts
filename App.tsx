@@ -37,6 +37,8 @@ const AppContent: React.FC = () => {
     tribunalBets: [],
     squadRideBets: [],
     sportsbookBets: [],
+    ambushBets: [],
+    ambushTargetBets: [],
     weeklyStats: {
       gritWagered: 0,
       gritWon: 0,

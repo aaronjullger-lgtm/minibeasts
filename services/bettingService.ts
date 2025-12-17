@@ -5,6 +5,7 @@
  * - The Tribunal (social betting with superlatives)
  * - The Squad Ride (co-op parlay system)
  * - The Sportsbook (standard NFL betting)
+ * - The Ambush System (information asymmetry betting)
  * - Bet resolution and payout calculation
  */
 
@@ -15,6 +16,7 @@ import {
     SquadRider,
     ParlayLeg,
     SportsbookBet,
+    AmbushBet,
     OverseerPlayerState
 } from '../types';
 
@@ -375,6 +377,137 @@ class BettingService {
             return 100 / (odds + 100);
         } else {
             return Math.abs(odds) / (Math.abs(odds) + 100);
+        }
+    }
+
+    /**
+     * Place an Ambush bet (betting on another player's behavior)
+     * @param bettor - The player placing the bet
+     * @param targetUserId - The player being bet on
+     * @param targetUserName - The name of the target player
+     * @param description - Description of what is being bet on
+     * @param category - Category of the ambush bet
+     * @param odds - American odds
+     * @param wager - Amount of grit to wager
+     */
+    placeAmbushBet(
+        bettor: OverseerPlayerState,
+        targetUserId: string,
+        targetUserName: string,
+        description: string,
+        category: 'social' | 'behavior' | 'prop',
+        odds: number,
+        wager: number
+    ): AmbushBet {
+        if (bettor.grit < wager) {
+            throw new Error('Insufficient grit');
+        }
+
+        if (bettor.id === targetUserId) {
+            throw new Error('Cannot place ambush bet on yourself');
+        }
+
+        const bet: AmbushBet = {
+            id: `ambush_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            bettorId: bettor.id,
+            bettorName: bettor.name,
+            targetUserId,
+            targetUserName,
+            description,
+            category,
+            odds,
+            wager,
+            potentialPayout: this.calculatePayout(wager, odds),
+            isResolved: false,
+            createdAt: Date.now()
+        };
+
+        // Deduct grit from bettor
+        bettor.grit -= wager;
+        bettor.ambushBets.push(bet);
+        bettor.weeklyStats.gritWagered += wager;
+        bettor.weeklyStats.betsPlaced++;
+
+        return bet;
+    }
+
+    /**
+     * Get ambush bets for a specific user with redaction applied
+     * - If user is the bettor: return full details
+     * - If user is the target: return redacted (only show total grit wagered against them)
+     */
+    getAmbushBetsForUser(
+        currentUserId: string,
+        allAmbushBets: AmbushBet[]
+    ): { bettorBets: AmbushBet[]; targetBets: { totalGritAgainst: number; betCount: number; bets: Array<Omit<AmbushBet, 'description' | 'category'>> } } {
+        // Bets where current user is the bettor (full details)
+        const bettorBets = allAmbushBets.filter(bet => bet.bettorId === currentUserId);
+
+        // Bets where current user is the target (redacted)
+        const targetBets = allAmbushBets.filter(bet => bet.targetUserId === currentUserId);
+        
+        const totalGritAgainst = targetBets.reduce((sum, bet) => sum + bet.wager, 0);
+        
+        // Redact sensitive information from target bets
+        const redactedTargetBets = targetBets.map(bet => ({
+            id: bet.id,
+            bettorId: 'REDACTED',
+            bettorName: 'ANONYMOUS',
+            targetUserId: bet.targetUserId,
+            targetUserName: bet.targetUserName,
+            // description and category are intentionally omitted (redacted)
+            odds: 0, // Hidden
+            wager: 0, // Hidden per-bet, only show total
+            potentialPayout: 0, // Hidden
+            isResolved: bet.isResolved,
+            won: bet.won,
+            createdAt: bet.createdAt,
+            resolvedAt: bet.resolvedAt
+        }));
+
+        return {
+            bettorBets,
+            targetBets: {
+                totalGritAgainst,
+                betCount: targetBets.length,
+                bets: redactedTargetBets
+            }
+        };
+    }
+
+    /**
+     * Resolve an Ambush bet
+     */
+    resolveAmbushBet(
+        bettor: OverseerPlayerState,
+        betId: string,
+        won: boolean,
+        evidence?: string[]
+    ): void {
+        const bet = bettor.ambushBets.find(b => b.id === betId);
+        
+        if (!bet) {
+            throw new Error('Bet not found');
+        }
+
+        if (bet.isResolved) {
+            throw new Error('Bet already resolved');
+        }
+
+        bet.isResolved = true;
+        bet.won = won;
+        bet.resolvedAt = Date.now();
+        
+        if (evidence) {
+            bet.evidence = evidence;
+        }
+
+        if (won) {
+            bettor.grit += bet.potentialPayout;
+            bettor.weeklyStats.gritWon += bet.potentialPayout;
+            bettor.weeklyStats.betsWon++;
+        } else {
+            bettor.weeklyStats.gritLost += bet.wager;
         }
     }
 }

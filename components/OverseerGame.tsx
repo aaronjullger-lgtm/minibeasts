@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { OverseerPlayerState, TribunalSuperlative, SquadRideParlay, TradeOffer, LoreItem } from '../types';
+import { OverseerPlayerState, TribunalSuperlative, SquadRideParlay, TradeOffer, LoreItem, AmbushBet } from '../types';
 import { weeklyScheduleService } from '../services/weeklyScheduleService';
 import { overseerService } from '../services/overseerService';
 import { bettingService } from '../services/bettingService';
@@ -14,6 +14,7 @@ import { gulagService } from '../services/gulagService';
 import { BodegaShop } from './BodegaShop';
 import { TradingFloor } from './TradingFloor';
 import { TribunalPanel } from './TribunalPanel';
+import { TheBoard } from './TheBoard';
 
 interface OverseerGameProps {
     initialPlayer: OverseerPlayerState;
@@ -22,10 +23,11 @@ interface OverseerGameProps {
 
 export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExit }) => {
     const [player, setPlayer] = useState<OverseerPlayerState>(initialPlayer);
-    const [currentView, setCurrentView] = useState<'main' | 'bodega' | 'trading' | 'tribunal'>('main');
+    const [currentView, setCurrentView] = useState<'main' | 'board' | 'bodega' | 'trading' | 'tribunal'>('main');
     const [phaseInfo, setPhaseInfo] = useState(weeklyScheduleService.getPhaseInfo());
     const [superlatives, setSuperlatives] = useState<TribunalSuperlative[]>([]);
     const [tradeOffers, setTradeOffers] = useState<TradeOffer[]>([]);
+    const [globalAmbushBets, setGlobalAmbushBets] = useState<AmbushBet[]>([]);
 
     // Update phase info every second
     useEffect(() => {
@@ -127,6 +129,35 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
             } catch (error) {
                 alert(error instanceof Error ? error.message : 'Failed to vote');
             }
+        }
+    };
+
+    const handlePlaceAmbushBet = (
+        targetUserId: string,
+        targetUserName: string,
+        description: string,
+        category: 'social' | 'behavior' | 'prop',
+        odds: number,
+        wager: number
+    ) => {
+        try {
+            const bet = bettingService.placeAmbushBet(
+                player,
+                targetUserId,
+                targetUserName,
+                description,
+                category,
+                odds,
+                wager
+            );
+            
+            // Add to global ambush bets
+            setGlobalAmbushBets(prev => [...prev, bet]);
+            
+            // Update player state
+            setPlayer({ ...player });
+        } catch (error) {
+            alert(error instanceof Error ? error.message : 'Failed to place ambush bet');
         }
     };
 
@@ -276,6 +307,20 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                             Dashboard
                         </button>
                         <button
+                            onClick={() => setCurrentView('board')}
+                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all btn-glow focus-ring border-b-2 ${
+                                currentView === 'board'
+                                    ? 'glow-red'
+                                    : ''
+                            }`}
+                            style={{
+                                color: currentView === 'board' ? 'var(--bright-red)' : 'var(--beige)',
+                                borderBottomColor: currentView === 'board' ? 'var(--bright-red)' : 'transparent'
+                            }}
+                        >
+                            The Board
+                        </button>
+                        <button
                             onClick={() => setCurrentView('tribunal')}
                             className={`flex-1 px-4 py-3 text-sm font-medium transition-all btn-glow focus-ring border-b-2 ${
                                 currentView === 'tribunal'
@@ -354,6 +399,15 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                             </div>
                         </div>
                     </div>
+                )}
+
+                {currentView === 'board' && (
+                    <TheBoard
+                        player={player}
+                        onPlaceAmbushBet={handlePlaceAmbushBet}
+                        allPlayers={[player]} // TODO: Add other players when multiplayer is implemented
+                        globalAmbushBets={globalAmbushBets}
+                    />
                 )}
 
                 {currentView === 'tribunal' && (
