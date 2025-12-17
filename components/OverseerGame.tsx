@@ -193,13 +193,13 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
-            {/* Clean Professional Header */}
-            <div className="sticky top-0 z-20 bg-black/90 backdrop-blur-md border-b border-gray-800/50">
+            {/* Cinematic Clean Professional Header with Glassmorphism */}
+            <div className="sticky top-0 z-20 glass-card border-b border-gray-800/50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Title Bar */}
-                    <div className="flex justify-between items-center py-4">
+                    {/* Title Bar - Cinematic Entry */}
+                    <div className="flex justify-between items-center py-4 cinematic-enter">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg glow-green">
                                 <span className="text-2xl sm:text-3xl">👁️</span>
                             </div>
                             <div>
@@ -213,15 +213,15 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                         </div>
                         <button
                             onClick={onExit}
-                            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg text-sm font-medium transition-colors min-h-[44px]"
+                            className="btn-glow focus-ring px-4 py-2 bg-gradient-to-br from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-gray-300 hover:text-white rounded-lg text-sm font-medium transition-all min-h-[44px] border border-gray-700/50"
                         >
                             Menu
                         </button>
                     </div>
 
-                    {/* Stats Cards - Compact and Clean */}
+                    {/* Stats Cards - Cinematic with Glassmorphism and Staggered Entry */}
                     <div className="grid grid-cols-3 gap-3 pb-4">
-                        <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-lg p-3 border border-gray-700/50">
+                        <div className="glass-card rounded-lg p-3 border border-gray-700/50 cinematic-enter cinematic-enter-delay-1 glow-green">
                             <p className="text-xs text-gray-500 mb-1">Phase</p>
                             <p className="text-sm font-bold text-green-400">{phaseInfo.icon} {phaseInfo.phase.replace('_', ' ').toUpperCase()}</p>
                             <p className="text-xs text-gray-400 mt-1 font-mono">
@@ -233,7 +233,7 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                             </p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-lg p-3 border border-gray-700/50">
+                        <div className="glass-card rounded-lg p-3 border border-gray-700/50 cinematic-enter cinematic-enter-delay-2 glow-blue">
                             <p className="text-xs text-gray-500 mb-1">Grit</p>
                             <p className="text-2xl font-bold text-green-400">{player.grit}</p>
                             <p className="text-xs text-gray-400 mt-1">
@@ -241,7 +241,7 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                             </p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-lg p-3 border border-gray-700/50">
+                        <div className="glass-card rounded-lg p-3 border border-gray-700/50 cinematic-enter cinematic-enter-delay-3 glow-purple">
                             <p className="text-xs text-gray-500 mb-1">Win Rate</p>
                             <p className="text-2xl font-bold text-blue-400">
                                 {player.weeklyStats.betsPlaced > 0 
@@ -254,13 +254,13 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                         </div>
                     </div>
 
-                    {/* Navigation Tabs - Clean Design */}
-                    <div className="flex border-t border-gray-800/50">
+                    {/* Navigation Tabs - Cinematic with Smooth Transitions */}
+                    <div className="flex border-t border-gray-800/50 cinematic-enter cinematic-enter-delay-4">
                         <button
                             onClick={() => setCurrentView('main')}
-                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all ${
+                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all btn-glow focus-ring ${
                                 currentView === 'main'
-                                    ? 'text-green-400 border-b-2 border-green-500'
+                                    ? 'text-green-400 border-b-2 border-green-500 glow-green'
                                     : 'text-gray-500 hover:text-gray-300 border-b-2 border-transparent'
                             }`}
                         >
@@ -268,9 +268,9 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                         </button>
                         <button
                             onClick={() => setCurrentView('tribunal')}
-                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all ${
+                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all btn-glow focus-ring ${
                                 currentView === 'tribunal'
-                                    ? 'text-purple-400 border-b-2 border-purple-500'
+                                    ? 'text-purple-400 border-b-2 border-purple-500 glow-purple'
                                     : 'text-gray-500 hover:text-gray-300 border-b-2 border-transparent'
                             }`}
                         >
@@ -278,9 +278,9 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                         </button>
                         <button
                             onClick={() => setCurrentView('bodega')}
-                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all ${
+                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all btn-glow focus-ring ${
                                 currentView === 'bodega'
-                                    ? 'text-blue-400 border-b-2 border-blue-500'
+                                    ? 'text-blue-400 border-b-2 border-blue-500 glow-blue'
                                     : 'text-gray-500 hover:text-gray-300 border-b-2 border-transparent'
                             }`}
                         >
@@ -288,9 +288,9 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                         </button>
                         <button
                             onClick={() => setCurrentView('trading')}
-                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all ${
+                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all btn-glow focus-ring ${
                                 currentView === 'trading'
-                                    ? 'text-orange-400 border-b-2 border-orange-500'
+                                    ? 'text-orange-400 border-b-2 border-orange-500 glow-orange'
                                     : 'text-gray-500 hover:text-gray-300 border-b-2 border-transparent'
                             }`}
                         >
@@ -300,26 +300,27 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                 </div>
             </div>
 
-            {/* Main Content */}
+            {/* Main Content with Cinematic Animations */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {currentView === 'main' && (
                     <div className="space-y-4">
-                        <div className="bg-gray-900/80 border border-gray-700 rounded-lg p-4 md:p-6">
+                        <div className="glass-card rounded-lg p-4 md:p-6 border border-gray-700/50 cinematic-enter cinematic-enter-delay-5">
                             <h2 className="text-xl md:text-2xl font-bold text-white mb-3">Week {phaseInfo.weekNumber} Overview</h2>
                             <p className="text-sm md:text-base text-gray-400 mb-4">
                                 The Overseer is analyzing chat history and generating betting lines.
                             </p>
                             
-                            {/* Weekly Schedule */}
+                            {/* Weekly Schedule with Staggered Animations */}
                             <div className="space-y-2">
                                 {weeklyScheduleService.getWeeklySchedule().map((phase, index) => (
                                     <div
                                         key={index}
-                                        className={`p-3 rounded-lg transition-colors ${
+                                        className={`p-3 rounded-lg transition-all glass-card btn-glow cinematic-enter ${
                                             phase.phase === phaseInfo.phase
-                                                ? 'bg-green-900/50 border border-green-500'
-                                                : 'bg-gray-800/50'
+                                                ? 'border-green-500 glow-green'
+                                                : 'border-gray-700/30'
                                         }`}
+                                        style={{ animationDelay: `${0.3 + index * 0.05}s` }}
                                     >
                                         <p className="text-sm md:text-base font-semibold text-white">{phase.day}</p>
                                         <p className="text-xs md:text-sm text-gray-400 mt-1">{phase.description}</p>

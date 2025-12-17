@@ -69,28 +69,31 @@ export const BodegaShop: React.FC<BodegaProps> = ({ player, onPurchase, onClose 
 
                 <div className="p-4 md:p-8 md:pt-0">
 
-                {/* Mystery Boxes */}
+                {/* Mystery Boxes with Cinematic Animations */}
                 {!pulledItem && (
                     <div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
-                            {MYSTERY_BOXES.map(box => (
+                            {MYSTERY_BOXES.map((box, index) => (
                                 <div
                                     key={box.id}
-                                    className="border-2 border-gray-700 rounded-lg p-4 md:p-6 bg-gray-800 active:border-green-500 md:hover:border-green-500 transition-colors cursor-pointer"
+                                    className={`glass-card border-2 border-gray-700/50 rounded-lg p-4 md:p-6 active:border-green-500 md:hover:border-green-500 transition-all cursor-pointer btn-glow focus-ring cinematic-enter ${
+                                        box.tier === 'brown_paper_bag' ? 'glow-blue' : 'glow-purple'
+                                    }`}
+                                    style={{ animationDelay: `${index * 0.1}s` }}
                                     onClick={() => !isOpening && handlePurchase(box)}
                                 >
                                     <div className="text-center">
-                                        <div className="text-4xl md:text-6xl mb-3 md:mb-4">
+                                        <div className="text-4xl md:text-6xl mb-3 md:mb-4 animate-float" style={{ animationDelay: `${index * 0.2}s` }}>
                                             {box.tier === 'brown_paper_bag' ? '🛍️' : '🗄️'}
                                         </div>
                                         <h3 className="text-lg md:text-2xl font-bold text-white mb-2">
-                                            {box.tier === 'brown_paper_bag' ? '🛍️ ' : '🗄️ '}{box.name}
+                                            {box.name}
                                         </h3>
                                         <p className="text-sm md:text-base text-gray-400 mb-3 md:mb-4">{box.description}</p>
                                         
                                         {box.guaranteedRarity && (
-                                            <p className="text-xs md:text-sm text-green-400 mb-2">
-                                                Guaranteed {box.guaranteedRarity}+
+                                            <p className="text-xs md:text-sm text-green-400 mb-2 font-semibold">
+                                                ✨ Guaranteed {box.guaranteedRarity}+
                                             </p>
                                         )}
 
@@ -103,14 +106,17 @@ export const BodegaShop: React.FC<BodegaProps> = ({ player, onPurchase, onClose 
 
                                         <button
                                             disabled={player.grit < box.cost || isOpening}
-                                            className={`w-full py-3 md:py-3 rounded font-bold text-sm md:text-base min-h-[44px] transition-colors ${
+                                            className={`w-full py-3 md:py-3 rounded-lg font-bold text-sm md:text-base min-h-[44px] transition-all btn-glow focus-ring ${
                                                 player.grit < box.cost
                                                     ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                                                    : 'bg-green-500 active:bg-green-600 md:hover:bg-green-600 text-black'
+                                                    : 'bg-gradient-to-r from-green-500 to-emerald-600 active:from-green-600 active:to-emerald-700 md:hover:from-green-400 md:hover:to-emerald-500 text-white shadow-lg glow-green'
                                             }`}
                                         >
                                             {isOpening && selectedBox?.id === box.id
-                                                ? 'OPENING...'
+                                                ? <span className="flex items-center justify-center gap-2">
+                                                    <span className="skeleton-shimmer w-4 h-4 rounded-full"></span>
+                                                    OPENING...
+                                                  </span>
                                                 : player.grit < box.cost
                                                 ? 'INSUFFICIENT GRIT'
                                                 : 'PURCHASE'}

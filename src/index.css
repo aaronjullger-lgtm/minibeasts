@@ -1,5 +1,33 @@
 @import "tailwindcss";
 
+/* ============================================
+   CINEMATIC DESIGN SYSTEM
+   Premium SaaS Aesthetic with Motion Design
+   ============================================ */
+
+/* CSS Custom Properties for Consistency */
+:root {
+  /* Glassmorphism */
+  --glass-blur: 12px;
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg-light: rgba(255, 255, 255, 0.05);
+  --glass-bg-medium: rgba(255, 255, 255, 0.08);
+  
+  /* Dynamic Lighting - Glow Effects */
+  --glow-green: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 40px rgba(16, 185, 129, 0.2);
+  --glow-blue: 0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(59, 130, 246, 0.2);
+  --glow-purple: 0 0 20px rgba(139, 92, 246, 0.4), 0 0 40px rgba(139, 92, 246, 0.2);
+  --glow-orange: 0 0 20px rgba(251, 146, 60, 0.4), 0 0 40px rgba(251, 146, 60, 0.2);
+  
+  /* Animation Timing - Quintic Out */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+  
+  /* Active States */
+  --active-scale: 0.96;
+  --hover-scale: 1.02;
+}
+
 /* Base styles */
 
 @layer base {
@@ -10,9 +38,11 @@
 
   html {
     @apply bg-slate-950 text-slate-50;
-    background: radial-gradient(ellipse at top, #1e293b 0%, #0f172a 50%, #020617 100%);
+    /* Enhanced gradient background with more depth */
+    background: radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at top, #1e293b 0%, #0f172a 50%, #020617 100%);
     background-attachment: fixed;
-    /* Mobile viewport height fix */
     height: -webkit-fill-available;
   }
 
@@ -22,9 +52,7 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Prevent iOS text size adjustment */
     -webkit-text-size-adjust: 100%;
-    /* Mobile viewport height fix */
     min-height: 100vh;
     min-height: -webkit-fill-available;
   }
@@ -832,6 +860,204 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
+  }
+
+  /* ============================================
+     CINEMATIC ANIMATION SUITE
+     ============================================ */
+
+  /* Cinematic Page Entry - Staggered Fade + Slide */
+  .cinematic-enter {
+    animation: cinematic-enter 0.6s var(--ease-out-quint) backwards;
+  }
+
+  .cinematic-enter-delay-1 { animation-delay: 0.05s; }
+  .cinematic-enter-delay-2 { animation-delay: 0.1s; }
+  .cinematic-enter-delay-3 { animation-delay: 0.15s; }
+  .cinematic-enter-delay-4 { animation-delay: 0.2s; }
+  .cinematic-enter-delay-5 { animation-delay: 0.25s; }
+
+  @keyframes cinematic-enter {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Glassmorphism Card */
+  .glass-card {
+    background: var(--glass-bg-medium);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s var(--ease-out-quint),
+                box-shadow 0.3s var(--ease-out-quint),
+                border-color 0.3s var(--ease-out-quint);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .glass-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  /* Button with Internal Glow */
+  .btn-glow {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s var(--ease-out-quint),
+                box-shadow 0.2s var(--ease-out-quint);
+  }
+
+  .btn-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .btn-glow:hover {
+      transform: scale(var(--hover-scale));
+    }
+
+    .btn-glow:hover::before {
+      opacity: 1;
+    }
+  }
+
+  .btn-glow:active {
+    transform: scale(var(--active-scale));
+  }
+
+  /* Colored Glow States */
+  .glow-green {
+    box-shadow: var(--glow-green);
+  }
+
+  .glow-blue {
+    box-shadow: var(--glow-blue);
+  }
+
+  .glow-purple {
+    box-shadow: var(--glow-purple);
+  }
+
+  .glow-orange {
+    box-shadow: var(--glow-orange);
+  }
+
+  /* Pulsating Focus Ring */
+  .focus-ring:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4),
+                0 0 0 6px rgba(59, 130, 246, 0.2);
+    animation: pulse-ring 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4),
+                  0 0 0 6px rgba(59, 130, 246, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5),
+                  0 0 0 8px rgba(59, 130, 246, 0.3);
+    }
+  }
+
+  /* Skeleton Shimmer Loader */
+  .skeleton-shimmer {
+    position: relative;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+    overflow: hidden;
+  }
+
+  .skeleton-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      135deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 25%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.05) 75%,
+      transparent 100%
+    );
+    animation: shimmer-slide 2s infinite;
+  }
+
+  @keyframes shimmer-slide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(200%); }
+  }
+
+  /* Success Ripple Effect */
+  .ripple-success {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ripple-success::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.3);
+    transform: translate(-50%, -50%);
+    animation: ripple-expand 0.6s ease-out;
+  }
+
+  @keyframes ripple-expand {
+    to {
+      width: 300%;
+      height: 300%;
+      opacity: 0;
+    }
+  }
+
+  /* Cinematic Empty State */
+  .empty-state {
+    opacity: 0.6;
+    filter: blur(0.5px);
+    transition: opacity 0.3s ease, filter 0.3s ease;
+  }
+
+  .empty-state:hover {
+    opacity: 0.8;
+    filter: blur(0);
+  }
+
+  /* Floating Animation for Icons */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
 
   .text-gradient-emerald {
