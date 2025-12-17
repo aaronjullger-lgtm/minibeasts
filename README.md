@@ -2,9 +2,9 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Mini Beasts: The All-In Meal
+# 👁️ The Overseer: Mini Beasts Social Betting Game
 
-A dynasty mode life simulator for a chaotic group chat of football-obsessed degenerates in their 20s. Manage your grit, survive the season, and don't let your girl find out about your parlay addiction.
+An AI-driven social betting game for a chaotic group chat of football-obsessed degenerates. The Overseer analyzes your chat history, generates betting lines, and runs a weekly underground casino where you bet grit on superlatives, co-op parlays, and NFL props. Survive The Gulag or face the consequences.
 
 View your app in AI Studio: https://ai.studio/apps/drive/1i7O9l_AhRO61_x4FelQ7mzIniBDM9a7f
 
@@ -20,233 +20,184 @@ View your app in AI Studio: https://ai.studio/apps/drive/1i7O9l_AhRO61_x4FelQ7mz
 
 ---
 
-## Available Minigames
+## 🎮 The Overseer Game
 
-The following minigames are now playable in Dynasty Mode:
+**The Overseer** is an AI-driven game master that transforms your group chat into a competitive betting experience.
 
-### ✅ 1. "Sunday Scaries: The Parlay Revenge Game" **[IMPLEMENTED]**
-**Concept:** A high-stakes betting simulator where you make increasingly dumb parlays throughout the NFL season. Every loss makes Colin roast you harder, and every win makes Elie claim he "called it."
+### Core Features
 
-**Why it fits:** The group is already degenerate gamblers. This leans into the parlay addiction meta and gives everyone a chance to watch their friends spiral into financial ruin in real-time.
+#### 👁️ AI-Driven Game Master
+- Analyzes chat history to detect trends, arguments, jokes, and behaviors
+- Generates custom betting lines based on your group's personality
+- Creates AI-powered superlatives for weekly voting
+- Judges outcomes using chat evidence
 
-**Features:**
-- ✅ Real-time roast generation based on how badly your bet is losing
-- ✅ "Hater's Parlay" mode where you bet against everyone's favorite teams
-- ✅ Special Colin event: "Liberal GF finds your betting history" - costs 200 grit to smooth over
-- ✅ Elie's "Actually I'm Smart" multiplier that makes his losses hurt twice as much
+#### 📅 Weekly Game Loop (Real-Time Clock)
 
----
+**Monday-Wednesday: Surveillance Phase**
+- The Overseer monitors chat activity
+- Flag messages for AI review
+- Submit betting suggestions via Town Hall
+- Prepare your strategy
 
-### ✅ 2. "Commish Chaos: Spencer's Power Trip Simulator" **[IMPLEMENTED]**
-**Concept:** A fantasy football commissioner management game where you abuse your power, make terrible rule changes mid-season, and desperately try to maintain control as the league revolts.
+**Thursday: The Lines Drop**
+- AI publishes the weekly betting board
+- 5 superlatives generated for The Tribunal
+- Trading markets open
+- Squad Ride parlay can be created
 
-**Why it fits:** Spencer gets clowned for being a "powerless commish" - this lets players experience his pain or become the tyrant he never could be.
+**Friday-Saturday: The Action**
+- Betting window OPEN
+- Place bets on Tribunal superlatives
+- Join Squad Ride parlays
+- Purchase and activate power-ups
+- Buy mystery boxes from The Bodega
 
-**Features:**
-- ✅ Veto trades for no reason and watch the group chat explode
-- ✅ Make up new scoring rules to help your team
-- ✅ "The Joint Chiropractic" ad mini-game to earn emergency commish powers
-- ✅ Final boss: The entire league voting you out and starting a new league without you
+**Sunday: The Climax**
+- The Hunt: NFL parlays resolve live
+- Voting opens for Tribunal superlatives
+- Bets close as results come in
 
----
+**Monday Morning: Judgment Day**
+- Spotify Wrapped-style weekly recap
+- Winners and losers announced
+- Evidence and receipts revealed
+- Payouts distributed
 
-### ✅ 3. "The Ty Window: A Rare Event Collector" **[IMPLEMENTED]**
-**Concept:** A clicker/idle game where you wait for Ty to actually text something. When he does (The Ty Window), you have 30 seconds to screenshot it before he disappears for another week.
+### Game Modes
 
-**Why it fits:** Ty is the phantom of the group. This turns his silence into an actual gameplay mechanic.
+#### ⚖️ The Tribunal (Social Betting)
+Vote and bet on AI-generated superlatives:
+- "Most Delusional Take of the Week"
+- "Best Joke"
+- "Biggest L"
+- "Most Out-of-Pocket Comment"
+- And more, based on actual chat behavior
 
-**Features:**
-- ✅ Random wait times between Ty messages
-- ✅ Bonus points if his message is longer than one word
-- ✅ "Ty Window Alert" notification system
-- ✅ Track how many Ty Windows you can catch in a game
-- ✅ Secret bonus: Catch all Ty Windows for maximum points
+**How it works:**
+1. AI analyzes chat and nominates 3-4 people per category
+2. AI sets American-style odds (+150, -110, etc.)
+3. Players place bets on who will win
+4. Everyone votes on Sunday
+5. Winners get paid out based on odds
 
----
+#### 🚀 The Squad Ride (Co-Op Parlay)
+Create or join weekly 3-leg NFL parlays:
+- One player creates the parlay each week
+- Others can "squad ride" with their own wager
+- Each additional rider adds +10% multiplier
+- If parlay wins, everyone gets paid with their multiplier
+- If it loses, everyone loses together
 
-### ✅ 4. "The Bitchless Chronicles: Elie & Craif's Dating Sim" **[IMPLEMENTED]**
-**Concept:** A dating simulator where you play as either Elie or Craif trying to not get friend-zoned. Spoiler: You will get friend-zoned.
+**Example:**
+```
+Colin's Parlay: Cowboys ML + Eagles ML + Over 47.5 = +550
+- Alex rides: 100 grit, x1.0 multiplier → 650 grit if win
+- Nick rides: 100 grit, x1.1 multiplier → 715 grit if win
+- Justin rides: 100 grit, x1.2 multiplier → 780 grit if win
+```
 
-**Why it fits:** The entire group roasts these two for being perpetually single. Might as well make a game about their suffering.
+#### 🏈 The Sportsbook
+Standard NFL betting with Grit:
+- **Spreads** (e.g., Cowboys -3.5)
+- **Moneylines** (e.g., Eagles ML)
+- **Over/Under** (e.g., Total Points Over 47.5)
+- **Custom Props** (AI-verified)
+  - "Announcer mentions Taylor Swift 3+ times"
+  - "Justin screenshots a bad take during the game"
+  - "Eric defends Jerry Jones in the chat"
 
-**Features:**
-- ✅ Play as Elie: Fall for another lesbian while claiming you're "the main character"
-- ✅ Play as Craif: Send the perfect text, get "you're such a good friend!" back
-- ✅ Defensive Response System: Type increasingly desperate explanations when the group roasts you
-- ✅ Bad ending guaranteed, but you can unlock different flavors of rejection
-- ✅ Aaron randomly shows up to say "skill issue" no matter what you do
+### The Economy
 
----
+#### 💰 Grit (Currency)
+Universal in-game currency for everything:
+- **Earn:** Win bets, sell items, complete challenges
+- **Spend:** Place bets, buy mystery boxes, purchase power-ups
 
-### ✅ 5. "Beer Die Challenge" **[IMPLEMENTED & ENHANCED]**
-**Concept:** Click-based reflex game where you tap die before they disappear. Speed increases as you progress.
+#### 🛍️ The Bodega (Mystery Box Shop)
+Underground casino shop that refreshes every Tuesday at 3 AM:
 
-**Why it fits:** Classic party game that tests your reflexes and timing under pressure.
+**Brown Paper Bag (50 grit)**
+- 70% Common items
+- 20% Uncommon
+- 8% Rare
+- 2% Epic
 
-**Features:**
-- ✅ Power-ups: Slow motion, multi-dice, shield
-- ✅ Combo system with score multipliers
-- ✅ Golden dice (5x points) and bomb dice (lose life)
-- ✅ Boss rounds every 100 points
-- ✅ Obstacles that block clicks
-- ✅ Progressive difficulty scaling
+**Evidence Locker (200 grit)**
+- Guaranteed rare or better
+- 40% Rare
+- 35% Epic
+- 20% Legendary
+- 5% Mythic
 
----
+#### 💎 100+ Lore Items
+Character-specific collectibles with passive bonuses:
 
-### ✅ 6. "Fantasy Draft Championship Builder" **[IMPLEMENTED & ENHANCED]**
-**Concept:** Draft your fantasy football team, manage it through trades and waivers, simulate the season, and compete for the championship.
+**Mythic Items (1 of each):**
+- 🏈 Signed Terry McLaurin Jersey (+15% all payouts)
+- 💔 Liberal GF Ultimatum (force double-or-nothing)
+- 🕎 Aaron's Sacred Menorah (nullify bankruptcy)
+- 👑 Spencer's Commish Badge (veto power)
+- 📱 Ty's First Paragraph Text (+20% luck)
 
-**Why it fits:** The group is obsessed with fantasy football. This is their entire personality September through December.
+**Legendary Items (2-5 each):**
+- 🎯 Eric's ALL-IN Headband (+10% grit from wins)
+- 📸 Justin's Screenshot Vault (see opponent bets)
+- 💍 Eagles Super Bowl Ring (+12% on Eagles bets)
+- 🙏 Wyatt's Prayer Hands (random blessing)
 
-**Features:**
-- ✅ Three draft strategies: Safe, Risky, Balanced
-- ✅ Character-specific special abilities (Eric's "ALL-IN", Elie's overthinking, Justin's screenshots)
-- ✅ Trade system with AI opponents
-- ✅ Waiver wire pickups
-- ✅ Player injuries and boom/bust mechanics
-- ✅ Team synergy bonuses
-- ✅ 13-week season simulation with weekly scores
-- ✅ Playoff bracket and championship game
+**And 90+ more items** across Epic, Rare, Uncommon, and Common tiers!
 
----
+#### ⚡ Power-Ups (15 Total)
+Time-based consumables that last 7 days:
+- ❌ **The Veto** (300 grit) - Cancel any Tribunal nomination
+- 👁️ **The Lens** (250 grit) - See voting percentages before close
+- 🛡️ **The Shield** (200 grit) - Nullify one punishment/loss
+- 💰 **Double Down** (150 grit) - Next bet pays 2x
+- 📋 **Parlay Insurance** (175 grit) - Get 50% back if lose by one leg
+- And more...
 
-### ✅ 7. "NFL Trivia Night: Brain Battle" **[IMPLEMENTED & ENHANCED]**
-**Concept:** Test your NFL knowledge with trivia questions, use lifelines strategically, and build massive scoring streaks.
+#### 🏪 Trading Floor
+Player-to-player marketplace:
+- List items for sale at custom prices
+- Purchase from other players
+- 5% house tax on all transactions
+- Quick sell for instant grit (40% of market value)
 
-**Why it fits:** Perfect for the group to prove who actually knows football vs. who just talks loud.
+#### 🎯 Equipment System
+Equip up to 3 items for passive bonuses:
+- Stack payout multipliers
+- Bet type-specific bonuses
+- Stat boosts
+- Special abilities
 
-**Features:**
-- ✅ 10 challenging NFL trivia questions
-- ✅ Three lifelines: 50/50, Ask the Group, Skip
-- ✅ Combo streak system with multipliers
-- ✅ Lightning round (triggered by 3+ streak) with 2x points
-- ✅ Time pressure with countdown timer
-- ✅ Character-specific roasts for wrong answers
-- ✅ Group chat suggestions (sometimes wrong)
-- ✅ Perfect game bonus (100 grit)
+### The Punishment System
 
----
+#### ⛓️ The Gulag
+Hit 0 grit and face the consequences:
 
-### ✅ 8. "Commentary Battle: Hot Take Havoc" **[IMPLEMENTED & ENHANCED]**
-**Concept:** Drop your hottest takes on live game situations and NFL drama. Build your reputation or get roasted into oblivion.
+1. **Immediate Lockout** - Removed from active play
+2. **The Gulag Bet** - AI generates one high-risk redemption bet (+300 to +1000 odds)
+3. **Win:** Get 100 grit and freedom
+4. **Lose:** 7-day ban + IRL punishment
 
-**Why it fits:** This IS the group chat. Everyone's got takes. Some are good. Most are terrible. All are entertaining.
-
-**Features:**
-- ✅ Roast meter that tracks how badly you're getting cooked
-- ✅ Character alignment system (who agrees with you)
-- ✅ Hot take multiplier (2x points on next answer)
-- ✅ Viral moments (Justin screenshots your best/worst takes)
-- ✅ Group explosion meter (controversial takes increase it)
-- ✅ Multiple rounds with escalating stakes
-- ✅ BOSS ROUND: Defend your worst take of all time
-- ✅ Three defense strategies: Double Down, Apologize, or Blame Others
-
----
-
-## Future Game Ideas
-
-### 9. "All-In Arena: Eric's Grit Battle Royale"
-**Concept:** A combat game where players fight using "grit" and "that dog in them" as stats. Eric provides real-time commentary on who's got the most heart.
-
-**Why it fits:** Eric is obsessed with "ALL-IN" culture. This turns his football philosophy into actual gameplay.
-
-**Features:**
-- Characters ranked by their "dawg" rating
-- Special moves based on NFL player archetypes (e.g., "Micah Parsons Rush", "Kelce Rage")
-- Eric's commentary intensifies as battles get closer
-- Lose badly enough and Eric kicks you from the group for "not being all-in"
-- Jerry Jones appears as a villain that Eric has to reluctantly defend
-
----
-
-### 10. "The Eagles Bloc: A Tower Defense Game"
-**Concept:** Alex, Nick, and Justin defend Philadelphia from haters. Deploy Eagles players and defend Jalen Hurts' honor at all costs.
-
-**Why it fits:** These three are die-hard Eagles fans who get weirdly defensive. Perfect for a "defend the base" style game.
-
-**Features:**
-- Waves of haters attack with anti-Eagles takes
-- Deploy "Jalen Hurts is MVP" arguments as defensive towers
-- Justin uses 🤓 emoji attacks to mock incoming haters
-- Nick's acapella group shows up as a distraction (it hurts your team)
-- Boss battle: Someone says "The Eagles got lucky" and all three players enter rage mode
-
----
-
-### 11. "UConn Hype Generator: Wyatt's Randomizer"
-**Concept:** A mini-game where Wyatt texts completely random, out-of-context messages to the group chat. Your job is to guess what he's talking about.
-
-**Why it fits:** Wyatt drops bizarre texts like "BLM✊🏾" with zero context. This captures his chaotic energy.
-
-**Features:**
-- Random message generator with increasing absurdity
-- Group tries to figure out what Wyatt means
-- Occasionally he's talking about UConn basketball (bonus points for guessing correctly)
-- Prayer mode: Wyatt blesses the chat but no one knows why
-- Multiplayer: Everyone votes on what they think Wyatt's message means
-
----
-
-### 12. "Screenshot Warfare: Justin's Evidence Vault"
-**Concept:** A stealth game where you try to say something dumb without Justin screenshotting it. He's always watching. He's always ready.
-
-**Why it fits:** Justin screenshots everything, especially Elie's bad takes. This is his superpower.
-
-**Features:**
-- Type messages in the group chat simulator
-- Justin's screenshot counter appears at the top (tracks your mistakes)
-- Say something stupid? It's in the vault forever
-- Elie mode (hard difficulty): Everything you say gets screenshotted
-- End goal: Survive a full season without being in Justin's "Top 5 Worst Takes"
+**Escalating Punishments:**
+- 1st bankruptcy: 7-day ban
+- 2nd bankruptcy: 7-day ban + buy a round of drinks IRL
+- 3rd+ bankruptcy: 14-day ban + wear a dunce cap to next game
 
 ---
 
-## 👁️ NEW: The Overseer - AI Game Master Mode **[IMPLEMENTED]**
+## 📚 Full Documentation
 
-**Concept:** An AI-driven social betting game that transforms your group chat into an underground casino. The Overseer analyzes chat logs, generates betting lines, and runs a weekly game loop with mystery boxes, trading, and brutal punishments.
-
-**Why it's revolutionary:** This isn't just a minigame - it's a complete social betting ecosystem. The AI learns your group's inside jokes, generates superlatives, and creates custom prop bets based on your actual behavior.
-
-**Core Features:**
-- 👁️ **AI-Driven Game Master** - Analyzes chat to generate betting content
-- 📅 **Weekly Game Loop** - Real-time phases (Surveillance, Lines Drop, Action, Climax, Judgment Day)
-- ⚖️ **The Tribunal** - Bet on AI-generated superlatives, vote on winners
-- 🚀 **The Squad Ride** - Co-op parlays with multiplier bonuses (+10% per rider)
-- 🏈 **The Sportsbook** - Standard NFL betting with custom prop bets
-- 🛍️ **The Bodega** - Mystery boxes with 100+ lore-based collectible items
-- 🏪 **Trading Floor** - Player-to-player marketplace with 5% house tax
-- 💎 **6 Rarity Tiers** - Common to Mythic items with passive bonuses
-- ⛓️ **The Gulag** - Brutal punishment system for bankrupt players
-- ⚡ **Power-Ups** - 15 consumables with 7-day durations
-
-**The Economy:**
-- Currency: **Grit** (earned from wins, lost on bets)
-- **Mystery Boxes**: Brown Paper Bag (50 grit) or Evidence Locker (200 grit)
-- **100+ Lore Items**: Character-specific collectibles based on inside jokes
-  - 🏈 Signed Terry Jersey (Mythic, 1 of 1)
-  - 💔 Liberal GF Ultimatum (Mythic, 1 of 1)
-  - 🎯 Eric's ALL-IN Headband (Legendary)
-  - 🤓 Nerd Emoji (Uncommon, 100 supply)
-- **Equipment System**: Equip 3 items for stacking bonuses
-
-**Game Modes:**
-1. **The Tribunal** - Vote on superlatives like "Most Delusional Take"
-2. **The Squad Ride** - Create 3-leg parlays, others join for multipliers
-3. **The Sportsbook** - Bet on NFL spreads, totals, and custom props
-
-**The Gulag:**
-- Hit 0 grit = instant lockout
-- Get ONE high-risk redemption bet (+300 to +1000 odds)
-- Win: 100 grit and freedom
-- Lose: 7-day ban or IRL punishment (escalates with repeat visits)
-
-**See [OVERSEER_GUIDE.md](./OVERSEER_GUIDE.md) for full documentation.**
+For complete details, see:
+- **[OVERSEER_GUIDE.md](./OVERSEER_GUIDE.md)** - Complete user guide (11,000+ words)
+- **[INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)** - Technical integration guide
 
 ---
 
 ## Current Game Status
 
-This repository contains the **Dynasty Mode** life simulator - the OG Mini Beasts experience. Pick your character, manage your stats, survive the NFL season, and try not to get roasted into oblivion by your friends.
+**The Overseer** is the complete Mini Beasts experience. Select your character, enter the underground casino, and survive the weekly game loop. The AI watches everything. Your receipts are being collected. Your delusional takes are being cataloged.
 
 Good luck. You're gonna need it.
