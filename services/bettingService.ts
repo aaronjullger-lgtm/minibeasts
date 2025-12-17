@@ -719,16 +719,23 @@ class BettingService {
         targetPlayer: OverseerPlayerState,
         losingBettors: OverseerPlayerState[]
     ): BankruptNotification[] {
-        return losingBettors.map(bettor => ({
-            type: 'AMBUSH_LOSS',
-            loserId: bettor.id,
-            loserName: bettor.name,
-            amount: resolution.totalPot / losingBettors.length, // Approximate amount lost
-            subjectId: targetPlayer.id,
-            subjectName: targetPlayer.name,
-            message: `YOU GOT AMBUSHED. ${targetPlayer.name.toUpperCase()} TOOK YOUR GRIT.`,
-            timestamp: Date.now()
-        }));
+        return losingBettors.map(bettor => {
+            // Calculate actual amount lost by this specific bettor
+            const bettorLoss = bettor.ambushBets
+                .filter(bet => bet.targetUserId === targetPlayer.id && bet.isResolved && !bet.won)
+                .reduce((sum, bet) => sum + bet.wager, 0);
+
+            return {
+                type: 'AMBUSH_LOSS',
+                loserId: bettor.id,
+                loserName: bettor.name,
+                amount: bettorLoss,
+                subjectId: targetPlayer.id,
+                subjectName: targetPlayer.name,
+                message: `YOU GOT AMBUSHED. ${targetPlayer.name.toUpperCase()} TOOK YOUR GRIT.`,
+                timestamp: Date.now()
+            };
+        });
     }
 }
 
