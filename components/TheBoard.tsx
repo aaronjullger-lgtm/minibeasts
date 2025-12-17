@@ -67,7 +67,7 @@ export const TheBoard: React.FC<TheBoardProps> = ({
     onPlaceAmbushBet,
     allPlayers,
     globalAmbushBets
-    }) => {
+}) => {
     const [actionFeedMessages, setActionFeedMessages] = useState<ActionFeedMessage[]>([]);
     const [showBetSlip, setShowBetSlip] = useState(false);
     const [betSlipData, setBetSlipData] = useState({
@@ -316,11 +316,11 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                                         </span>
                                     </div>
                                 </div>
-                                
+
                                 {/* Submit Button */}
                                 <button
                                     onClick={handlePlaceBet}
-                                    className="w-full bg-board-red hover:bg-red-600 text-white font-bold py-3 rounded-none text-lg transition-all transform hover:scale-105 board-red-glow"
+                                    className="w-full bg-board-red hover:bg-red-600 text-white font-bold py-3 rounded-lg text-lg transition-all transform hover:scale-105 board-red-glow"
                                 >
                                     PLACE BET
                                 </button>

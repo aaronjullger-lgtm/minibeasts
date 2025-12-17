@@ -128,7 +128,7 @@ export const ActionFeed: React.FC<ActionFeedProps> = ({ messages }) => {
                     scrollbar-width: none;
                 }
                 
-                @keyframes scroll-marquee {
+                @keyframes scroll-slow {
                     0% {
                         transform: translateX(0);
                     }
@@ -138,11 +138,11 @@ export const ActionFeed: React.FC<ActionFeedProps> = ({ messages }) => {
                 }
                 
                 .animate-scroll-slow {
-                    animation: scroll-marquee 60s linear infinite;
+                    animation: scroll-slow 60s linear infinite;
                 }
                 
                 .animate-scroll-fast {
-                    animation: scroll-marquee 30s linear infinite;
+                    animation: scroll-slow 30s linear infinite;
                 }
                 
                 .animate-scroll-slow:hover,

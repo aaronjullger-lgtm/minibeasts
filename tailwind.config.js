@@ -23,9 +23,6 @@ export default {
       backgroundImage: {
         'stadium-gradient': 'radial-gradient(circle at 50% 0%, rgba(255, 51, 51, 0.08) 0%, rgba(5, 10, 20, 1) 70%)',
       },
-      boxShadow: {
-        'board-red-glow': '0 0 15px rgba(255, 51, 51, 0.4)',
-      },
     },
   },
   plugins: [],
