@@ -15,6 +15,8 @@ import { BodegaShop } from './BodegaShop';
 import { TradingFloor } from './TradingFloor';
 import { TribunalPanel } from './TribunalPanel';
 import { TheBoard } from './TheBoard';
+import { PaydayScreen } from './PaydayScreen';
+import { BankruptScreen } from './BankruptScreen';
 
 interface OverseerGameProps {
     initialPlayer: OverseerPlayerState;
@@ -28,6 +30,8 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
     const [superlatives, setSuperlatives] = useState<TribunalSuperlative[]>([]);
     const [tradeOffers, setTradeOffers] = useState<TradeOffer[]>([]);
     const [globalAmbushBets, setGlobalAmbushBets] = useState<AmbushBet[]>([]);
+    const [showPayday, setShowPayday] = useState(false);
+    const [showBankrupt, setShowBankrupt] = useState(false);
 
     // Demo mode: Add sample ambush bets targeting the current player
     const addDemoBets = () => {
@@ -452,12 +456,24 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
 
                 {currentView === 'board' && (
                     <div>
-                        <div className="max-w-7xl mx-auto px-4 mb-4">
+                        <div className="max-w-7xl mx-auto px-4 mb-4 flex gap-2">
                             <button
                                 onClick={addDemoBets}
                                 className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded text-sm"
                             >
                                 🎭 DEMO: Add Shadow Locks (See what targets see)
+                            </button>
+                            <button
+                                onClick={() => setShowPayday(true)}
+                                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm"
+                            >
+                                💰 DEMO: Show Payday (Subject wins)
+                            </button>
+                            <button
+                                onClick={() => setShowBankrupt(true)}
+                                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm"
+                            >
+                                💀 DEMO: Show Bankrupt (Bettor loses)
                             </button>
                         </div>
                         <TheBoard
@@ -505,6 +521,38 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                     onPurchaseItem={handlePurchaseItem}
                     onCancelListing={handleCancelListing}
                     onClose={() => setCurrentView('main')}
+                />
+            )}
+
+            {/* Payday Notification */}
+            {showPayday && (
+                <PaydayScreen
+                    notification={{
+                        type: 'VAULT_TRANSFER',
+                        recipientId: player.id,
+                        recipientName: player.name,
+                        amount: 2250,
+                        message: `YOU JUST TAXED THE BOYS FOR 2,250 GRIT.`,
+                        timestamp: Date.now()
+                    }}
+                    onClose={() => setShowPayday(false)}
+                />
+            )}
+
+            {/* Bankrupt Notification */}
+            {showBankrupt && (
+                <BankruptScreen
+                    notification={{
+                        type: 'AMBUSH_LOSS',
+                        loserId: player.id,
+                        loserName: player.name,
+                        amount: 1000,
+                        subjectId: 'wyatt',
+                        subjectName: 'Wyatt',
+                        message: `YOU GOT AMBUSHED. WYATT TOOK YOUR GRIT.`,
+                        timestamp: Date.now()
+                    }}
+                    onClose={() => setShowBankrupt(false)}
                 />
             )}
         </div>
