@@ -192,136 +192,116 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
     }
 
     return (
-        <div className="min-h-screen bg-black text-white">
-            {/* Header with Phase Info - Mobile optimized */}
-            <div className="sticky top-0 z-20 bg-black/95 backdrop-blur-sm border-b border-green-500/30">
-                <div className="px-3 py-3 md:px-6 md:py-4">
-                    <div className="flex flex-col gap-3">
-                        {/* Title and Exit */}
-                        <div className="flex justify-between items-center">
-                            <div className="flex-1 min-w-0">
-                                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-green-400 truncate" style={{ fontFamily: 'monospace' }}>
-                                    👁️ THE OVERSEER
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
+            {/* Clean Professional Header */}
+            <div className="sticky top-0 z-20 bg-black/90 backdrop-blur-md border-b border-gray-800/50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Title Bar */}
+                    <div className="flex justify-between items-center py-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg">
+                                <span className="text-2xl sm:text-3xl">👁️</span>
+                            </div>
+                            <div>
+                                <h1 className="text-lg sm:text-xl font-bold text-white">
+                                    The Overseer
                                 </h1>
-                                <p className="text-xs sm:text-sm text-gray-400 truncate">
+                                <p className="text-xs text-gray-400">
                                     Week {phaseInfo.weekNumber} • {phaseInfo.phase.toUpperCase().replace('_', ' ')}
                                 </p>
                             </div>
-                            <button
-                                onClick={onExit}
-                                className="bg-red-500 active:bg-red-600 text-white font-bold py-2 px-3 sm:px-4 rounded text-sm min-h-[44px] transition-colors"
-                            >
-                                EXIT
-                            </button>
+                        </div>
+                        <button
+                            onClick={onExit}
+                            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg text-sm font-medium transition-colors min-h-[44px]"
+                        >
+                            Menu
+                        </button>
+                    </div>
+
+                    {/* Stats Cards - Compact and Clean */}
+                    <div className="grid grid-cols-3 gap-3 pb-4">
+                        <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-lg p-3 border border-gray-700/50">
+                            <p className="text-xs text-gray-500 mb-1">Phase</p>
+                            <p className="text-sm font-bold text-green-400">{phaseInfo.icon} {phaseInfo.phase.replace('_', ' ').toUpperCase()}</p>
+                            <p className="text-xs text-gray-400 mt-1 font-mono">
+                                {formatTime(
+                                    phaseInfo.timeRemaining.hours,
+                                    phaseInfo.timeRemaining.minutes,
+                                    phaseInfo.timeRemaining.seconds
+                                )}
+                            </p>
                         </div>
 
-                        {/* Quick Stats - Horizontal scroll on mobile */}
-                        <div className="flex gap-3 overflow-x-auto pb-2 -mx-3 px-3 snap-x snap-mandatory scrollbar-hide">
-                            <div className="flex-shrink-0 bg-gray-900/80 rounded-lg p-3 min-w-[280px] sm:min-w-0 sm:flex-1 snap-start border border-gray-700/50">
-                                <p className="text-gray-400 text-xs mb-1">Current Phase</p>
-                                <p className="text-lg sm:text-xl font-bold text-green-400 mb-1">
-                                    {phaseInfo.icon} {phaseInfo.phase.toUpperCase().replace('_', ' ')}
-                                </p>
-                                <p className="text-xs text-gray-400 mb-1 line-clamp-2">{phaseInfo.description}</p>
-                                <p className="text-xs sm:text-sm text-green-300 font-mono">
-                                    {formatTime(
-                                        phaseInfo.timeRemaining.hours,
-                                        phaseInfo.timeRemaining.minutes,
-                                        phaseInfo.timeRemaining.seconds
-                                    )}
-                                </p>
-                            </div>
+                        <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-lg p-3 border border-gray-700/50">
+                            <p className="text-xs text-gray-500 mb-1">Grit</p>
+                            <p className="text-2xl font-bold text-green-400">{player.grit}</p>
+                            <p className="text-xs text-gray-400 mt-1">
+                                {player.ownedItems.length} items
+                            </p>
+                        </div>
 
-                            <div className="flex-shrink-0 bg-gray-900/80 rounded-lg p-3 min-w-[200px] sm:min-w-0 sm:flex-1 snap-start border border-gray-700/50">
-                                <p className="text-gray-400 text-xs mb-1">Your Stats</p>
-                                <p className="text-2xl sm:text-3xl font-bold text-green-400">{player.grit}</p>
-                                <p className="text-xs text-gray-500">GRIT</p>
-                                <div className="text-xs text-gray-400 mt-2 space-y-0.5">
-                                    <p>Items: {player.ownedItems.length} • Equipped: {player.equippedItems.length}/3</p>
-                                    <p>Power-Ups: {player.activePowerUps.length}</p>
-                                </div>
-                            </div>
-
-                            <div className="flex-shrink-0 bg-gray-900/80 rounded-lg p-3 min-w-[200px] sm:min-w-0 sm:flex-1 snap-start border border-gray-700/50">
-                                <p className="text-gray-400 text-xs mb-1">This Week</p>
-                                <div className="text-xs text-gray-300 space-y-1">
-                                    <p className="flex justify-between">
-                                        <span>Wagered:</span>
-                                        <span className="text-gray-400">{player.weeklyStats.gritWagered}</span>
-                                    </p>
-                                    <p className="flex justify-between">
-                                        <span>Won:</span>
-                                        <span className="text-green-400">+{player.weeklyStats.gritWon}</span>
-                                    </p>
-                                    <p className="flex justify-between">
-                                        <span>Lost:</span>
-                                        <span className="text-red-400">-{player.weeklyStats.gritLost}</span>
-                                    </p>
-                                    <p className="flex justify-between font-semibold">
-                                        <span>Win Rate:</span>
-                                        <span>{player.weeklyStats.betsPlaced > 0 
-                                            ? Math.round((player.weeklyStats.betsWon / player.weeklyStats.betsPlaced) * 100)
-                                            : 0}%</span>
-                                    </p>
-                                </div>
-                            </div>
+                        <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-lg p-3 border border-gray-700/50">
+                            <p className="text-xs text-gray-500 mb-1">Win Rate</p>
+                            <p className="text-2xl font-bold text-blue-400">
+                                {player.weeklyStats.betsPlaced > 0 
+                                    ? Math.round((player.weeklyStats.betsWon / player.weeklyStats.betsPlaced) * 100)
+                                    : 0}%
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                                {player.weeklyStats.betsPlaced} bets
+                            </p>
                         </div>
                     </div>
-                </div>
 
-                {/* Navigation - Bottom tabs on mobile */}
-                <div className="border-t border-gray-800">
-                    <div className="flex overflow-x-auto scrollbar-hide">
+                    {/* Navigation Tabs - Clean Design */}
+                    <div className="flex border-t border-gray-800/50">
                         <button
                             onClick={() => setCurrentView('main')}
-                            className={`flex-1 min-w-[100px] px-4 py-3 text-xs sm:text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${
+                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all ${
                                 currentView === 'main'
-                                    ? 'bg-green-500/20 text-green-400 border-green-500'
-                                    : 'text-gray-400 border-transparent active:bg-gray-800'
+                                    ? 'text-green-400 border-b-2 border-green-500'
+                                    : 'text-gray-500 hover:text-gray-300 border-b-2 border-transparent'
                             }`}
                         >
-                            <span className="block">📊</span>
-                            <span className="block text-[10px] sm:text-xs mt-0.5">DASHBOARD</span>
+                            Dashboard
                         </button>
                         <button
                             onClick={() => setCurrentView('tribunal')}
-                            className={`flex-1 min-w-[100px] px-4 py-3 text-xs sm:text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${
+                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all ${
                                 currentView === 'tribunal'
-                                    ? 'bg-purple-500/20 text-purple-400 border-purple-500'
-                                    : 'text-gray-400 border-transparent active:bg-gray-800'
+                                    ? 'text-purple-400 border-b-2 border-purple-500'
+                                    : 'text-gray-500 hover:text-gray-300 border-b-2 border-transparent'
                             }`}
                         >
-                            <span className="block">⚖️</span>
-                            <span className="block text-[10px] sm:text-xs mt-0.5">TRIBUNAL</span>
+                            Tribunal
                         </button>
                         <button
                             onClick={() => setCurrentView('bodega')}
-                            className={`flex-1 min-w-[100px] px-4 py-3 text-xs sm:text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${
+                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all ${
                                 currentView === 'bodega'
-                                    ? 'bg-green-500/20 text-green-400 border-green-500'
-                                    : 'text-gray-400 border-transparent active:bg-gray-800'
+                                    ? 'text-blue-400 border-b-2 border-blue-500'
+                                    : 'text-gray-500 hover:text-gray-300 border-b-2 border-transparent'
                             }`}
                         >
-                            <span className="block">🛍️</span>
-                            <span className="block text-[10px] sm:text-xs mt-0.5">BODEGA</span>
+                            Bodega
                         </button>
                         <button
                             onClick={() => setCurrentView('trading')}
-                            className={`flex-1 min-w-[100px] px-4 py-3 text-xs sm:text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${
+                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all ${
                                 currentView === 'trading'
-                                    ? 'bg-blue-500/20 text-blue-400 border-blue-500'
-                                    : 'text-gray-400 border-transparent active:bg-gray-800'
+                                    ? 'text-orange-400 border-b-2 border-orange-500'
+                                    : 'text-gray-500 hover:text-gray-300 border-b-2 border-transparent'
                             }`}
                         >
-                            <span className="block">🏪</span>
-                            <span className="block text-[10px] sm:text-xs mt-0.5">TRADING</span>
+                            Trading
                         </button>
                     </div>
                 </div>
             </div>
 
             {/* Main Content */}
-            <div className="px-3 py-4 md:px-6 pb-safe">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {currentView === 'main' && (
                     <div className="space-y-4">
                         <div className="bg-gray-900/80 border border-gray-700 rounded-lg p-4 md:p-6">
