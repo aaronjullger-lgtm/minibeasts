@@ -11,7 +11,7 @@ export interface ActionFeedMessage {
     message: string;
     timestamp: number;
     type: 'whale' | 'commish' | 'ambush' | 'tribunal' | 'general';
-    direction?: 'up' | 'down';
+    direction?: 'up' | 'down' | 'neutral';
     isWhale?: boolean;
 }
 
@@ -19,7 +19,7 @@ interface ActionFeedProps {
     messages: ActionFeedMessage[];
 }
 
-const getDirectionIndicator = (direction?: 'up' | 'down') => {
+const getDirectionIndicator = (direction?: 'up' | 'down' | 'neutral') => {
     const resolvedDirection = direction ?? 'neutral';
     const directionSymbol = resolvedDirection === 'down' ? '−' : resolvedDirection === 'up' ? '+' : '•';
     const directionClass = resolvedDirection === 'down'

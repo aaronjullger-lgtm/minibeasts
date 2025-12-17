@@ -134,8 +134,10 @@ export const TheBoard: React.FC<TheBoardProps> = ({
 
             setShake(true);
             setShowStamp(true);
-            timeouts.current.push(window.setTimeout(() => setShake(false), ANIMATION_DURATION));
-            timeouts.current.push(window.setTimeout(() => setShowStamp(false), ANIMATION_DURATION));
+            timeouts.current.push(window.setTimeout(() => {
+                setShake(false);
+                setShowStamp(false);
+            }, ANIMATION_DURATION));
 
             // Reset bet slip
             setBetSlipData({
