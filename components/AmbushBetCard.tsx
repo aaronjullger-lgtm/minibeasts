@@ -6,7 +6,7 @@
  * - For targets: shows redacted "SHADOW LOCK DETECTED" message with Paranoia Meter
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AmbushBet } from '../types';
 
 interface AmbushBetCardProps {
@@ -23,6 +23,16 @@ export const AmbushBetCard: React.FC<AmbushBetCardProps> = ({
     targetBetCount = 0
 }) => {
     const [showDetails, setShowDetails] = useState(false);
+    const [encryptedLabel, setEncryptedLabel] = useState('SYSTEM_ENCRYPTED');
+
+    useEffect(() => {
+        if (!isTarget) return;
+        const variants = ['SYSTEM_ENCRYPTED', 'CHANNEL_LOCKED', 'ACCESS_DENIED', 'PAYLOAD_SEALED'];
+        const id = window.setInterval(() => {
+            setEncryptedLabel(variants[Math.floor(Math.random() * variants.length)]);
+        }, 5000);
+        return () => clearInterval(id);
+    }, [isTarget]);
 
     const getOddsLabel = (odds: number): string => {
         return odds > 0 ? `+${odds}` : `${odds}`;

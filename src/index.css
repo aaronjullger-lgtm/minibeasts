@@ -1425,6 +1425,7 @@
   .font-board-header {
     @apply skew-x-[-12deg];
     display: inline-block;
+    letter-spacing: 0.2em;
   }
 
   .font-board-grit {

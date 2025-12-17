@@ -182,35 +182,35 @@ export const TheBoard: React.FC<TheBoardProps> = ({
             <div className="container mx-auto px-4 py-4 lg:py-8">
                 <div className="sticky top-0 z-30 bg-black/60 backdrop-blur-md border border-white/5 rounded-sm p-4 mb-6 shadow-lg">
                     <div className="flex items-center justify-between mb-3">
-                        <div className="text-xs uppercase tracking-[0.18em] text-board-off-white/60">Command HUD</div>
+                        <div className="text-xs uppercase tracking-[0.18em] text-board-off-white/60">COMMAND HUD</div>
                         <button
                             onClick={() => setShowBetSlip(!showBetSlip)}
                             className="hidden md:inline-flex items-center gap-2 bg-board-red text-white px-4 py-2 rounded-sm text-sm font-semibold board-red-glow"
                         >
-                            🎯 Place Bet
+                            PLACE BET
                         </button>
                     </div>
                     <div className="grid grid-cols-2 gap-3 text-board-off-white">
                         <div className="bg-white/5 border border-white/10 rounded-sm p-3">
-                            <div className="text-[10px] uppercase tracking-[0.18em] text-board-off-white/60">User</div>
-                            <div className="text-sm font-semibold">{player.name || 'Operator'}</div>
-                            <div className="text-xs text-board-off-white/60">Rank {player.rank ?? 0}</div>
+                            <div className="text-[9px] uppercase tracking-[0.18em] text-board-off-white/60">USER_ID</div>
+                            <div className="text-sm font-board-grit">{player.name || 'Operator'}</div>
+                            <div className="text-[11px] text-board-off-white/60 font-board-grit">RANK {player.rank ?? 0}</div>
                         </div>
                         <div className="bg-white/5 border border-white/10 rounded-sm p-3 text-right">
-                            <div className="text-[10px] uppercase tracking-[0.18em] text-board-off-white/60">Phase</div>
-                            <div className="text-sm font-semibold">SURVEILLANCE</div>
-                            <div className="text-xs text-board-off-white/60">Live</div>
+                            <div className="text-[9px] uppercase tracking-[0.18em] text-board-off-white/60">PHASE</div>
+                            <div className="text-sm font-board-grit">SURVEILLANCE</div>
+                            <div className="text-[11px] text-board-off-white/60 font-board-grit">LIVE</div>
                         </div>
                         <div className="bg-white/5 border border-white/10 rounded-sm p-3">
-                            <div className="text-[10px] uppercase tracking-[0.18em] text-board-off-white/60">Grit Balance</div>
+                            <div className="text-[9px] uppercase tracking-[0.18em] text-board-off-white/60">TERMINAL_CREDIT</div>
                             <OdometerDisplay value={player.grit} />
                         </div>
                         <div className="bg-white/5 border border-white/10 rounded-sm p-3 text-right">
-                            <div className="text-[10px] uppercase tracking-[0.18em] text-board-off-white/60">Active Bets</div>
+                            <div className="text-[9px] uppercase tracking-[0.18em] text-board-off-white/60">ACTIVE_BETS</div>
                             <div className="text-xl font-board-grit text-board-off-white">
                                 {(bettorBets.length + targetBets.betCount).toLocaleString()}
                             </div>
-                            <div className="text-xs text-board-off-white/60">Across ambush grid</div>
+                            <div className="text-[11px] text-board-off-white/60 font-board-grit">AMBUSH GRID</div>
                         </div>
                     </div>
                 </div>
@@ -222,9 +222,9 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                         <div className="flex justify-center mb-4 md:hidden">
                             <button
                                 onClick={() => setShowBetSlip(!showBetSlip)}
-                                className="bg-board-red hover:bg-red-600 text-white font-bold py-3 px-6 rounded-sm text-sm shadow-lg transition-all transform hover:scale-105 board-red-glow w-full"
+                                className="bg-board-red hover:bg-red-600 text-white font-bold py-3 px-6 rounded-sm text-sm shadow-lg transition-all board-red-glow w-full"
                             >
-                                🎯 PLACE AMBUSH BET
+                                PLACE AMBUSH BET
                             </button>
                         </div>
 
@@ -350,7 +350,7 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                                         {/* Submit Button */}
                                         <button
                                             onClick={handlePlaceBet}
-                                            className="w-full bg-board-red hover:bg-red-600 text-white font-bold py-3 rounded-sm text-lg transition-all transform hover:scale-105 board-red-glow"
+                                            className="w-full bg-board-red hover:bg-red-600 text-white font-bold py-3 rounded-sm text-lg transition-all board-red-glow"
                                         >
                                             PLACE BET
                                         </button>
