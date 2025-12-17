@@ -19,6 +19,22 @@ interface ActionFeedProps {
     messages: ActionFeedMessage[];
 }
 
+const getDirectionIndicator = (direction?: 'up' | 'down') => {
+    const resolvedDirection = direction ?? 'neutral';
+    const directionSymbol = resolvedDirection === 'down' ? '−' : resolvedDirection === 'up' ? '+' : '•';
+    const directionClass = resolvedDirection === 'down'
+        ? 'text-board-red'
+        : resolvedDirection === 'up'
+            ? 'text-green-400'
+            : 'text-board-off-white/60';
+
+    return (
+        <span className={`text-sm font-board-grit ${directionClass}`}>
+            {directionSymbol}
+        </span>
+    );
+};
+
 export const ActionFeed: React.FC<ActionFeedProps> = ({ messages }) => {
     const [displayMessages, setDisplayMessages] = useState<ActionFeedMessage[]>([]);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -99,20 +115,7 @@ export const ActionFeed: React.FC<ActionFeedProps> = ({ messages }) => {
                                     key={msg.id} 
                                     className={`flex items-center gap-3 whitespace-nowrap px-3 py-2 rounded border border-board-muted-blue/60 bg-black/40 ${msg.isWhale ? 'whale-flash' : ''}`}
                                 >
-                                    {(() => {
-                                        const direction = msg.direction ?? 'neutral';
-                                        const directionSymbol = direction === 'down' ? '−' : direction === 'up' ? '+' : '•';
-                                        const directionClass = direction === 'down'
-                                            ? 'text-board-red'
-                                            : direction === 'up'
-                                                ? 'text-green-400'
-                                                : 'text-board-off-white/60';
-                                        return (
-                                            <span className={`text-sm font-board-grit ${directionClass}`}>
-                                                {directionSymbol}
-                                            </span>
-                                        );
-                                    })()}
+                                    {getDirectionIndicator(msg.direction)}
                                     <span className="text-lg">{getMessageIcon(msg.type)}</span>
                                     <span className={`text-sm font-medium ${getMessageColor(msg.type, msg.isWhale)}`}>
                                         {msg.message}

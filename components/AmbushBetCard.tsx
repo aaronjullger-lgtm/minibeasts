@@ -23,6 +23,7 @@ export const AmbushBetCard: React.FC<AmbushBetCardProps> = ({
     targetBetCount = 0
 }) => {
     const [showDetails, setShowDetails] = useState(false);
+    const evidenceButtonClass = "inline-flex items-center gap-2 bg-board-red text-white border border-board-red px-3 py-2 text-xs font-board-grit uppercase rounded-none hover:bg-white hover:text-board-red transition-none";
 
     const getOddsLabel = (odds: number): string => {
         return odds > 0 ? `+${odds}` : `${odds}`;
@@ -191,14 +192,14 @@ export const AmbushBetCard: React.FC<AmbushBetCardProps> = ({
             </div>
 
             {/* Evidence (if resolved) */}
-            {bet.isResolved && bet.evidence && bet.evidence.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-board-muted-blue/50">
-                    <button
-                        onClick={() => setShowDetails(!showDetails)}
-                        className="inline-flex items-center gap-2 bg-board-red text-white border border-board-red px-3 py-2 text-xs font-board-grit uppercase rounded-none hover:bg-white hover:text-board-red transition-none"
-                    >
-                        {showDetails ? '▼ Hide' : '▶ Evidence'} ({bet.evidence.length})
-                    </button>
+                    {bet.isResolved && bet.evidence && bet.evidence.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-board-muted-blue/50">
+                            <button
+                                onClick={() => setShowDetails(!showDetails)}
+                                className={evidenceButtonClass}
+                            >
+                                {showDetails ? '▼ Hide' : '▶ Evidence'} ({bet.evidence.length})
+                            </button>
                     
                     {showDetails && (
                         <div className="mt-2 space-y-2">

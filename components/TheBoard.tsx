@@ -15,6 +15,7 @@ import { AmbushBetCard } from './AmbushBetCard';
 import { bettingService } from '../services/bettingService';
 
 const DIGIT_HEIGHT = 32;
+const ANIMATION_DURATION = 600;
 
 const OdometerDisplay: React.FC<{ value: number }> = ({ value }) => {
     const digits = value.toLocaleString().split('');
@@ -133,8 +134,8 @@ export const TheBoard: React.FC<TheBoardProps> = ({
 
             setShake(true);
             setShowStamp(true);
-            timeouts.current.push(window.setTimeout(() => setShake(false), 600));
-            timeouts.current.push(window.setTimeout(() => setShowStamp(false), 600));
+            timeouts.current.push(window.setTimeout(() => setShake(false), ANIMATION_DURATION));
+            timeouts.current.push(window.setTimeout(() => setShowStamp(false), ANIMATION_DURATION));
 
             // Reset bet slip
             setBetSlipData({
