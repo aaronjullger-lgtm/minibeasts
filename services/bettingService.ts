@@ -1,0 +1,382 @@
+/**
+ * Betting Service
+ * 
+ * Handles all betting operations:
+ * - The Tribunal (social betting with superlatives)
+ * - The Squad Ride (co-op parlay system)
+ * - The Sportsbook (standard NFL betting)
+ * - Bet resolution and payout calculation
+ */
+
+import {
+    TribunalBet,
+    TribunalSuperlative,
+    SquadRideParlay,
+    SquadRider,
+    ParlayLeg,
+    SportsbookBet,
+    OverseerPlayerState
+} from '../types';
+
+class BettingService {
+    /**
+     * Place a bet on The Tribunal
+     */
+    placeTribunalBet(
+        player: OverseerPlayerState,
+        superlativeId: string,
+        nomineeId: string,
+        wager: number,
+        odds: number
+    ): TribunalBet {
+        if (player.grit < wager) {
+            throw new Error('Insufficient grit');
+        }
+
+        const bet: TribunalBet = {
+            id: `tribunal_bet_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            superlativeId,
+            playerId: player.id,
+            nomineeId,
+            wager,
+            odds,
+            potentialPayout: this.calculatePayout(wager, odds),
+            isResolved: false
+        };
+
+        // Deduct grit
+        player.grit -= wager;
+        player.tribunalBets.push(bet);
+        player.weeklyStats.gritWagered += wager;
+        player.weeklyStats.betsPlaced++;
+
+        return bet;
+    }
+
+    /**
+     * Cast a vote in The Tribunal
+     */
+    voteInTribunal(
+        superlative: TribunalSuperlative,
+        voterId: string,
+        nomineeId: string
+    ): void {
+        // Check if voting is still open
+        if (Date.now() > superlative.votingClosesAt) {
+            throw new Error('Voting has closed');
+        }
+
+        superlative.votes[voterId] = nomineeId;
+    }
+
+    /**
+     * Resolve The Tribunal and determine winners
+     */
+    resolveTribunal(superlative: TribunalSuperlative): string {
+        if (superlative.isResolved) {
+            throw new Error('Already resolved');
+        }
+
+        // Count votes
+        const voteCounts: { [nomineeId: string]: number } = {};
+        
+        for (const nomineeId of Object.values(superlative.votes)) {
+            voteCounts[nomineeId] = (voteCounts[nomineeId] || 0) + 1;
+        }
+
+        // Find winner (most votes)
+        let winnerId = '';
+        let maxVotes = 0;
+
+        for (const [nomineeId, count] of Object.entries(voteCounts)) {
+            if (count > maxVotes) {
+                maxVotes = count;
+                winnerId = nomineeId;
+            }
+        }
+
+        superlative.winner = winnerId;
+        superlative.isResolved = true;
+
+        return winnerId;
+    }
+
+    /**
+     * Payout tribunal bets
+     */
+    payoutTribunalBets(
+        players: OverseerPlayerState[],
+        superlative: TribunalSuperlative
+    ): void {
+        if (!superlative.isResolved || !superlative.winner) {
+            throw new Error('Tribunal not resolved');
+        }
+
+        for (const player of players) {
+            for (const bet of player.tribunalBets) {
+                if (bet.superlativeId !== superlative.id || bet.isResolved) {
+                    continue;
+                }
+
+                bet.isResolved = true;
+                bet.won = bet.nomineeId === superlative.winner;
+
+                if (bet.won) {
+                    const payout = bet.potentialPayout;
+                    player.grit += payout;
+                    player.weeklyStats.gritWon += payout;
+                    player.weeklyStats.betsWon++;
+                } else {
+                    player.weeklyStats.gritLost += bet.wager;
+                }
+            }
+        }
+    }
+
+    /**
+     * Create a Squad Ride parlay
+     */
+    createSquadRideParlay(
+        creatorId: string,
+        creatorName: string,
+        legs: Omit<ParlayLeg, 'isResolved' | 'won'>[],
+        weekNumber: number,
+        minOdds: number = 150,
+        maxOdds: number = 1000
+    ): SquadRideParlay {
+        // Calculate total odds
+        const totalOdds = this.calculateParlayOdds(legs.map(l => l.odds));
+
+        if (totalOdds < minOdds) {
+            throw new Error(`Total odds must be at least +${minOdds}`);
+        }
+
+        if (totalOdds > maxOdds) {
+            throw new Error(`Total odds cannot exceed +${maxOdds}`);
+        }
+
+        const parlay: SquadRideParlay = {
+            id: `squad_ride_${weekNumber}_${Date.now()}`,
+            weekNumber,
+            creatorId,
+            creatorName,
+            legs: legs.map((leg, index) => ({
+                ...leg,
+                id: `leg_${index}`,
+                isResolved: false
+            })),
+            totalOdds,
+            minOdds,
+            maxOdds,
+            riders: [],
+            status: 'open'
+        };
+
+        return parlay;
+    }
+
+    /**
+     * Join a Squad Ride parlay
+     */
+    joinSquadRide(
+        player: OverseerPlayerState,
+        parlay: SquadRideParlay,
+        wager: number
+    ): SquadRider {
+        if (parlay.status !== 'open') {
+            throw new Error('Squad Ride is not open');
+        }
+
+        if (player.grit < wager) {
+            throw new Error('Insufficient grit');
+        }
+
+        // Check if already riding
+        if (parlay.riders.some(r => r.playerId === player.id)) {
+            throw new Error('Already riding this parlay');
+        }
+
+        // Calculate multiplier (more riders = higher multiplier)
+        const baseMultiplier = 1.0;
+        const riderBonus = parlay.riders.length * 0.1; // +10% per existing rider
+        const multiplier = baseMultiplier + riderBonus;
+
+        const rider: SquadRider = {
+            playerId: player.id,
+            playerName: player.name,
+            wager,
+            multiplier
+        };
+
+        // Deduct grit
+        player.grit -= wager;
+        parlay.riders.push(rider);
+        player.squadRideBets.push(rider);
+        player.weeklyStats.gritWagered += wager;
+        player.weeklyStats.betsPlaced++;
+
+        return rider;
+    }
+
+    /**
+     * Resolve a Squad Ride parlay
+     */
+    resolveSquadRide(
+        players: OverseerPlayerState[],
+        parlay: SquadRideParlay,
+        results: boolean[] // True for won legs, false for lost
+    ): void {
+        if (parlay.status === 'won' || parlay.status === 'lost') {
+            throw new Error('Already resolved');
+        }
+
+        // Update leg results
+        parlay.legs.forEach((leg, index) => {
+            leg.isResolved = true;
+            leg.won = results[index];
+        });
+
+        // Check if all legs won
+        const allWon = parlay.legs.every(leg => leg.won);
+        parlay.status = allWon ? 'won' : 'lost';
+        parlay.resolvedAt = Date.now();
+
+        // Payout if won
+        if (allWon) {
+            for (const rider of parlay.riders) {
+                const player = players.find(p => p.id === rider.playerId);
+                if (!player) continue;
+
+                const basePayout = this.calculatePayout(rider.wager, parlay.totalOdds);
+                const payout = Math.floor(basePayout * rider.multiplier);
+
+                player.grit += payout;
+                player.weeklyStats.gritWon += payout;
+                player.weeklyStats.betsWon++;
+            }
+        } else {
+            // Update losses
+            for (const rider of parlay.riders) {
+                const player = players.find(p => p.id === rider.playerId);
+                if (player) {
+                    player.weeklyStats.gritLost += rider.wager;
+                }
+            }
+        }
+    }
+
+    /**
+     * Place a sportsbook bet
+     */
+    placeSportsbookBet(
+        player: OverseerPlayerState,
+        type: 'spread' | 'moneyline' | 'over_under' | 'prop',
+        description: string,
+        pick: string,
+        odds: number,
+        wager: number,
+        game?: string
+    ): SportsbookBet {
+        if (player.grit < wager) {
+            throw new Error('Insufficient grit');
+        }
+
+        const bet: SportsbookBet = {
+            id: `sportsbook_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            playerId: player.id,
+            type,
+            game,
+            description,
+            pick,
+            odds,
+            wager,
+            potentialPayout: this.calculatePayout(wager, odds),
+            isResolved: false
+        };
+
+        player.grit -= wager;
+        player.sportsbookBets.push(bet);
+        player.weeklyStats.gritWagered += wager;
+        player.weeklyStats.betsPlaced++;
+
+        return bet;
+    }
+
+    /**
+     * Resolve a sportsbook bet
+     */
+    resolveSportsbookBet(
+        player: OverseerPlayerState,
+        betId: string,
+        won: boolean
+    ): void {
+        const bet = player.sportsbookBets.find(b => b.id === betId);
+        
+        if (!bet) {
+            throw new Error('Bet not found');
+        }
+
+        if (bet.isResolved) {
+            throw new Error('Bet already resolved');
+        }
+
+        bet.isResolved = true;
+        bet.won = won;
+
+        if (won) {
+            player.grit += bet.potentialPayout;
+            player.weeklyStats.gritWon += bet.potentialPayout;
+            player.weeklyStats.betsWon++;
+        } else {
+            player.weeklyStats.gritLost += bet.wager;
+        }
+    }
+
+    /**
+     * Calculate payout from American odds
+     */
+    private calculatePayout(wager: number, odds: number): number {
+        if (odds > 0) {
+            // Positive odds (underdog)
+            return Math.floor(wager + (wager * odds / 100));
+        } else {
+            // Negative odds (favorite)
+            return Math.floor(wager + (wager * 100 / Math.abs(odds)));
+        }
+    }
+
+    /**
+     * Calculate combined parlay odds
+     */
+    private calculateParlayOdds(individualOdds: number[]): number {
+        let decimalMultiplier = 1.0;
+
+        for (const odds of individualOdds) {
+            const decimal = odds > 0 
+                ? (odds / 100) + 1 
+                : (100 / Math.abs(odds)) + 1;
+            
+            decimalMultiplier *= decimal;
+        }
+
+        // Convert back to American odds
+        if (decimalMultiplier >= 2.0) {
+            return Math.floor((decimalMultiplier - 1) * 100);
+        } else {
+            return Math.floor(-100 / (decimalMultiplier - 1));
+        }
+    }
+
+    /**
+     * Get odds probability (for display purposes)
+     */
+    getOddsProbability(odds: number): number {
+        if (odds > 0) {
+            return 100 / (odds + 100);
+        } else {
+            return Math.abs(odds) / (Math.abs(odds) + 100);
+        }
+    }
+}
+
+export const bettingService = new BettingService();
