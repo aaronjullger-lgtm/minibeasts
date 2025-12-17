@@ -77,26 +77,26 @@ export const TribunalPanel: React.FC<TribunalProps> = ({
     };
 
     return (
-        <div className="bg-gray-900 border-2 border-purple-500 rounded-lg p-6">
-            <div className="mb-6">
-                <h2 className="text-3xl font-bold text-purple-400 mb-2">
+        <div className="bg-gray-900/80 border border-purple-500 rounded-lg p-4 md:p-6">
+            <div className="mb-4 md:mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold text-purple-400 mb-2">
                     ⚖️ THE TRIBUNAL
                 </h2>
-                <p className="text-gray-400">
+                <p className="text-gray-400 text-sm md:text-base">
                     Social Betting • AI-Generated Superlatives • Vote on Winners
                 </p>
-                <div className="mt-2 flex gap-4">
-                    <span className={`text-sm font-bold ${bettingOpen ? 'text-green-400' : 'text-red-400'}`}>
+                <div className="mt-2 flex gap-3 md:gap-4 flex-wrap">
+                    <span className={`text-xs md:text-sm font-bold ${bettingOpen ? 'text-green-400' : 'text-red-400'}`}>
                         {bettingOpen ? '● BETTING OPEN' : '● BETTING CLOSED'}
                     </span>
-                    <span className={`text-sm font-bold ${votingOpen ? 'text-green-400' : 'text-red-400'}`}>
+                    <span className={`text-xs md:text-sm font-bold ${votingOpen ? 'text-green-400' : 'text-red-400'}`}>
                         {votingOpen ? '● VOTING OPEN' : '● VOTING CLOSED'}
                     </span>
                 </div>
             </div>
 
             {/* Superlatives List */}
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
                 {superlatives.map(superlative => {
                     const hasVoted = !!superlative.votes[player.id];
                     const votedFor = superlative.votes[player.id];
@@ -105,17 +105,17 @@ export const TribunalPanel: React.FC<TribunalProps> = ({
                     return (
                         <div
                             key={superlative.id}
-                            className="border-2 border-gray-700 rounded-lg p-4 bg-gray-800"
+                            className="border border-gray-700 rounded-lg p-3 md:p-4 bg-gray-800"
                         >
-                            <div className="flex justify-between items-start mb-3">
-                                <div>
-                                    <h3 className="text-xl font-bold text-white mb-1">
+                            <div className="flex justify-between items-start mb-3 gap-2">
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-lg md:text-xl font-bold text-white mb-1">
                                         {superlative.title}
                                     </h3>
-                                    <p className="text-sm text-gray-400">{superlative.description}</p>
+                                    <p className="text-xs md:text-sm text-gray-400 line-clamp-2">{superlative.description}</p>
                                 </div>
                                 {superlative.isResolved && (
-                                    <span className="bg-green-500 text-black px-3 py-1 rounded font-bold text-sm">
+                                    <span className="bg-green-500 text-black px-2 md:px-3 py-1 rounded font-bold text-xs md:text-sm whitespace-nowrap">
                                         RESOLVED
                                     </span>
                                 )}
@@ -132,21 +132,21 @@ export const TribunalPanel: React.FC<TribunalProps> = ({
                                     return (
                                         <div
                                             key={nominee.playerId}
-                                            className={`p-3 rounded ${
+                                            className={`p-2 md:p-3 rounded ${
                                                 isWinner
-                                                    ? 'bg-green-900 border-2 border-green-500'
+                                                    ? 'bg-green-900/50 border border-green-500'
                                                     : votedFor === nominee.playerId
-                                                    ? 'bg-blue-900 border-2 border-blue-500'
+                                                    ? 'bg-blue-900/50 border border-blue-500'
                                                     : 'bg-gray-700'
                                             }`}
                                         >
-                                            <div className="flex justify-between items-center">
-                                                <div className="flex-1">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="font-bold text-white">
+                                            <div className="flex justify-between items-center gap-2">
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2 flex-wrap">
+                                                        <span className="font-bold text-white text-sm md:text-base">
                                                             {nominee.playerName}
                                                         </span>
-                                                        <span className="text-green-400 font-bold">
+                                                        <span className="text-green-400 font-bold text-sm md:text-base">
                                                             {getOddsLabel(nominee.odds)}
                                                         </span>
                                                         {isWinner && (

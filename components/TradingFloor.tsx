@@ -62,69 +62,71 @@ export const TradingFloor: React.FC<TradingFloorProps> = ({
     const marketOffers = activeOffers.filter(o => o.sellerId !== player.id);
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-            <div className="bg-gray-900 border-4 border-green-500 rounded-lg p-8 max-w-6xl w-full max-h-[90vh] overflow-y-auto">
-                {/* Header */}
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h2 className="text-4xl font-bold text-green-400" style={{ fontFamily: 'monospace' }}>
-                            🏪 TRADING FLOOR
-                        </h2>
-                        <p className="text-gray-400 mt-2">
-                            Player-to-Player Marketplace • {TRADING_FLOOR_CONFIG.houseTaxRate * 100}% House Tax
-                        </p>
-                        <p className="text-green-300 text-xl mt-1">Your Grit: {player.grit}</p>
-                    </div>
-                    <button
-                        onClick={onClose}
-                        className="text-gray-400 hover:text-white text-3xl"
+        <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-0 md:p-4">
+            <div className="bg-gray-900 w-full h-full md:h-auto md:max-w-6xl md:rounded-lg md:border-4 border-green-500 overflow-y-auto">
+                {/* Header - Sticky on mobile */}
+                <div className="sticky top-0 z-10 bg-gray-900 border-b-4 border-green-500 md:border-b-0">
+                    <div className="flex justify-between items-center p-4 md:p-8 md:pb-6">
+                        <div>
+                            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-green-400" style={{ fontFamily: 'monospace' }}>
+                                🏪 TRADING FLOOR
+                            </h2>
+                            <p className="text-gray-400 mt-1 md:mt-2 text-sm md:text-base">
+                                Player Marketplace • {TRADING_FLOOR_CONFIG.houseTaxRate * 100}% Tax
+                            </p>
+                            <p className="text-green-300 text-lg md:text-xl mt-1 font-mono">Your Grit: {player.grit}</p>
+                        </div>
+                        <button
+                            onClick={onClose}
+                            className="text-gray-400 hover:text-white text-2xl md:text-3xl min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors"
                     >
                         ✕
                     </button>
                 </div>
 
-                {/* Navigation Tabs */}
-                <div className="flex gap-4 mb-6">
-                    <button
-                        onClick={() => setView('market')}
-                        className={`px-6 py-3 rounded font-bold ${
-                            view === 'market'
-                                ? 'bg-green-500 text-black'
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        }`}
-                    >
-                        MARKET ({marketOffers.length})
-                    </button>
-                    <button
-                        onClick={() => setView('inventory')}
-                        className={`px-6 py-3 rounded font-bold ${
-                            view === 'inventory'
-                                ? 'bg-green-500 text-black'
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        }`}
-                    >
-                        MY INVENTORY ({player.ownedItems.length})
-                    </button>
-                    <button
-                        onClick={() => setView('listings')}
-                        className={`px-6 py-3 rounded font-bold ${
-                            view === 'listings'
-                                ? 'bg-green-500 text-black'
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        }`}
-                    >
-                        MY LISTINGS ({myListings.length})
-                    </button>
-                </div>
+                <div className="p-4 md:p-8 md:pt-0">
+                    {/* Navigation Tabs */}
+                    <div className="flex gap-2 md:gap-4 mb-4 md:mb-6 overflow-x-auto scrollbar-hide">
+                        <button
+                            onClick={() => setView('market')}
+                            className={`px-4 md:px-6 py-3 rounded font-bold whitespace-nowrap text-sm md:text-base min-h-[44px] transition-colors ${
+                                view === 'market'
+                                    ? 'bg-green-500 text-black'
+                                    : 'bg-gray-700 text-gray-300 active:bg-gray-600'
+                            }`}
+                        >
+                            MARKET ({marketOffers.length})
+                        </button>
+                        <button
+                            onClick={() => setView('inventory')}
+                            className={`px-4 md:px-6 py-3 rounded font-bold whitespace-nowrap text-sm md:text-base min-h-[44px] transition-colors ${
+                                view === 'inventory'
+                                    ? 'bg-green-500 text-black'
+                                    : 'bg-gray-700 text-gray-300 active:bg-gray-600'
+                            }`}
+                        >
+                            INVENTORY ({player.ownedItems.length})
+                        </button>
+                        <button
+                            onClick={() => setView('listings')}
+                            className={`px-4 md:px-6 py-3 rounded font-bold whitespace-nowrap text-sm md:text-base min-h-[44px] transition-colors ${
+                                view === 'listings'
+                                    ? 'bg-green-500 text-black'
+                                    : 'bg-gray-700 text-gray-300 active:bg-gray-600'
+                            }`}
+                        >
+                            LISTINGS ({myListings.length})
+                        </button>
+                    </div>
 
                 {/* Market View */}
                 {view === 'market' && (
                     <div>
-                        <h3 className="text-2xl font-bold text-white mb-4">Available Offers</h3>
+                        <h3 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">Available Offers</h3>
                         {marketOffers.length === 0 ? (
-                            <p className="text-gray-400 text-center py-8">No items for sale</p>
+                            <p className="text-gray-400 text-center py-8 text-sm md:text-base">No items for sale</p>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                                 {marketOffers.map(offer => {
                                     const item = mysteryBoxService.getItemById(offer.itemId);
                                     if (!item) return null;
@@ -134,17 +136,17 @@ export const TradingFloor: React.FC<TradingFloorProps> = ({
                                     return (
                                         <div
                                             key={offer.id}
-                                            className="border-2 rounded-lg p-4 bg-gray-800"
+                                            className="border-2 rounded-lg p-3 md:p-4 bg-gray-800"
                                             style={{ borderColor: getRarityColor(item.rarity) }}
                                         >
-                                            <div className="text-3xl mb-2">{item.name.split(' ')[0]}</div>
-                                            <h4 className="font-bold text-white mb-1">{item.name}</h4>
+                                            <div className="text-2xl md:text-3xl mb-2">{item.name.split(' ')[0]}</div>
+                                            <h4 className="font-bold text-white mb-1 text-sm md:text-base">{item.name}</h4>
                                             <p className="text-xs uppercase mb-2"
                                                style={{ color: getRarityColor(item.rarity) }}
                                             >
                                                 {item.rarity}
                                             </p>
-                                            <p className="text-sm text-gray-400 mb-3">{item.description}</p>
+                                            <p className="text-xs md:text-sm text-gray-400 mb-3 line-clamp-2">{item.description}</p>
                                             
                                             <div className="mb-3">
                                                 <p className="text-gray-500 text-xs">Seller: {offer.sellerName}</p>
