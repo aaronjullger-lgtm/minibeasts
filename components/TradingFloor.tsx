@@ -83,6 +83,7 @@ export const TradingFloor: React.FC<TradingFloorProps> = ({
                         ✕
                     </button>
                 </div>
+                </div>
 
                 <div className="p-4 md:p-8 md:pt-0">
                     {/* Navigation Tabs */}
@@ -309,6 +310,7 @@ export const TradingFloor: React.FC<TradingFloorProps> = ({
                         )}
                     </div>
                 )}
+                </div>
             </div>
         </div>
     );
