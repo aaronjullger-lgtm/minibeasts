@@ -8,6 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AmbushBet } from '../types';
+import { SnitchButton } from './SnitchButton';
 
 interface AmbushBetCardProps {
     bet: AmbushBet;
@@ -63,6 +64,17 @@ export const AmbushBetCard: React.FC<AmbushBetCardProps> = ({
         } else {
             return { level: 'MINIMAL', color: 'bg-green-500', width: 'w-1/12' };
         }
+    };
+
+    const handleSnitch = () => {
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(
+                new CustomEvent('commish-snitch', {
+                    detail: { betId: bet.id, target: bet.targetUserName, bettor: bet.bettorName },
+                })
+            );
+        }
+        alert('📞 Snitch wire pinged The Commish.');
     };
 
     // Render for TARGET user (redacted with Shadow Lock)
@@ -168,11 +180,14 @@ export const AmbushBetCard: React.FC<AmbushBetCardProps> = ({
                     </div>
                 </div>
 
-                {bet.isResolved && (
-                    <span className={`px-3 py-1 text-xs font-board-grit rounded-none border ${bet.won ? 'bg-green-600 text-white border-green-400' : 'bg-board-crimson text-white border-board-crimson/70'}`}>
-                        {bet.won ? '✓ WON' : '✗ LOST'}
-                    </span>
-                )}
+                <div className="flex items-center gap-3">
+                    <SnitchButton onSnitch={handleSnitch} label="Snitch" />
+                    {bet.isResolved && (
+                        <span className={`px-3 py-1 text-xs font-board-grit rounded-none border ${bet.won ? 'bg-green-600 text-white border-green-400' : 'bg-board-crimson text-white border-board-crimson/70'}`}>
+                            {bet.won ? '✓ WON' : '✗ LOST'}
+                        </span>
+                    )}
+                </div>
             </div>
 
             {/* Snitch Wire Logic */}

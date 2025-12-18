@@ -19,13 +19,16 @@ import { TribunalPanel } from './TribunalPanel';
 import { TheBoard } from './TheBoard';
 import { PaydayScreen } from './PaydayScreen';
 import { BankruptScreen } from './BankruptScreen';
+import { GulagLockdown } from './GulagLockdown';
 
 interface OverseerGameProps {
     initialPlayer: OverseerPlayerState;
     onExit: () => void;
+    onPlayerUpdate?: (player: OverseerPlayerState) => void;
+    onLockdownChange?: (locked: boolean) => void;
 }
 
-export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExit }) => {
+export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExit, onPlayerUpdate, onLockdownChange }) => {
     const [player, setPlayer] = useState<OverseerPlayerState>(initialPlayer);
     const [currentView, setCurrentView] = useState<'main' | 'board' | 'bodega' | 'locker' | 'trading' | 'tribunal'>('main');
     const [phaseInfo, setPhaseInfo] = useState(weeklyScheduleService.getPhaseInfo());
@@ -100,6 +103,16 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
         }
     }, [player.grit]);
 
+    useEffect(() => {
+        onPlayerUpdate?.(player);
+    }, [player, onPlayerUpdate]);
+
+    const isLockdown = player.grit <= 0 || player.gulagState?.inGulag;
+
+    useEffect(() => {
+        onLockdownChange?.(isLockdown);
+    }, [isLockdown, onLockdownChange]);
+
     // Handle phase transitions
     useEffect(() => {
         const checkPhase = async () => {
@@ -141,6 +154,59 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
         
         // Log the action for debugging
         console.log(`Syndicate action executed: ${action} for ${cost} grit`);
+    };
+
+    const handleHailMaryAttempt = () => {
+        const parlayPool = [
+            'Exact score on Sunday night + anytime defensive TD',
+            '5-leg underdog moneyline ladder',
+            'Backup QB over yardage + kicker longest FG parlay',
+            'All road dogs against the spread in the late window',
+            'Safety + overtime in the primetime slate',
+        ];
+        const parlay = parlayPool[Math.floor(Math.random() * parlayPool.length)];
+        const won = Math.random() < 0.35;
+
+        setPlayer(prev => {
+            const baseState = prev.gulagState || {
+                playerId: prev.id,
+                playerName: prev.name,
+                previousBankruptcies: 0,
+                rapSheet: [],
+                inGulag: true,
+            };
+
+            const updatedRapSheet = [
+                ...(baseState.rapSheet || []),
+                won
+                    ? `Escaped via Hail Mary (${new Date().toLocaleDateString()})`
+                    : `Executed after failed Hail Mary (${new Date().toLocaleDateString()})`,
+            ];
+
+            return {
+                ...prev,
+                grit: won ? 500 : 0,
+                gulagState: {
+                    ...baseState,
+                    inGulag: !won,
+                    banExpiresAt: won ? undefined : Date.now() + 24 * 60 * 60 * 1000,
+                    previousBankruptcies: (baseState.previousBankruptcies || 0) + 1,
+                    gulagBet: {
+                        id: `hail_mary_${Date.now()}`,
+                        playerId: prev.id,
+                        description: parlay,
+                        odds: 500,
+                        wager: 0,
+                        isResolved: true,
+                        won,
+                        redemptionAmount: 500,
+                    },
+                    rapSheet: updatedRapSheet,
+                },
+            };
+        });
+
+        return { won, parlay };
     };
 
     const handleListItem = (itemId: string, price: number) => {
@@ -254,60 +320,11 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
         return `${hours}h ${minutes}m ${seconds}s`;
     };
 
-    // Check if player is in Gulag
-    const inGulag = gulagService.isInGulag(player);
-    const isBanned = gulagService.isBanned(player);
-
-    if (inGulag || isBanned) {
+    if (isLockdown) {
         return (
-            <div className="min-h-screen bg-black flex items-center justify-center p-4">
-                <div className="max-w-2xl w-full bg-gray-900 border-4 border-red-500 rounded-lg p-8 text-center">
-                    <h1 className="text-6xl font-bold text-red-500 mb-4">
-                        ⛓️ THE GULAG ⛓️
-                    </h1>
-                    <p className="text-2xl text-white mb-6">
-                        You went bankrupt and have been imprisoned.
-                    </p>
-                    
-                    {isBanned ? (
-                        <div>
-                            <p className="text-xl text-gray-400 mb-4">
-                                You lost your redemption bet.
-                            </p>
-                            <p className="text-lg text-red-400 mb-4">
-                                Ban Time Remaining: {gulagService.getRemainingBanTime(player)} hours
-                            </p>
-                            {player.gulagState?.gulagBet?.irlPunishment && (
-                                <p className="text-yellow-400 mb-4">
-                                    IRL Punishment: {player.gulagState.gulagBet.irlPunishment}
-                                </p>
-                            )}
-                        </div>
-                    ) : (
-                        <div>
-                            <p className="text-xl text-gray-400 mb-6">
-                                Your only way out: Win the Gulag Bet
-                            </p>
-                            <button
-                                onClick={async () => {
-                                    const bet = await gulagService.generateGulagBet(player);
-                                    alert(`Your Gulag Bet: ${bet.description}\nOdds: +${bet.odds}\nWin to earn ${bet.redemptionAmount} grit and freedom!`);
-                                }}
-                                className="bg-red-500 hover:bg-red-600 text-white font-bold py-4 px-8 rounded text-xl"
-                            >
-                                GENERATE GULAG BET
-                            </button>
-                        </div>
-                    )}
-
-                    <button
-                        onClick={onExit}
-                        className="mt-6 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded"
-                    >
-                        Exit to Menu
-                    </button>
-                </div>
-            </div>
+            <GulagLockdown player={player} onHailMary={handleHailMaryAttempt}>
+                <></>
+            </GulagLockdown>
         );
     }
 
