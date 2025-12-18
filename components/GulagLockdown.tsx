@@ -80,7 +80,7 @@ export const GulagLockdown: React.FC<GulagLockdownProps> = ({ player, onHailMary
   };
 
   if (!isLocked) {
-    return <>{children}</>;
+    return null;
   }
 
   return (

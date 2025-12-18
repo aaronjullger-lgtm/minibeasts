@@ -82,7 +82,7 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
     };
 
     if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(run);
+      (window as Window & { requestIdleCallback: (cb: () => void) => number }).requestIdleCallback(run);
     } else {
       setTimeout(run, 0);
     }
