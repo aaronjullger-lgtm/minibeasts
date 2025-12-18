@@ -22,7 +22,7 @@ export function calculateCowardice(bet: { odds: number }): boolean {
     // Negative odds indicate favorites
     // Worse than -200 means heavily favored (e.g., -300, -500)
     // More negative = bigger favorite = more cowardice
-    if (bet.odds < 0 && bet.odds < -200) {
+    if (bet.odds < -200) {
         return true;
     }
     return false;
@@ -103,7 +103,7 @@ export function generateRoast(user: OverseerPlayerState): RoastResult {
     // Generate roast based on performance
     if (winRate < 30) {
         return {
-            message: `Fade this man immediately. ${user.name} is ${winRate.toFixed(0)}% on the season.`,
+            message: `Fade them immediately. ${user.name} is ${winRate.toFixed(0)}% on the season.`,
             severity: 'brutal'
         };
     }
