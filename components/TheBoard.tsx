@@ -8,11 +8,12 @@
  * - All betting types in one view
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { OverseerPlayerState, AmbushBet } from '../types';
 import { ActionFeed, ActionFeedMessage, generateBetNotification } from './ActionFeed';
 import { AmbushBetCard } from './AmbushBetCard';
 import { bettingService } from '../services/bettingService';
+import { ThermalReceipt } from './ThermalReceipt';
 
 const DIGIT_HEIGHT = 32;
 const ANIMATION_DURATION = 600;
@@ -86,6 +87,17 @@ export const TheBoard: React.FC<TheBoardProps> = ({
     const [shake, setShake] = useState(false);
     const [showStamp, setShowStamp] = useState(false);
     const timeouts = useRef<number[]>([]);
+    const receiptLines = useMemo(() => {
+        const stake = Math.max(25, Math.min(player.grit, 1500));
+        const potential = Math.max(stake * 3, 500);
+        return [
+            { label: 'BETTOR', value: player.name || 'OPERATOR' },
+            { label: 'TICKET', value: `AMB-${String(bettorBets.length + 1).padStart(3, '0')}` },
+            { label: 'STAKE', value: `${stake.toLocaleString()} GRIT` },
+            { label: 'ODDS', value: '+750 PARLAY' },
+            { label: 'PAYOUT', value: `${potential.toLocaleString()} GRIT` },
+        ];
+    }, [player.name, player.grit, bettorBets.length]);
 
     // Get filtered ambush bets for current user
     const { bettorBets, targetBets } = bettingService.getAmbushBetsForUser(
@@ -412,6 +424,12 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                             <ActionFeed messages={actionFeedMessages} />
                         </div>
                     </aside>
+                </div>
+
+                <div className="mt-10 flex flex-col items-center gap-3">
+                    <h3 className="text-sm uppercase tracking-[0.18em] text-board-off-white/60">🧾 The Thermal Receipt</h3>
+                    <ThermalReceipt lines={receiptLines} triggerPhrase="TELL SETH HE'S WASHED" />
+                    <p className="text-[11px] text-board-off-white/60">Tap to save the story asset when you hit a massive win.</p>
                 </div>
             </div>
 
