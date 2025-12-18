@@ -25,7 +25,7 @@ export const ScreenShell: React.FC<ScreenShellProps> = ({
       {/* Fixed Header - 60px, Glass Effect */}
       {header && (
         <header 
-          className="fixed top-0 left-0 right-0 z-50 h-16 backdrop-blur-xl bg-tactical-dark/80 border-b border-tactical-border pt-safe"
+          className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-tactical-dark/80 border-b border-tactical-border pt-safe"
           style={{ height: '60px' }}
         >
           {header}
@@ -34,8 +34,10 @@ export const ScreenShell: React.FC<ScreenShellProps> = ({
 
       {/* Scrollable Content Area - Absolute Positioning */}
       <main
-        className={`absolute left-0 right-0 overflow-y-auto overflow-x-hidden pb-safe ${header ? 'top-16' : 'top-0'} ${footer ? 'bottom-20' : 'bottom-0'}`}
+        className={`absolute left-0 right-0 overflow-y-auto overflow-x-hidden pb-safe ${header ? '' : 'top-0'} ${footer ? '' : 'bottom-0'}`}
         style={{
+          top: header ? '60px' : '0',
+          bottom: footer ? '80px' : '0',
           overscrollBehaviorY: 'none', // Prevent rubber band effect on iOS
           WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
         }}
