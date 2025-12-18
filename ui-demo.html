@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Beasts - UI Components Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Design System Utilities */
+    .glass-panel {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .scanline::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      z-index: 1;
+      pointer-events: none;
+      animation: scanline-move 8s linear infinite;
+    }
+
+    @keyframes scanline-move {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(10px); }
+    }
+
+    body {
+      background: radial-gradient(ellipse 100% 60% at 50% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+                  linear-gradient(180deg, #050A14 0%, #03070f 60%, #000000 100%);
+      min-height: 100vh;
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'board-navy': '#050A14',
+            'board-surface': '#0F172A',
+            'board-highlight': '#1E293B',
+            'board-text': '#E2E8F0',
+            'board-red': '#EF4444',
+            'board-gold': '#F59E0B',
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+            'mono': ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased">
+  <div class="min-h-screen flex flex-col">
+    <!-- Fixed Header -->
+    <header class="fixed top-0 left-0 right-0 z-50">
+      <div class="glass-panel px-4 py-3 mx-4 mt-4 rounded-2xl">
+        <h1 class="text-xl font-bold text-board-text">Mini Beasts UI Demo</h1>
+        <p class="text-sm text-board-text/60">Design System Components</p>
+      </div>
+    </header>
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto mt-28 mb-24 px-4">
+      <div class="max-w-2xl mx-auto space-y-4">
+        
+        <!-- Default Card -->
+        <div class="glass-panel rounded-2xl p-4 border-board-highlight/20">
+          <h2 class="text-lg font-semibold text-board-text mb-2">Default Glass Panel</h2>
+          <p class="text-board-text/70 text-sm">
+            This demonstrates the glassmorphism effect with blur(12px) and subtle transparency.
+          </p>
+        </div>
+
+        <!-- Interactive Card -->
+        <div class="glass-panel rounded-2xl p-4 border-board-highlight/20 hover:border-board-highlight/40 active:scale-[0.98] transition-all duration-300 cursor-pointer">
+          <h2 class="text-lg font-semibold text-board-text mb-2">Interactive Card</h2>
+          <p class="text-board-text/70 text-sm">
+            Hover over this card to see the border effect. Click to see the scale animation.
+          </p>
+        </div>
+
+        <!-- Alert Variant -->
+        <div class="glass-panel rounded-2xl p-4 border-board-red/30 shadow-board-red/10">
+          <h2 class="text-lg font-semibold text-board-red mb-2">⚠️ Alert Variant</h2>
+          <p class="text-board-text/70 text-sm">
+            This card uses the alert variant with red accent borders for critical information.
+          </p>
+        </div>
+
+        <!-- Gold Variant -->
+        <div class="glass-panel rounded-2xl p-4 border-board-gold/30 shadow-board-gold/10">
+          <h2 class="text-lg font-semibold text-board-gold mb-2">🏆 Gold Variant</h2>
+          <p class="text-board-text/70 text-sm">
+            This card uses the gold variant for premium content or winning states.
+          </p>
+        </div>
+
+        <!-- Typography Demo -->
+        <div class="glass-panel rounded-2xl p-4 border-board-highlight/20">
+          <h2 class="text-lg font-semibold text-board-text mb-3">Typography System</h2>
+          <div class="space-y-2">
+            <p class="font-sans text-board-text">Sans: Inter/Roobert - Clean UI Text</p>
+            <p class="font-mono text-board-text">Mono: JetBrains Mono - Data & Odds</p>
+          </div>
+        </div>
+
+        <!-- Color Palette -->
+        <div class="glass-panel rounded-2xl p-4 border-board-highlight/20">
+          <h2 class="text-lg font-semibold text-board-text mb-3">Color Palette</h2>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded bg-board-navy border border-board-text/20"></div>
+              <span class="text-sm text-board-text/70">Navy</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded bg-board-surface border border-board-text/20"></div>
+              <span class="text-sm text-board-text/70">Surface</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded bg-board-highlight border border-board-text/20"></div>
+              <span class="text-sm text-board-text/70">Highlight</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded bg-board-text border border-board-text/20"></div>
+              <span class="text-sm text-board-text/70">Text</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded bg-board-red border border-board-text/20"></div>
+              <span class="text-sm text-board-text/70">Red</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded bg-board-gold border border-board-text/20"></div>
+              <span class="text-sm text-board-text/70">Gold</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scanline Effect Demo -->
+        <div class="glass-panel rounded-2xl p-4 border-board-highlight/20 relative scanline">
+          <h2 class="text-lg font-semibold text-board-text mb-2 relative z-10">Scanline Effect</h2>
+          <p class="text-board-text/70 text-sm relative z-10">
+            This card has the scanline overlay for a retro terminal aesthetic.
+          </p>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Fixed Bottom Nav -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 pb-4">
+      <div class="mx-auto max-w-2xl px-4">
+        <div class="glass-panel rounded-2xl shadow-2xl">
+          <div class="flex items-center justify-around px-2 py-3">
+            <button class="relative flex flex-col items-center gap-1 px-4 py-2 rounded-xl text-board-text scale-105 transition-all duration-300 active:scale-95">
+              <span class="text-2xl drop-shadow-[0_0_8px_rgba(226,232,240,0.6)]">🏠</span>
+              <span class="text-xs font-medium">Home</span>
+              <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-board-text rounded-full"></div>
+            </button>
+            <button class="relative flex flex-col items-center gap-1 px-4 py-2 rounded-xl text-board-text/60 hover:text-board-text/80 transition-all duration-300 active:scale-95">
+              <span class="text-2xl">🎮</span>
+              <span class="text-xs font-medium">Games</span>
+            </button>
+            <button class="relative flex flex-col items-center gap-1 px-4 py-2 rounded-xl text-board-text/60 hover:text-board-text/80 transition-all duration-300 active:scale-95">
+              <span class="text-2xl">📊</span>
+              <span class="text-xs font-medium">Stats</span>
+            </button>
+            <button class="relative flex flex-col items-center gap-1 px-4 py-2 rounded-xl text-board-text/60 hover:text-board-text/80 transition-all duration-300 active:scale-95">
+              <span class="text-2xl">👤</span>
+              <span class="text-xs font-medium">Profile</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <script>
+    // Simulate haptic feedback on navigation clicks
+    document.querySelectorAll('nav button').forEach(button => {
+      button.addEventListener('click', () => {
+        if ('vibrate' in navigator) {
+          navigator.vibrate(10);
+        }
+        // Remove active state from all buttons
+        document.querySelectorAll('nav button').forEach(b => {
+          b.className = 'relative flex flex-col items-center gap-1 px-4 py-2 rounded-xl text-board-text/60 hover:text-board-text/80 transition-all duration-300 active:scale-95';
+          const dot = b.querySelector('.bg-board-text');
+          if (dot) dot.remove();
+        });
+        // Add active state to clicked button
+        button.className = 'relative flex flex-col items-center gap-1 px-4 py-2 rounded-xl text-board-text scale-105 transition-all duration-300 active:scale-95';
+        const icon = button.querySelector('.text-2xl');
+        icon.className = 'text-2xl drop-shadow-[0_0_8px_rgba(226,232,240,0.6)]';
+        // Add active dot
+        const dot = document.createElement('div');
+        dot.className = 'absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-board-text rounded-full';
+        button.appendChild(dot);
+      });
+    });
+  </script>
+</body>
+</html>
