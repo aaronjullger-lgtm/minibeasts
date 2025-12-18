@@ -243,14 +243,17 @@ export const LockerRoom: React.FC<LockerRoomProps> = ({ player, onPurchase, onCl
                                         </div>
                                     </div>
 
-                                    {/* Purchase Button */}
                                     <div className="flex-shrink-0">
                                         <button
                                             onClick={() => handlePurchase(tier)}
                                             disabled={player.grit < tier.cost || isOpening}
                                             className={`px-8 py-4 rounded-lg font-bold text-lg uppercase tracking-wider transition-all transform ${
                                                 player.grit >= tier.cost && !isOpening
-                                                    ? `${tier.borderColor.replace('border-', 'bg-')} text-white hover:scale-105 active:scale-95 shadow-lg`
+                                                    ? tier.id === 'clearance'
+                                                        ? 'bg-board-muted-blue text-white hover:scale-105 active:scale-95 shadow-lg'
+                                                        : tier.id === 'standard'
+                                                        ? 'bg-board-off-white text-board-navy hover:scale-105 active:scale-95 shadow-lg'
+                                                        : 'bg-board-red text-white hover:scale-105 active:scale-95 shadow-lg'
                                                     : 'bg-gray-700 text-gray-500 cursor-not-allowed opacity-50'
                                             }`}
                                             style={{

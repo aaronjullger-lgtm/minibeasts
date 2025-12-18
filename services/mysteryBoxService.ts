@@ -332,7 +332,7 @@ class MysteryBoxService {
                     id: 'common_towel',
                     name: '🧻 Crusty Gym Towel',
                     description: 'Questionable cleanliness. +2% grit earnings.',
-                    rarity: 'common' as const,
+                    rarity: 'brick' as const,
                     supply: -1,
                     currentSupply: -1,
                     lore: 'Found in the clearance bin. Has seen better days.',
@@ -344,7 +344,7 @@ class MysteryBoxService {
                     id: 'common_socks',
                     name: '🧦 Mismatched Socks',
                     description: 'One red, one blue. Still works.',
-                    rarity: 'common' as const,
+                    rarity: 'brick' as const,
                     supply: -1,
                     currentSupply: -1,
                     lore: 'The clearance rack special.',
@@ -355,7 +355,7 @@ class MysteryBoxService {
                     id: 'heat_gloves',
                     name: '🧤 Practice Gloves',
                     description: 'Decent grip. +5% payout on wins.',
-                    rarity: 'heat' as const,
+                    rarity: 'mid' as const,
                     supply: -1,
                     currentSupply: -1,
                     lore: 'Standard issue for the committed.',
@@ -369,7 +369,7 @@ class MysteryBoxService {
                     id: 'heat_jersey',
                     name: '👕 Team Jersey',
                     description: 'Official merch. +10% grit earnings.',
-                    rarity: 'heat' as const,
+                    rarity: 'mid' as const,
                     supply: -1,
                     currentSupply: -1,
                     lore: 'The standard issue for true fans.',
@@ -443,15 +443,15 @@ class MysteryBoxService {
         };
 
         // Determine rarity based on tier with weighted randomness
-        let selectedRarity: 'common' | 'heat' | 'grail';
+        let selectedRarity: 'brick' | 'mid' | 'heat' | 'grail';
         const roll = Math.random() * 100;
 
         if (tierId === 'clearance') {
-            // Clearance: 80% common, 20% heat
-            selectedRarity = roll < 80 ? 'common' : 'heat';
+            // Clearance: 80% brick, 20% mid
+            selectedRarity = roll < 80 ? 'brick' : 'mid';
         } else if (tierId === 'standard') {
-            // Standard: 70% heat, 30% grail
-            selectedRarity = roll < 70 ? 'heat' : 'grail';
+            // Standard: 70% mid/heat, 30% grail
+            selectedRarity = roll < 70 ? (roll < 35 ? 'mid' : 'heat') : 'grail';
         } else {
             // Grail: 100% grail
             selectedRarity = 'grail';
@@ -466,7 +466,12 @@ class MysteryBoxService {
         // If no items of selected rarity, fallback to any item from tier
         const finalItems = itemsOfRarity.length > 0 ? itemsOfRarity : tierItems;
         
-        // Select random item
+        // Select random item with null check
+        if (finalItems.length === 0) {
+            // Fallback to a guaranteed item
+            return mockItems.clearance[0];
+        }
+        
         const randomIndex = Math.floor(Math.random() * finalItems.length);
         
         return { ...finalItems[randomIndex] };

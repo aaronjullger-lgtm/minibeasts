@@ -85,10 +85,12 @@ export const CrateOpenAnimation: React.FC<CrateOpenAnimationProps> = ({ item, on
                                         ? 'bg-board-gold text-board-navy'
                                         : item.rarity === 'heat'
                                         ? 'bg-board-red text-white'
-                                        : 'bg-board-muted-blue text-board-off-white'
+                                        : item.rarity === 'mid'
+                                        ? 'bg-blue-500 text-white'
+                                        : 'bg-gray-500 text-white'
                                 }`}
                             >
-                                {item.rarity === 'grail' ? '⭐ GRAIL ⭐' : item.rarity === 'heat' ? '🔥 HEAT' : 'COMMON'}
+                                {item.rarity === 'grail' ? '⭐ GRAIL ⭐' : item.rarity === 'heat' ? '🔥 HEAT' : item.rarity === 'mid' ? '📦 MID' : '🧱 BRICK'}
                             </span>
                         </div>
 
