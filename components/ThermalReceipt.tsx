@@ -46,6 +46,13 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
     const { width, height } = node.getBoundingClientRect();
     const clone = node.cloneNode(true) as Element;
     clone.querySelectorAll('script').forEach((el) => el.remove());
+    clone.querySelectorAll('*').forEach((el) => {
+      Array.from(el.attributes).forEach((attr) => {
+        if (attr.name.toLowerCase().startsWith('on')) {
+          el.removeAttribute(attr.name);
+        }
+      });
+    });
     const serialized = new XMLSerializer().serializeToString(clone);
     const svg = `
       <svg xmlns="http://www.w3.org/2000/svg" width="${width * 2}" height="${height * 2}">

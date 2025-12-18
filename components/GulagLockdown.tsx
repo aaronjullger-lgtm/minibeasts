@@ -35,13 +35,17 @@ export const GulagLockdown: React.FC<GulagLockdownProps> = ({ player, onHailMary
 
   const getAudioCtor = () => {
     if (typeof window === 'undefined') return null;
-    return (window.AudioContext || (window as any).webkitAudioContext || null) as
-      | typeof AudioContext
-      | null;
+    const hasWebkit = 'webkitAudioContext' in window;
+    return (window.AudioContext ||
+      (hasWebkit
+        ? (window as Window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+        : null) ||
+      null) as typeof AudioContext | null;
   };
 
   useEffect(() => {
     if (!isLocked || typeof window === 'undefined') return;
+    let cleanup: (() => void) | undefined;
     try {
       const AudioCtor = getAudioCtor();
       if (!AudioCtor) return;
@@ -60,12 +64,13 @@ export const GulagLockdown: React.FC<GulagLockdownProps> = ({ player, onHailMary
       source.connect(gain).connect(ctx.destination);
       source.start(0);
       audioRef.current = source;
-      return () => {
+      cleanup = () => {
         source.stop();
       };
     } catch {
       // ignore audio failures in non-browser environments or when autoplay is blocked
     }
+    return cleanup;
   }, [isLocked]);
 
   const handleHailMary = () => {

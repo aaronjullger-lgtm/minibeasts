@@ -29,7 +29,7 @@ interface OverseerGameProps {
 }
 
 // Duration used for Gulag 24h execution/ban timer
-const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+const TWENTY_FOUR_HOURS_MS = 24 /* hours */ * 60 /* minutes */ * 60 /* seconds */ * 1000;
 
 export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExit, onPlayerUpdate, onLockdownChange }) => {
     const [player, setPlayer] = useState<OverseerPlayerState>(initialPlayer);
@@ -324,11 +324,7 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
     };
 
     if (isLockdown) {
-        return (
-            <GulagLockdown player={player} onHailMary={handleHailMaryAttempt}>
-                {null}
-            </GulagLockdown>
-        );
+        return <GulagLockdown player={player} onHailMary={handleHailMaryAttempt} />;
     }
 
     return (
