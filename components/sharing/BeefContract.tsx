@@ -75,6 +75,9 @@ export const BeefContract: React.FC<BeefContractProps> = ({
 
   const timestamp = new Date();
   const contractId = `BC-${Date.now().toString(36).toUpperCase()}`;
+  
+  // VS divider positioning - calculated based on header + half of tale section
+  const VS_DIVIDER_TOP = '120px';
 
   return (
     <div className="relative">
@@ -133,7 +136,7 @@ export const BeefContract: React.FC<BeefContractProps> = ({
           </div>
 
           {/* VS Divider in the middle */}
-          <div className="absolute left-1/2 top-[120px] transform -translate-x-1/2 -translate-y-1/2 z-10">
+          <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: VS_DIVIDER_TOP }}>
             <div className="w-16 h-16 bg-board-navy border-2 border-board-gold/50 rounded-full flex items-center justify-center">
               <span className="text-board-gold font-bold text-xl">VS</span>
             </div>

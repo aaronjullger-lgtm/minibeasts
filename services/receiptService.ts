@@ -15,6 +15,20 @@ export interface ReceiptGenerationOptions {
   height?: number; // Optional fixed height
 }
 
+// Constants
+const FRAUD_ALERT_INSULTS = [
+  'User Delusion',
+  'Bad Ball Knowledge',
+  'Insufficient Grit',
+  'Poor Decision Making',
+  'Questionable Judgment',
+  'Terminal Optimism',
+  'Chronic Cope',
+  'Delusional Confidence',
+  'Fraudulent Activity',
+  'Betting Against Reality',
+];
+
 class ReceiptService {
   private readonly DEFAULT_QUALITY = 0.95;
   private readonly DEFAULT_PIXEL_RATIO = 2;
@@ -148,20 +162,7 @@ class ReceiptService {
    * Get random insult for Fraud Alert
    */
   getRandomInsult(): string {
-    const insults = [
-      'User Delusion',
-      'Bad Ball Knowledge',
-      'Insufficient Grit',
-      'Poor Decision Making',
-      'Questionable Judgment',
-      'Terminal Optimism',
-      'Chronic Cope',
-      'Delusional Confidence',
-      'Fraudulent Activity',
-      'Betting Against Reality',
-    ];
-    
-    return insults[Math.floor(Math.random() * insults.length)];
+    return FRAUD_ALERT_INSULTS[Math.floor(Math.random() * FRAUD_ALERT_INSULTS.length)];
   }
 }
 
