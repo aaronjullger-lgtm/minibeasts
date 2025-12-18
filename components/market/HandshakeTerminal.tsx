@@ -15,6 +15,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { LoreItem, OverseerPlayerState } from '../../types';
 import { assetService } from '../../services/assetService';
 
+// Helper function to truncate item names
+const truncateItemName = (name: string, maxLength: number = 20): string => {
+    return name.length > maxLength ? name.substring(0, maxLength) + '...' : name;
+};
+
 interface HandshakeTerminalProps {
     player: OverseerPlayerState;
     allPlayers: OverseerPlayerState[];
@@ -233,7 +238,7 @@ export const HandshakeTerminal: React.FC<HandshakeTerminalProps> = ({
                                                     >
                                                         {/* Chip/Microfilm Aesthetic */}
                                                         <div className="text-xs font-mono text-center break-words text-paper-white">
-                                                            {item.name.length > 20 ? item.name.substring(0, 20) + '...' : item.name}
+                                                            {truncateItemName(item.name)}
                                                         </div>
                                                         <div className={`text-[10px] font-mono mt-2 ${
                                                             item.rarity === 'grail' ? 'text-red-400' :
@@ -295,7 +300,7 @@ export const HandshakeTerminal: React.FC<HandshakeTerminalProps> = ({
                                                     >
                                                         {/* Chip/Microfilm Aesthetic */}
                                                         <div className="text-xs font-mono text-center break-words text-paper-white">
-                                                            {item.name.length > 20 ? item.name.substring(0, 20) + '...' : item.name}
+                                                            {truncateItemName(item.name)}
                                                         </div>
                                                         <div className={`text-[10px] font-mono mt-2 ${
                                                             item.rarity === 'grail' ? 'text-red-400' :

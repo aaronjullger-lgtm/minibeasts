@@ -75,14 +75,14 @@ export const SealedBidWire: React.FC<SealedBidWireProps> = ({
         };
 
         const cleanup = () => {
-            document.removeEventListener('touchmove', handleMove as any);
-            document.removeEventListener('mousemove', handleMove as any);
+            document.removeEventListener('touchmove', handleMove);
+            document.removeEventListener('mousemove', handleMove);
             document.removeEventListener('touchend', handleEnd);
             document.removeEventListener('mouseup', handleEnd);
         };
 
-        document.addEventListener('touchmove', handleMove as any);
-        document.addEventListener('mousemove', handleMove as any);
+        document.addEventListener('touchmove', handleMove);
+        document.addEventListener('mousemove', handleMove);
         document.addEventListener('touchend', handleEnd);
         document.addEventListener('mouseup', handleEnd);
     };

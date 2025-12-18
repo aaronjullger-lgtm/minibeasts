@@ -20,8 +20,8 @@ class AssetService {
         bidderName: string,
         bidderGrit: number
     ): { success: boolean; bid?: WaiverBid; error?: string } {
-        if (amount <= 0) {
-            return { success: false, error: 'Bid amount must be positive' };
+        if (amount < 1) {
+            return { success: false, error: 'Bid amount must be at least 1 grit' };
         }
 
         if (amount > bidderGrit) {
@@ -29,7 +29,7 @@ class AssetService {
         }
 
         const bid: WaiverBid = {
-            id: `sealed_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
+            id: crypto.randomUUID ? crypto.randomUUID() : `sealed_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
             waiverListingId: itemId,
             bidderId,
             bidderName,
@@ -98,7 +98,7 @@ class AssetService {
      * Generate a unique transaction ID for tracking
      */
     generateTransactionId(): string {
-        return `txn_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+        return crypto.randomUUID ? crypto.randomUUID() : `txn_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
     }
 
     /**
