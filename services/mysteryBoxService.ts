@@ -319,6 +319,163 @@ class MysteryBoxService {
     resetTradingFloor(): void {
         this.tradingFloor.offers = [];
     }
+
+    /**
+     * Simplified Gacha System - Open Mystery Box by Tier
+     * For "The Locker Room" implementation
+     */
+    openMysteryBoxByTier(tierId: 'clearance' | 'standard' | 'grail'): LoreItem {
+        // Define mock items for the gacha system
+        const mockItems = {
+            clearance: [
+                {
+                    id: 'common_towel',
+                    name: '🧻 Crusty Gym Towel',
+                    description: 'Questionable cleanliness. +2% grit earnings.',
+                    rarity: 'brick' as const,
+                    supply: -1,
+                    currentSupply: -1,
+                    lore: 'Found in the clearance bin. Has seen better days.',
+                    equipped: false,
+                    passiveBonus: { payoutMultiplier: 1.02 },
+                    type: 'lore' as const
+                },
+                {
+                    id: 'common_socks',
+                    name: '🧦 Mismatched Socks',
+                    description: 'One red, one blue. Still works.',
+                    rarity: 'brick' as const,
+                    supply: -1,
+                    currentSupply: -1,
+                    lore: 'The clearance rack special.',
+                    equipped: false,
+                    type: 'lore' as const
+                },
+                {
+                    id: 'heat_gloves',
+                    name: '🧤 Practice Gloves',
+                    description: 'Decent grip. +5% payout on wins.',
+                    rarity: 'mid' as const,
+                    supply: -1,
+                    currentSupply: -1,
+                    lore: 'Standard issue for the committed.',
+                    equipped: false,
+                    passiveBonus: { payoutMultiplier: 1.05 },
+                    type: 'lore' as const
+                }
+            ],
+            standard: [
+                {
+                    id: 'heat_jersey',
+                    name: '👕 Team Jersey',
+                    description: 'Official merch. +10% grit earnings.',
+                    rarity: 'mid' as const,
+                    supply: -1,
+                    currentSupply: -1,
+                    lore: 'The standard issue for true fans.',
+                    equipped: false,
+                    passiveBonus: { payoutMultiplier: 1.10 },
+                    type: 'lore' as const
+                },
+                {
+                    id: 'heat_cap',
+                    name: '🧢 Lucky Cap',
+                    description: 'Never been washed. +8% grit earnings.',
+                    rarity: 'heat' as const,
+                    supply: -1,
+                    currentSupply: -1,
+                    lore: 'Standard issue with character.',
+                    equipped: false,
+                    passiveBonus: { payoutMultiplier: 1.08 },
+                    type: 'lore' as const
+                },
+                {
+                    id: 'grail_chain',
+                    name: '⛓️ Championship Chain',
+                    description: 'Heavy metal. +20% grit earnings!',
+                    rarity: 'grail' as const,
+                    supply: 10,
+                    currentSupply: 10,
+                    lore: 'A rare find in standard crates.',
+                    equipped: false,
+                    passiveBonus: { payoutMultiplier: 1.20 },
+                    type: 'lore' as const
+                }
+            ],
+            grail: [
+                {
+                    id: 'grail_crown',
+                    name: '👑 Dynasty Crown',
+                    description: 'Pure gold. +30% grit earnings!',
+                    rarity: 'grail' as const,
+                    supply: 3,
+                    currentSupply: 3,
+                    lore: 'The ultimate prize. Reserved for champions.',
+                    equipped: false,
+                    passiveBonus: { payoutMultiplier: 1.30 },
+                    type: 'lore' as const
+                },
+                {
+                    id: 'grail_trophy',
+                    name: '🏆 The Lombardi',
+                    description: 'Legendary artifact. +40% grit earnings!',
+                    rarity: 'grail' as const,
+                    supply: 1,
+                    currentSupply: 1,
+                    lore: 'The pinnacle of achievement.',
+                    equipped: false,
+                    passiveBonus: { payoutMultiplier: 1.40 },
+                    type: 'lore' as const
+                },
+                {
+                    id: 'grail_ring',
+                    name: '💍 Championship Ring',
+                    description: 'Diamonds and gold. +35% grit earnings!',
+                    rarity: 'grail' as const,
+                    supply: 5,
+                    currentSupply: 5,
+                    lore: 'Only the elite can claim this.',
+                    equipped: false,
+                    passiveBonus: { payoutMultiplier: 1.35 },
+                    type: 'lore' as const
+                }
+            ]
+        };
+
+        // Determine rarity based on tier with weighted randomness
+        let selectedRarity: 'brick' | 'mid' | 'heat' | 'grail';
+        const roll = Math.random() * 100;
+
+        if (tierId === 'clearance') {
+            // Clearance: 80% brick, 20% mid
+            selectedRarity = roll < 80 ? 'brick' : 'mid';
+        } else if (tierId === 'standard') {
+            // Standard: 70% mid/heat, 30% grail
+            selectedRarity = roll < 70 ? (roll < 35 ? 'mid' : 'heat') : 'grail';
+        } else {
+            // Grail: 100% grail
+            selectedRarity = 'grail';
+        }
+
+        // Get items from the selected tier
+        const tierItems = mockItems[tierId];
+        
+        // Filter by selected rarity
+        const itemsOfRarity = tierItems.filter(item => item.rarity === selectedRarity);
+        
+        // If no items of selected rarity, fallback to any item from tier
+        const finalItems = itemsOfRarity.length > 0 ? itemsOfRarity : tierItems;
+        
+        // Select random item with null check
+        if (finalItems.length === 0) {
+            // Fallback to a guaranteed item
+            return mockItems.clearance[0];
+        }
+        
+        const randomIndex = Math.floor(Math.random() * finalItems.length);
+        
+        return { ...finalItems[randomIndex] };
+    }
 }
 
 export const mysteryBoxService = new MysteryBoxService();
