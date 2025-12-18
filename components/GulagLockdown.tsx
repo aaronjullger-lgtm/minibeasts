@@ -4,12 +4,11 @@ import { OverseerPlayerState } from '../types';
 interface GulagLockdownProps {
   player: OverseerPlayerState;
   onHailMary?: () => { won: boolean; parlay: string };
-  children: React.ReactNode;
 }
 
 const HAIL_MARY_REWARD = 500;
 
-export const GulagLockdown: React.FC<GulagLockdownProps> = ({ player, onHailMary, children }) => {
+export const GulagLockdown: React.FC<GulagLockdownProps> = ({ player, onHailMary }) => {
   const [result, setResult] = useState<null | 'win' | 'lose'>(null);
   const [parlay, setParlay] = useState<string>('');
   const audioRef = useRef<AudioBufferSourceNode | null>(null);
@@ -50,7 +49,7 @@ export const GulagLockdown: React.FC<GulagLockdownProps> = ({ player, onHailMary
       const AudioCtor = getAudioCtor();
       if (!AudioCtor) return;
       const ctx = new AudioCtor();
-      const bufferSize = 2 * ctx.sampleRate;
+      const bufferSize = Math.floor(0.5 * ctx.sampleRate);
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
