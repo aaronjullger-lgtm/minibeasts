@@ -131,6 +131,17 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
         }));
     };
 
+    const handleSyndicateAction = (action: string, cost: number) => {
+        // Deduct cost from player's grit
+        setPlayer(prev => ({
+            ...prev,
+            grit: prev.grit - cost
+        }));
+        
+        // Log the action for debugging
+        console.log(`Syndicate action executed: ${action} for ${cost} grit`);
+    };
+
     const handleListItem = (itemId: string, price: number) => {
         const offer = mysteryBoxService.listItemForTrade(
             player.id,
@@ -540,6 +551,7 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                 <LockerRoom
                     player={player}
                     onPurchase={handleLockerRoomPurchase}
+                    onSyndicateAction={handleSyndicateAction}
                     onClose={() => setCurrentView('main')}
                 />
             )}
