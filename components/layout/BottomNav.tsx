@@ -45,7 +45,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
                   className={`
-                    flex flex-col items-center gap-1 px-4 py-2 rounded-xl
+                    relative flex flex-col items-center gap-1 px-4 py-2 rounded-xl
                     transition-all duration-300 active:scale-95
                     ${isActive
                       ? 'text-board-text scale-105'

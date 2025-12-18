@@ -29,12 +29,10 @@ export const ScreenShell: React.FC<ScreenShellProps> = ({
 
       {/* Scrollable Main Area */}
       <main
-        className="flex-1 overflow-y-auto overflow-x-hidden"
+        className={`flex-1 overflow-y-auto overflow-x-hidden ${header ? 'mt-16' : ''} ${footer ? 'mb-20' : ''}`}
         style={{
           overscrollBehaviorY: 'none', // Prevent rubber band effect on iOS
           WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
-          marginTop: header ? 'var(--header-height, 4rem)' : '0',
-          marginBottom: footer ? 'var(--footer-height, 5rem)' : '0',
         }}
       >
         <div className="min-h-full">

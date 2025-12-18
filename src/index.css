@@ -1483,7 +1483,11 @@
      DESIGN SYSTEM UTILITIES
      ============================================ */
 
-  /* Glassmorphism Panel - Premium Card Effect */
+  /* Glassmorphism Panel - Premium Card Effect
+   * Use this for new components that need glassmorphism.
+   * This is the recommended utility for the strict design system.
+   * For legacy compatibility, .noir-card (defined earlier) remains available.
+   */
   .glass-panel {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
