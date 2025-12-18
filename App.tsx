@@ -99,10 +99,9 @@ const AppContent: React.FC = () => {
                 <span 
                   className={`text-2xl transition-all duration-200 ${
                     isActive 
-                      ? 'scale-110 filter drop-shadow-[0_0_8px_rgba(255,51,51,0.8)]' 
-                      : 'opacity-60'
+                      ? 'text-board-red scale-110 filter drop-shadow-[0_0_8px_rgba(255,51,51,0.8)]' 
+                      : 'text-board-off-white opacity-60'
                   }`}
-                  style={{ color: isActive ? '#FF3333' : '#E1E7F5' }}
                 >
                   {tab.icon}
                 </span>
