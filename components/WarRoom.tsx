@@ -8,6 +8,15 @@ interface WarRoomProps {
   onClose?: () => void;
 }
 
+/**
+ * Get ordinal suffix for a number (1st, 2nd, 3rd, 4th)
+ */
+function getOrdinalSuffix(num: number): string {
+  const suffixes = ['TH', 'ST', 'ND', 'RD'];
+  const v = num % 100;
+  return suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0];
+}
+
 export const WarRoom: React.FC<WarRoomProps> = ({
   games,
   squadPassengers = [],
@@ -94,7 +103,7 @@ export const WarRoom: React.FC<WarRoomProps> = ({
               isPulsing ? 'text-board-red' : 'text-gray-400'
             }`}>
               {selectedGame.status === 'live' ? 'LIVE' : selectedGame.status.toUpperCase()} // {selectedGame.quarter}
-              {selectedGame.quarter === 1 ? 'ST' : selectedGame.quarter === 2 ? 'ND' : selectedGame.quarter === 3 ? 'RD' : 'TH'} QTR // {selectedGame.timeRemaining}
+              {getOrdinalSuffix(selectedGame.quarter)} QTR // {selectedGame.timeRemaining}
             </p>
           </div>
         </div>

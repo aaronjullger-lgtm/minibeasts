@@ -25,6 +25,8 @@ export class LiveGameService {
   private commishListeners: ((message: ChatMessage) => void)[] = [];
   private gameTimers: Map<string, NodeJS.Timeout> = new Map();
   private isRunning = false;
+  private eventIdCounter = 0; // Counter for unique event IDs
+  private screenShakeTimeout: NodeJS.Timeout | null = null; // Track screen shake timeout
 
   /**
    * Initialize the service with mock games
@@ -124,7 +126,7 @@ export class LiveGameService {
     }
     
     return {
-      id: `evt_${Date.now()}_${Math.random()}`,
+      id: `evt_${game.id}_${this.eventIdCounter++}`,
       type,
       gameId: game.id,
       team,
@@ -209,8 +211,17 @@ export class LiveGameService {
    */
   private triggerScreenShake(): void {
     const root = document.documentElement;
+    
+    // Clear any existing timeout to prevent conflicts
+    if (this.screenShakeTimeout) {
+      clearTimeout(this.screenShakeTimeout);
+    }
+    
     root.classList.add('screen-shake');
-    setTimeout(() => root.classList.remove('screen-shake'), 500);
+    this.screenShakeTimeout = setTimeout(() => {
+      root.classList.remove('screen-shake');
+      this.screenShakeTimeout = null;
+    }, 500);
   }
 
   /**
@@ -231,7 +242,13 @@ export class LiveGameService {
       animation: flash 0.5s ease-out;
     `;
     document.body.appendChild(flashDiv);
-    setTimeout(() => document.body.removeChild(flashDiv), 500);
+    
+    setTimeout(() => {
+      // Safety check: verify element still exists and has parent
+      if (flashDiv && flashDiv.parentNode === document.body) {
+        document.body.removeChild(flashDiv);
+      }
+    }, 500);
   }
 
   /**
@@ -366,6 +383,12 @@ export class LiveGameService {
     this.isRunning = false;
     this.gameTimers.forEach(timer => clearTimeout(timer));
     this.gameTimers.clear();
+    
+    // Clear screen shake timeout if active
+    if (this.screenShakeTimeout) {
+      clearTimeout(this.screenShakeTimeout);
+      this.screenShakeTimeout = null;
+    }
   }
 
   /**

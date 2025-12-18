@@ -18,6 +18,7 @@ export const ProphecyCard: React.FC<ProphecyCardProps> = ({
   const [wager, setWager] = useState(50);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [progress, setProgress] = useState(100);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Calculate time remaining
@@ -47,13 +48,16 @@ export const ProphecyCard: React.FC<ProphecyCardProps> = ({
   const handlePlaceBet = () => {
     if (!selectedOption || card.isLocked || card.isResolved) return;
     
+    // Clear any previous errors
+    setError(null);
+    
     if (wager < 10) {
-      alert('Minimum wager is 10 grit');
+      setError('Minimum wager is 10 grit');
       return;
     }
     
     if (wager > currentPlayerGrit) {
-      alert('Insufficient grit');
+      setError('Insufficient grit');
       return;
     }
 
@@ -213,6 +217,13 @@ export const ProphecyCard: React.FC<ProphecyCardProps> = ({
           {/* Wager Input */}
           {!isLocked && !card.isResolved && (
             <div className="space-y-3 pt-4 border-t border-gray-700">
+              {/* Error message */}
+              {error && (
+                <div className="bg-board-red bg-opacity-20 border border-board-red rounded p-2 text-center">
+                  <p className="text-board-red text-sm font-board-grit">{error}</p>
+                </div>
+              )}
+              
               <div>
                 <label className="block text-xs text-gray-400 mb-2 font-board-grit uppercase">
                   Your Wager
@@ -222,7 +233,10 @@ export const ProphecyCard: React.FC<ProphecyCardProps> = ({
                   min="10"
                   max={currentPlayerGrit}
                   value={wager}
-                  onChange={(e) => setWager(Math.max(10, parseInt(e.target.value) || 0))}
+                  onChange={(e) => {
+                    setWager(Math.max(10, parseInt(e.target.value) || 0));
+                    setError(null); // Clear error on change
+                  }}
                   className="w-full px-4 py-2 bg-board-muted-blue border border-gray-700 rounded text-board-off-white font-board-grit"
                   placeholder="Enter grit amount"
                 />
