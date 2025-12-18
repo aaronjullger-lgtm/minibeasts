@@ -110,12 +110,12 @@ export const CommishCore: React.FC<CommishCoreProps> = ({
                 />
 
                 {/* Eye Container */}
-                <div className={`relative w-24 h-24 rounded-full border-4 border-${coreColor} bg-board-navy flex items-center justify-center overflow-hidden`}
+                <div className={`relative w-24 h-24 rounded-full border-4 ${isActive ? 'border-board-red' : 'border-board-muted-blue'} bg-board-navy flex items-center justify-center overflow-hidden`}
                     style={{ boxShadow: `0 0 30px ${glowColor}` }}>
                     
                     {/* Iris */}
                     <motion.div
-                        className={`w-12 h-12 rounded-full bg-${coreColor}`}
+                        className={`w-12 h-12 rounded-full ${isActive ? 'bg-board-red' : 'bg-board-muted-blue'}`}
                         variants={eyeVariants}
                         animate={isActive ? 'active' : 'dormant'}
                     >
@@ -139,7 +139,7 @@ export const CommishCore: React.FC<CommishCoreProps> = ({
                         {[...Array(8)].map((_, i) => (
                             <motion.div
                                 key={i}
-                                className={`w-1 bg-${coreColor} opacity-30`}
+                                className={`w-1 ${isActive ? 'bg-board-red' : 'bg-board-muted-blue'} opacity-30`}
                                 style={{ height: `${20 + Math.random() * 40}%` }}
                                 variants={waveformVariants}
                                 animate={isActive ? 'active' : 'dormant'}
@@ -161,7 +161,7 @@ export const CommishCore: React.FC<CommishCoreProps> = ({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.5 }}
-                        className={`text-center font-board-grit text-xs text-${coreColor} tracking-wider`}
+                        className={`text-center font-board-grit text-xs ${isActive ? 'text-board-red' : 'text-board-muted-blue'} tracking-wider`}
                     >
                         {thoughts[currentThoughtIndex] || 'STANDBY...'}
                     </motion.div>
@@ -202,7 +202,7 @@ export const CommishCore: React.FC<CommishCoreProps> = ({
                             <div className="space-y-4 font-board-grit text-sm">
                                 <div className="flex justify-between items-center">
                                     <span className="text-board-off-white/70">STATUS:</span>
-                                    <span className={`text-${coreColor} font-bold`}>
+                                    <span className={`${isActive ? 'text-board-red' : 'text-board-muted-blue'} font-bold`}>
                                         {isActive ? 'ACTIVE' : 'DORMANT'}
                                     </span>
                                 </div>

@@ -78,7 +78,7 @@ class CommishService {
             ];
 
             return {
-                id: `roast_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                id: `roast_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
                 message: roasts[Math.floor(Math.random() * roasts.length)],
                 timestamp: Date.now(),
                 type: 'commish',
@@ -112,7 +112,7 @@ class CommishService {
      */
     issueLoan(player: OverseerPlayerState): CommishLoan {
         const loan: CommishLoan = {
-            id: `loan_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            id: `loan_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
             playerId: player.id,
             playerName: player.name,
             principal: this.LOAN_AMOUNT,
@@ -208,7 +208,7 @@ class CommishService {
 
         // For now, we'll just create a message. Actual verification would need evidence
         const message: ActionFeedMessage = {
-            id: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            id: `audit_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
             message: `THE COMMISH is auditing a Shadow Lock on ${bet.targetUserName}. Evidence required.`,
             timestamp: Date.now(),
             type: 'commish',
