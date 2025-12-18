@@ -20,6 +20,11 @@ export default {
         'board-off-white': '#E1E7F5',
         'board-muted-blue': '#1E293B',
         'board-crimson': '#8a1c1c',
+        // Tactical Luxury / Spy Aesthetic Palette
+        'tactical-dark': '#0A0E14',    // Deep charcoal, matte finish
+        'tactical-gray': '#5A6169',    // Gunmetal for borders
+        'gold-leaf': '#D4AF37',        // Luxury gold for rare items
+        'paper-white': '#F5F5F0',      // Off-white for standard text
       },
       fontFamily: {
         // Typography
