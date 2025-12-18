@@ -11,6 +11,7 @@ import { overseerService } from '../services/overseerService';
 import { bettingService } from '../services/bettingService';
 import { mysteryBoxService } from '../services/mysteryBoxService';
 import { gulagService } from '../services/gulagService';
+import { CorruptionAction } from '../services/corruptionService';
 import { BodegaShop } from './BodegaShop';
 import { LockerRoom } from './LockerRoom';
 import { TradingFloor } from './TradingFloor';
@@ -129,6 +130,17 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
             grit: prev.grit - cost,
             ownedItems: [...prev.ownedItems, pulledItem]
         }));
+    };
+
+    const handleSyndicateAction = (action: CorruptionAction, cost: number) => {
+        // Deduct cost from player's grit
+        setPlayer(prev => ({
+            ...prev,
+            grit: prev.grit - cost
+        }));
+        
+        // Log the action for debugging
+        console.log(`Syndicate action executed: ${action} for ${cost} grit`);
     };
 
     const handleListItem = (itemId: string, price: number) => {
@@ -540,6 +552,7 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                 <LockerRoom
                     player={player}
                     onPurchase={handleLockerRoomPurchase}
+                    onSyndicateAction={handleSyndicateAction}
                     onClose={() => setCurrentView('main')}
                 />
             )}

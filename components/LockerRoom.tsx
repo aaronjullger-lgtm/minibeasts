@@ -13,11 +13,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { LoreItem, OverseerPlayerState } from '../types';
 import { mysteryBoxService } from '../services/mysteryBoxService';
 import { CrateOpenAnimation } from './CrateOpenAnimation';
+import { SyndicateTerminal } from './SyndicateTerminal';
+import { CorruptionAction } from '../services/corruptionService';
 
 interface LockerRoomProps {
     player: OverseerPlayerState;
     onPurchase: (tierId: string, cost: number, pulledItem: LoreItem) => void;
     onClose: () => void;
+    onSyndicateAction?: (action: CorruptionAction, cost: number) => void;
 }
 
 interface MysteryBoxTier {
@@ -32,7 +35,7 @@ interface MysteryBoxTier {
     textColor: string;
 }
 
-export const LockerRoom: React.FC<LockerRoomProps> = ({ player, onPurchase, onClose }) => {
+export const LockerRoom: React.FC<LockerRoomProps> = ({ player, onPurchase, onClose, onSyndicateAction }) => {
     const [pulledItem, setPulledItem] = useState<LoreItem | null>(null);
     const [isOpening, setIsOpening] = useState(false);
     const [showSyndicate, setShowSyndicate] = useState(false);
@@ -306,29 +309,16 @@ export const LockerRoom: React.FC<LockerRoomProps> = ({ player, onPurchase, onCl
 
             {/* Syndicate Access Modal */}
             {showSyndicate && (
-                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/90">
-                    <div className="bg-board-navy border-4 border-board-gold rounded-lg p-8 max-w-md mx-4 animate-fade-in">
-                        <div className="text-center">
-                            <div className="text-6xl mb-4">🔓</div>
-                            <h2 className="text-3xl font-board-header font-bold text-board-gold mb-4 animate-shimmer-text">
-                                ACCESS GRANTED
-                            </h2>
-                            <p className="text-board-off-white mb-6">
-                                You've found the backdoor to the Syndicate.
-                                <br />
-                                <span className="text-board-muted-blue text-sm italic">
-                                    (Admin panel coming in Phase 3)
-                                </span>
-                            </p>
-                            <button
-                                onClick={() => setShowSyndicate(false)}
-                                className="px-6 py-3 bg-board-gold text-board-navy font-bold rounded-lg hover:bg-yellow-500 transition-all transform active:scale-95"
-                            >
-                                UNDERSTOOD
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <SyndicateTerminal
+                    player={player}
+                    onActionComplete={(action, cost) => {
+                        if (onSyndicateAction) {
+                            onSyndicateAction(action, cost);
+                        }
+                        setShowSyndicate(false);
+                    }}
+                    onClose={() => setShowSyndicate(false)}
+                />
             )}
         </>
     );
