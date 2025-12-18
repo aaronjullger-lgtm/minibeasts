@@ -33,7 +33,7 @@ export const TradingFloor: React.FC<TradingFloorProps> = ({
 
     // Reset lock state when selections change
     useEffect(() => {
-        if (lockState !== 'unlocked') {
+        if (lockState !== 'unlocked' && (mySelectedItems.size > 0 || theirSelectedItems.size > 0)) {
             setLockState('unlocked');
         }
     }, [mySelectedItems.size, theirSelectedItems.size]);

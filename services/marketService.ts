@@ -42,7 +42,10 @@ export const proposeTrade = async (
     // Mock implementation - simulates API call
     return new Promise((resolve) => {
         setTimeout(() => {
-            const tradeId = `trade_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+            // Use crypto.randomUUID if available, otherwise fall back to timestamp-based ID
+            const tradeId = typeof crypto !== 'undefined' && crypto.randomUUID
+                ? `trade_${crypto.randomUUID()}`
+                : `trade_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
             resolve({
                 success: true,
                 message: `Trade proposed to player ${targetPlayerId}`,
