@@ -54,8 +54,7 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
           }
         });
       });
-      let serialized = new XMLSerializer().serializeToString(clone);
-      serialized = serialized.replace(/on\w+="[^"]*"/gi, '').replace(/<script.*?>.*?<\/script>/gi, '');
+      const serialized = new XMLSerializer().serializeToString(clone);
       const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="${width * 2}" height="${height * 2}">
           <foreignObject width="100%" height="100%" x="0" y="0">
