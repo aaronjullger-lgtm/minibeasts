@@ -49,17 +49,31 @@
   }
 
   html {
-    /* The "Interrogation" Light - Elite Noir Spotlight Background */
-    background: radial-gradient(ellipse 100% 60% at 50% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
-                linear-gradient(180deg, #050A14 0%, #03070f 60%, #000000 100%);
+    /* Tactical Luxury - Matte Black with Subtle Noise Texture */
+    background: #0A0A0A;
     background-attachment: fixed;
     height: -webkit-fill-available;
-    color: var(--off-white);
+    color: #F5F5F5;
+    /* Prevent iOS rubber band effect */
+    overscroll-behavior-y: none;
+  }
+
+  /* Noise Texture Overlay - Expensive Material Look */
+  html::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' /%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    z-index: 1;
+    mix-blend-mode: overlay;
   }
 
   body {
     @apply antialiased;
-    font-feature-settings: "liga" 1, "calt" 1;
+    /* Force tabular numbers for perfect alignment of odds/grit */
+    font-feature-settings: "liga" 1, "calt" 1, "tnum" 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -67,18 +81,8 @@
     min-height: 100vh;
     min-height: -webkit-fill-available;
     position: relative;
-  }
-
-  /* Film Grain Overlay - Cinematic Texture */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
-    opacity: 0.05;
-    z-index: 9999;
-    mix-blend-mode: overlay;
+    /* Prevent iOS rubber band effect */
+    overscroll-behavior-y: none;
   }
 
   /* Safe area support for notched devices */
