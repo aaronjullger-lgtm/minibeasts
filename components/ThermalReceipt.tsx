@@ -44,7 +44,7 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
     if (!ref.current) return;
     const node = ref.current;
     const { width, height } = node.getBoundingClientRect();
-    const clone = node.cloneNode(true) as Node;
+    const clone = node.cloneNode(true) as Element;
     clone.querySelectorAll('script').forEach((el) => el.remove());
     const serialized = new XMLSerializer().serializeToString(clone);
     const svg = `
@@ -60,15 +60,14 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
       canvas.width = width * 2;
       canvas.height = height * 2;
       const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-        const link = document.createElement('a');
-        link.download = 'mini-beasts-receipt.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-      }
+      if (!ctx) return;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const link = document.createElement('a');
+      link.download = 'mini-beasts-receipt.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
     };
     image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
   }, []);

@@ -35,8 +35,9 @@ export const GulagLockdown: React.FC<GulagLockdownProps> = ({ player, onHailMary
 
   const getAudioCtor = () => {
     if (typeof window === 'undefined') return null;
-    const maybeWindow = window as typeof window & { webkitAudioContext?: typeof AudioContext };
-    return window.AudioContext || maybeWindow.webkitAudioContext || null;
+    return (window.AudioContext || (window as any).webkitAudioContext || null) as
+      | typeof AudioContext
+      | null;
   };
 
   useEffect(() => {
