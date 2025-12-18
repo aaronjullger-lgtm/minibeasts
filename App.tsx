@@ -49,6 +49,7 @@ const AppContent: React.FC = () => {
   };
 
   const [overseerPlayer] = useState<OverseerPlayerState>(initialOverseerPlayer);
+  const [activeTab, setActiveTab] = useState<string>('board');
 
   // No exit handler needed since we go straight to game
   const handleExit = () => {
@@ -56,34 +57,85 @@ const AppContent: React.FC = () => {
     console.log('Exit requested - implement logout');
   };
 
-  return <OverseerGame initialPlayer={overseerPlayer} onExit={handleExit} />;
+  return (
+    <>
+      {/* The HUD (Heads-Up Display) - Fixed at top */}
+      <div className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-4 py-3 backdrop-blur-xl bg-board-navy/80 border-b border-board-muted-blue">
+        {/* Left: Season/Phase */}
+        <div className="text-[10px] uppercase tracking-widest text-board-off-white/60 font-board-grit">
+          SEASON 1 • PHASE 3
+        </div>
+        
+        {/* Right: Grit Balance */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-board-off-white/60 uppercase tracking-wider">GRIT</span>
+          <span className="text-2xl font-board-grit font-bold text-board-red tracking-tight">
+            {overseerPlayer.grit.toLocaleString()}
+          </span>
+        </div>
+      </div>
+
+      {/* Main Content Area - with padding for HUD and bottom nav */}
+      <div className="pt-16 pb-24">
+        <OverseerGame initialPlayer={overseerPlayer} onExit={handleExit} />
+      </div>
+
+      {/* The Bottom Nav - Fixed at bottom */}
+      <nav className="fixed bottom-0 inset-x-0 z-50 h-20 bg-board-navy backdrop-blur-xl border-t border-board-muted-blue flex items-center justify-around px-2">
+        {[
+          { id: 'locker', label: 'Locker Room', icon: '🗄️' },
+          { id: 'board', label: 'The Board', icon: '🎯' },
+          { id: 'squad', label: 'My Squad', icon: '👥' },
+          { id: 'profile', label: 'Profile', icon: '👤' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className="flex flex-col items-center gap-1 min-w-[60px] py-2 transition-all duration-200"
+            >
+              <div className="relative">
+                <span 
+                  className={`text-2xl transition-all duration-200 ${
+                    isActive 
+                      ? 'text-board-red scale-110 filter drop-shadow-[0_0_8px_rgba(255,51,51,0.8)]' 
+                      : 'text-board-off-white opacity-60'
+                  }`}
+                >
+                  {tab.icon}
+                </span>
+                {/* Active indicator dot */}
+                {isActive && (
+                  <div 
+                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-board-red"
+                    style={{ boxShadow: '0 0 6px rgba(255, 51, 51, 0.8)' }}
+                  />
+                )}
+              </div>
+              <span 
+                className={`text-[10px] uppercase tracking-wider font-medium transition-all duration-200 ${
+                  isActive 
+                    ? 'text-board-red font-bold' 
+                    : 'text-board-off-white/60'
+                }`}
+              >
+                {tab.label}
+              </span>
+            </button>
+          );
+        })}
+      </nav>
+    </>
+  );
 };
 
 const App: React.FC = () => {
   return (
-    <div className="app-grain app-scanlines min-h-screen bg-stadium-gradient">
+    <div className="min-h-screen bg-board-navy">
       <ErrorBoundary>
         <ToastProvider>
-          <div className="pb-16 md:pb-0">
-            <AppContent />
-          </div>
-          <nav className="fixed bottom-0 inset-x-0 z-40 bg-black/70 backdrop-blur-md border-t border-board-muted-blue/50 flex justify-around py-3 md:hidden">
-            {[
-              { label: 'Board', icon: '🎯' },
-              { label: 'Wiretap', icon: '📡' },
-              { label: 'Locker', icon: '🗄️' },
-              { label: 'Trades', icon: '📈' },
-              { label: 'Profile', icon: '👤' },
-            ].map((item, idx) => (
-              <button
-                key={item.label}
-                className={`flex flex-col items-center gap-1 text-xs font-semibold ${idx === 0 ? 'text-board-red scale-110' : 'text-board-off-white/70'}`}
-              >
-                <span className={`${idx === 0 ? 'board-red-glow' : ''}`}>{item.icon}</span>
-                <span>{item.label}</span>
-              </button>
-            ))}
-          </nav>
+          <AppContent />
         </ToastProvider>
       </ErrorBoundary>
     </div>
