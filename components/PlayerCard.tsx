@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PlayerCardData, RoastReaction } from '../types';
+import { IdentityCard, RiskProfileBadge, PrestigeBadge } from './IdentityCard';
 
 interface PlayerCardProps {
   playerData: PlayerCardData;
@@ -119,10 +120,34 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
                   </div>
                 </div>
 
-                {/* Player name */}
-                <h2 className="text-3xl font-bold text-board-off-white text-center mb-4" style={{ fontFamily: 'Archivo Black, sans-serif' }}>
-                  {playerData.playerName}
-                </h2>
+                {/* Player name with IdentityCard */}
+                <div className="text-center mb-4">
+                  <IdentityCard 
+                    userName={playerData.playerName}
+                    userProfile={playerData.userProfile}
+                    size="large"
+                    showBadge={true}
+                    className="justify-center"
+                  />
+                  
+                  {/* Risk Profile and Prestige details */}
+                  {playerData.userProfile && (
+                    <div className="mt-4 flex flex-col gap-2 items-center">
+                      {playerData.userProfile.riskProfile && (
+                        <RiskProfileBadge 
+                          riskProfile={playerData.userProfile.riskProfile}
+                          size="medium"
+                        />
+                      )}
+                      {playerData.userProfile.prestigeLevels.length > 0 && (
+                        <PrestigeBadge
+                          season={playerData.userProfile.prestigeLevels[playerData.userProfile.prestigeLevels.length - 1].season}
+                          multiplier={playerData.userProfile.prestigeLevels[playerData.userProfile.prestigeLevels.length - 1].multiplier}
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 {/* Grit display */}
                 <div className="bg-black bg-opacity-40 border-2 border-board-off-white rounded-lg p-4 mb-6">

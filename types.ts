@@ -657,6 +657,7 @@ export interface OverseerPlayerState extends PlayerState {
         betsPlaced: number;
         betsWon: number;
     };
+    userProfile?: UserProfile; // User profile with risk profile and prestige
 }
 
 // Player Card & Rap Sheet System
@@ -674,6 +675,7 @@ export interface PlayerCardData {
     totalGulagDays: number;
     bankruptcyCount: number;
     hasGrail: boolean;
+    userProfile?: UserProfile; // Optional user profile with risk profile and prestige
 }
 
 export interface PlayerStreak {
@@ -820,4 +822,57 @@ export interface ProphecyBet {
   placedAt: number;
   potentialPayout: number;
   won?: boolean;
+}
+
+// Onboarding & Prestige System Types
+
+export type RiskProfileType = 'THE_ALGO' | 'THE_DEGENERATE' | 'THE_SHARK';
+
+export interface RiskProfile {
+  type: RiskProfileType;
+  name: string;
+  description: string;
+  icon: string; // SVG icon identifier (Calculator, Skull, Wolf)
+  bonuses: {
+    prophecyCardBonus?: number; // For THE_ALGO
+    parlayBonus?: number; // For THE_DEGENERATE
+    tradingBonus?: number; // For THE_SHARK
+  };
+}
+
+export interface PrestigeLevel {
+  season: number;
+  badge: string; // e.g., "Season 1 Survivor"
+  multiplier: number; // e.g., 1.1 for 10% boost
+  ascendedAt: number; // Timestamp
+}
+
+export interface UserProfile {
+  userId: string;
+  userName: string;
+  riskProfile?: RiskProfile;
+  prestigeLevels: PrestigeLevel[];
+  hasAscended: boolean; // Has user ever ascended?
+  totalGritBurned: number; // Total grit burned across all ascensions
+}
+
+export interface PersonalityTestQuestion {
+  id: string;
+  question: string;
+  options: {
+    text: string;
+    weight: { // Weight towards each profile type
+      THE_ALGO: number;
+      THE_DEGENERATE: number;
+      THE_SHARK: number;
+    };
+  }[];
+}
+
+export interface AscensionOffer {
+  currentGrit: number;
+  season: number;
+  badge: string;
+  multiplier: number;
+  isAvailable: boolean;
 }
