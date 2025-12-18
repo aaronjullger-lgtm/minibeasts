@@ -12,6 +12,7 @@ import { bettingService } from '../services/bettingService';
 import { mysteryBoxService } from '../services/mysteryBoxService';
 import { gulagService } from '../services/gulagService';
 import { BodegaShop } from './BodegaShop';
+import { LockerRoom } from './LockerRoom';
 import { TradingFloor } from './TradingFloor';
 import { TribunalPanel } from './TribunalPanel';
 import { TheBoard } from './TheBoard';
@@ -25,7 +26,7 @@ interface OverseerGameProps {
 
 export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExit }) => {
     const [player, setPlayer] = useState<OverseerPlayerState>(initialPlayer);
-    const [currentView, setCurrentView] = useState<'main' | 'board' | 'bodega' | 'trading' | 'tribunal'>('main');
+    const [currentView, setCurrentView] = useState<'main' | 'board' | 'bodega' | 'locker' | 'trading' | 'tribunal'>('main');
     const [phaseInfo, setPhaseInfo] = useState(weeklyScheduleService.getPhaseInfo());
     const [superlatives, setSuperlatives] = useState<TribunalSuperlative[]>([]);
     const [tradeOffers, setTradeOffers] = useState<TradeOffer[]>([]);
@@ -120,6 +121,14 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                 ownedItems: [...prev.ownedItems, pulledItem]
             }));
         }
+    };
+
+    const handleLockerRoomPurchase = (tierId: string, cost: number, pulledItem: LoreItem) => {
+        setPlayer(prev => ({
+            ...prev,
+            grit: prev.grit - cost,
+            ownedItems: [...prev.ownedItems, pulledItem]
+        }));
     };
 
     const handleListItem = (itemId: string, price: number) => {
@@ -402,6 +411,20 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                             Bodega
                         </button>
                         <button
+                            onClick={() => setCurrentView('locker')}
+                            className={`flex-1 px-4 py-3 text-sm font-medium transition-all btn-glow focus-ring border-b-2 ${
+                                currentView === 'locker'
+                                    ? 'glow-blue'
+                                    : ''
+                            }`}
+                            style={{
+                                color: currentView === 'locker' ? 'var(--muted-blue)' : 'var(--beige)',
+                                borderBottomColor: currentView === 'locker' ? 'var(--muted-blue)' : 'transparent'
+                            }}
+                        >
+                            Locker
+                        </button>
+                        <button
                             onClick={() => setCurrentView('trading')}
                             className={`flex-1 px-4 py-3 text-sm font-medium transition-all btn-glow focus-ring border-b-2 ${
                                 currentView === 'trading'
@@ -509,6 +532,14 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                 <BodegaShop
                     player={player}
                     onPurchase={handlePurchaseBox}
+                    onClose={() => setCurrentView('main')}
+                />
+            )}
+
+            {currentView === 'locker' && (
+                <LockerRoom
+                    player={player}
+                    onPurchase={handleLockerRoomPurchase}
                     onClose={() => setCurrentView('main')}
                 />
             )}
