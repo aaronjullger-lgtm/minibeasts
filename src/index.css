@@ -1478,6 +1478,51 @@
   .locked-glitch:hover {
     animation: noir-glitch 0.5s steps(2, end) infinite;
   }
+
+  /* ============================================
+     DESIGN SYSTEM UTILITIES
+     ============================================ */
+
+  /* Glassmorphism Panel - Premium Card Effect */
+  .glass-panel {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  }
+
+  /* Scanline Overlay - Terminal Feel */
+  .scanline {
+    position: relative;
+    pointer-events: none;
+  }
+
+  .scanline::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.15) 0px,
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    z-index: 1;
+    pointer-events: none;
+    animation: scanline-move 8s linear infinite;
+  }
+
+  @keyframes scanline-move {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(10px);
+    }
+  }
 }
 
 @keyframes noir-glitch {
