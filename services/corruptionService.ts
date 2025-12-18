@@ -171,14 +171,14 @@ class CorruptionService {
   /**
    * Save data to localStorage
    */
-  private saveToLocalStorage(key: string, data: any): void {
+  private saveToLocalStorage<T>(key: string, data: T): void {
     localStorage.setItem(`syndicate_${key}`, JSON.stringify(data));
   }
 
   /**
    * Load data from localStorage
    */
-  private loadFromLocalStorage(key: string): any {
+  private loadFromLocalStorage<T>(key: string): T | null {
     const stored = localStorage.getItem(`syndicate_${key}`);
     return stored ? JSON.parse(stored) : null;
   }

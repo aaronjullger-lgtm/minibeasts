@@ -11,6 +11,7 @@ import { overseerService } from '../services/overseerService';
 import { bettingService } from '../services/bettingService';
 import { mysteryBoxService } from '../services/mysteryBoxService';
 import { gulagService } from '../services/gulagService';
+import { CorruptionAction } from '../services/corruptionService';
 import { BodegaShop } from './BodegaShop';
 import { LockerRoom } from './LockerRoom';
 import { TradingFloor } from './TradingFloor';
@@ -131,7 +132,7 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
         }));
     };
 
-    const handleSyndicateAction = (action: string, cost: number) => {
+    const handleSyndicateAction = (action: CorruptionAction, cost: number) => {
         // Deduct cost from player's grit
         setPlayer(prev => ({
             ...prev,

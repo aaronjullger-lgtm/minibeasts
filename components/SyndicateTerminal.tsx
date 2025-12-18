@@ -13,6 +13,10 @@ interface SyndicateTerminalProps {
   player: OverseerPlayerState;
   onActionComplete: (action: CorruptionAction, cost: number) => void;
   onClose: () => void;
+  /** Optional target bet ID for Wiretap action (defaults to demo value) */
+  targetBetId?: string;
+  /** Optional target player ID for Gag Order and Frame Up (defaults to demo value) */
+  targetPlayerId?: string;
 }
 
 interface SyndicateAction {
@@ -27,6 +31,8 @@ export const SyndicateTerminal: React.FC<SyndicateTerminalProps> = ({
   player,
   onActionComplete,
   onClose,
+  targetBetId = 'demo_bet_001',
+  targetPlayerId = 'demo_rival_001',
 }) => {
   const [showOverlay, setShowOverlay] = useState(false);
   const [selectedAction, setSelectedAction] = useState<CorruptionAction | null>(null);
@@ -71,16 +77,13 @@ export const SyndicateTerminal: React.FC<SyndicateTerminalProps> = ({
       // Execute the action based on type
       switch (action.id) {
         case 'WIRETAP':
-          // For demo, use a mock bet ID
-          corruptionService.purchaseWiretap(player.id, 'demo_bet_001', player.grit);
+          corruptionService.purchaseWiretap(player.id, targetBetId, player.grit);
           break;
         case 'GAG_ORDER':
-          // For demo, use a mock rival ID
-          corruptionService.applyGagOrder('demo_rival_001', player.grit);
+          corruptionService.applyGagOrder(targetPlayerId, player.grit);
           break;
         case 'FRAME_UP':
-          // For demo, send a mock frame-up
-          corruptionService.frameUp('demo_rival_001', 'You have been targeted by The Syndicate.', player.grit);
+          corruptionService.frameUp(targetPlayerId, 'You have been targeted by The Syndicate.', player.grit);
           break;
       }
 
