@@ -33,11 +33,16 @@ export const GulagLockdown: React.FC<GulagLockdownProps> = ({ player, onHailMary
     }
   }, [isLocked]);
 
+  const getAudioCtor = () => {
+    if (typeof window === 'undefined') return null;
+    const maybeWindow = window as typeof window & { webkitAudioContext?: typeof AudioContext };
+    return window.AudioContext || maybeWindow.webkitAudioContext || null;
+  };
+
   useEffect(() => {
     if (!isLocked || typeof window === 'undefined') return;
     try {
-      const AudioCtor = (window.AudioContext ||
-        (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext);
+      const AudioCtor = getAudioCtor();
       if (!AudioCtor) return;
       const ctx = new AudioCtor();
       const bufferSize = 2 * ctx.sampleRate;

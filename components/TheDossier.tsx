@@ -21,11 +21,12 @@ const StatItem: React.FC<{ label: string; value: string | number; tone?: 'danger
 };
 
 export const TheDossier: React.FC<TheDossierProps> = ({ player, onClose }) => {
+  const rapSheetEntries = React.useMemo(() => player?.gulagState?.rapSheet ?? [], [player?.gulagState?.rapSheet]);
   const corruptionIndex = player?.ambushBets?.length ?? 0;
-  const gagCount = player?.gulagState?.rapSheet?.filter((entry) =>
-    entry.toLowerCase().includes('gag')
-  ).length ?? 0;
-  const rapSheetEntries = player?.gulagState?.rapSheet ?? [];
+  const gagCount = React.useMemo(
+    () => rapSheetEntries.filter((entry) => entry.toLowerCase().includes('gag')).length,
+    [rapSheetEntries]
+  );
   const bookingNumber = player?.id || '00000';
   const avatarLabel = player?.name?.slice(0, 1)?.toUpperCase() || '?';
 

@@ -28,6 +28,8 @@ interface OverseerGameProps {
     onLockdownChange?: (locked: boolean) => void;
 }
 
+const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+
 export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExit, onPlayerUpdate, onLockdownChange }) => {
     const [player, setPlayer] = useState<OverseerPlayerState>(initialPlayer);
     const [currentView, setCurrentView] = useState<'main' | 'board' | 'bodega' | 'locker' | 'trading' | 'tribunal'>('main');
@@ -189,7 +191,7 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                 gulagState: {
                     ...baseState,
                     inGulag: !won,
-                    banExpiresAt: won ? undefined : Date.now() + 24 * 60 * 60 * 1000,
+                    banExpiresAt: won ? undefined : Date.now() + TWENTY_FOUR_HOURS_MS,
                     previousBankruptcies: (baseState.previousBankruptcies || 0) + 1,
                     gulagBet: {
                         id: `hail_mary_${Date.now()}`,
