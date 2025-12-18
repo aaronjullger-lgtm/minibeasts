@@ -9,22 +9,24 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Strict Design Tokens - Premium Noir Palette
-        'board-navy': '#050A14',       // Background - The deepest possible matte navy
-        'board-surface': '#0F172A',    // Card Backgrounds - Slate 900
-        'board-highlight': '#1E293B',  // Borders/Accents - Slate 800
-        'board-text': '#E2E8F0',       // Primary Text - Slate 200
-        'board-red': '#EF4444',        // Critical Actions/Alerts - Red 500
-        'board-gold': '#F59E0B',       // Value/Winning - Amber 500
+        // Tactical Luxury "Spectre" Palette - Matte Black & Gunmetal
+        'tactical-dark': '#0A0A0A',    // Main Background - Matte Black
+        'tactical-panel': '#171717',   // Card Backgrounds - Slightly lighter, no transparency
+        'tactical-border': '#333333',  // Subtle dividers
+        'paper-white': '#F5F5F5',      // Primary Text - Stark, high contrast
+        'muted-text': '#A3A3A3',       // Secondary details
+        'alert-orange': '#F97316',     // Critical actions - Safety Orange (use sparingly)
+        'gold-leaf': '#D4AF37',        // Winning states only - Metallic
         // Legacy colors kept for compatibility
+        'board-navy': '#050A14',
+        'board-surface': '#0F172A',
+        'board-highlight': '#1E293B',
+        'board-text': '#E2E8F0',
+        'board-red': '#EF4444',
+        'board-gold': '#F59E0B',
         'board-off-white': '#E1E7F5',
         'board-muted-blue': '#1E293B',
         'board-crimson': '#8a1c1c',
-        // Tactical Luxury / Spy Aesthetic Palette
-        'tactical-dark': '#0A0E14',    // Deep charcoal, matte finish
-        'tactical-gray': '#5A6169',    // Gunmetal for borders
-        'gold-leaf': '#D4AF37',        // Luxury gold for rare items
-        'paper-white': '#F5F5F0',      // Off-white for standard text
       },
       fontFamily: {
         // Typography
