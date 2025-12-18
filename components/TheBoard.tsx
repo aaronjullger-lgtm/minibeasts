@@ -14,6 +14,7 @@ import { ActionFeed, ActionFeedMessage, generateBetNotification } from './Action
 import { AmbushBetCard } from './AmbushBetCard';
 import { bettingService } from '../services/bettingService';
 import { ThermalReceipt } from './ThermalReceipt';
+import { IdentityCard } from './IdentityCard';
 
 const DIGIT_HEIGHT = 32;
 const ANIMATION_DURATION = 600;
@@ -205,7 +206,12 @@ export const TheBoard: React.FC<TheBoardProps> = ({
                     <div className="grid grid-cols-2 gap-3 text-board-off-white">
                         <div className="bg-white/5 border border-white/10 rounded-sm p-3">
                             <div className="text-[9px] uppercase tracking-[0.18em] text-board-off-white/60">USER_ID</div>
-                            <div className="text-sm font-board-grit">{player.name || 'Operator'}</div>
+                            <IdentityCard
+                                userName={player.name || 'Operator'}
+                                userProfile={player.userProfile}
+                                size="small"
+                                showBadge={true}
+                            />
                             <div className="text-[11px] text-board-off-white/60 font-board-grit">RANK {player.rank ?? 0}</div>
                         </div>
                         <div className="bg-white/5 border border-white/10 rounded-sm p-3 text-right">

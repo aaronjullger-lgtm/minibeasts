@@ -11,6 +11,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { OverseerPlayerState } from '../types';
+import { IdentityCard } from './IdentityCard';
 
 export interface LiveWireMessage {
     id: string;
@@ -20,6 +21,7 @@ export interface LiveWireMessage {
     timestamp: number;
     isAI?: boolean;
     reactions?: { [playerId: string]: 'WASHED' | 'COOKED' | 'CAP' };
+    userProfile?: any; // Optional user profile for the sender
 }
 
 interface LiveWireProps {
@@ -175,9 +177,13 @@ export const LiveWire: React.FC<LiveWireProps> = ({
                                 >
                                     <div className="flex items-start justify-between mb-1">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-board-off-white font-board-grit text-sm font-bold">
-                                                {message.senderName}
-                                            </span>
+                                            {/* Use IdentityCard for player names */}
+                                            <IdentityCard
+                                                userName={message.senderName}
+                                                userProfile={message.userProfile}
+                                                size="small"
+                                                showBadge={true}
+                                            />
                                             <span className="text-board-off-white/40 font-board-grit text-xs">
                                                 {new Date(message.timestamp).toLocaleTimeString()}
                                             </span>

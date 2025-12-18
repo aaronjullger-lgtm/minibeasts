@@ -657,6 +657,7 @@ export interface OverseerPlayerState extends PlayerState {
         betsPlaced: number;
         betsWon: number;
     };
+    userProfile?: UserProfile; // User profile with risk profile and prestige
 }
 
 // Player Card & Rap Sheet System
@@ -674,6 +675,7 @@ export interface PlayerCardData {
     totalGulagDays: number;
     bankruptcyCount: number;
     hasGrail: boolean;
+    userProfile?: UserProfile; // Optional user profile with risk profile and prestige
 }
 
 export interface PlayerStreak {
