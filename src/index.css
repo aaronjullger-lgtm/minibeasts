@@ -1492,3 +1492,75 @@
   0%, 100% { transform: scale(1); opacity: 0.9; }
   50% { transform: scale(1.08); opacity: 1; }
 }
+
+/* ============================================
+   WAR ROOM & LIVE GAME ANIMATIONS
+   ============================================ */
+
+/* Screen shake for touchdowns */
+.screen-shake {
+  animation: screen-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes screen-shake {
+  0%, 100% { transform: translate(0, 0); }
+  10%, 30%, 50%, 70%, 90% { transform: translate(-5px, -2px); }
+  20%, 40%, 60%, 80% { transform: translate(5px, 2px); }
+}
+
+/* Glitch effect for turnovers */
+.glitch-effect {
+  animation: glitch-effect 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes glitch-effect {
+  0% {
+    transform: translate(0);
+    filter: hue-rotate(0deg);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+    filter: hue-rotate(90deg);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+    filter: hue-rotate(180deg);
+  }
+  60% {
+    transform: translate(2px, 2px);
+    filter: hue-rotate(270deg);
+  }
+  80% {
+    transform: translate(2px, -2px);
+    filter: hue-rotate(180deg);
+  }
+  100% {
+    transform: translate(0);
+    filter: hue-rotate(0deg);
+  }
+}
+
+/* Flash animation */
+@keyframes flash {
+  0% { opacity: 0; }
+  10% { opacity: 0.3; }
+  20% { opacity: 0; }
+}
+
+/* Bounce animation for squad ride avatars */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+/* Slide in from right for event feed */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

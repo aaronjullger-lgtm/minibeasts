@@ -760,3 +760,64 @@ export interface NitroBoostLevel {
 
 // Inventory Item type alias for equipment
 export type InventoryItem = LoreItem;
+
+// Live Game Service Types
+export type LiveGameEventType = 'TOUCHDOWN' | 'TURNOVER' | 'FIELD_GOAL' | 'SAFETY' | 'INTERCEPTION' | 'FUMBLE';
+
+export interface LiveGameEvent {
+  id: string;
+  type: LiveGameEventType;
+  gameId: string;
+  team: string;
+  quarter: number;
+  timeRemaining: string;
+  description: string;
+  timestamp: number;
+  momentum: number; // -100 (away) to +100 (home)
+}
+
+export interface LiveGame {
+  id: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeScore: number;
+  awayScore: number;
+  quarter: number;
+  timeRemaining: string;
+  status: 'pre_game' | 'live' | 'halftime' | 'final';
+  momentum: number; // -100 (away) to +100 (home)
+  events: LiveGameEvent[];
+  lastEventTime: number;
+}
+
+// Prophecy Card Types
+export interface ProphecyCard {
+  id: string;
+  gameId: string;
+  title: string;
+  description: string;
+  options: ProphecyOption[];
+  createdAt: number;
+  expiresAt: number;
+  isLocked: boolean;
+  isResolved: boolean;
+  winningOption?: string;
+  resolvedAt?: number;
+}
+
+export interface ProphecyOption {
+  id: string;
+  label: string;
+  odds: number; // American odds
+  bets: ProphecyBet[];
+  totalWagered: number;
+}
+
+export interface ProphecyBet {
+  playerId: string;
+  playerName: string;
+  wager: number;
+  placedAt: number;
+  potentialPayout: number;
+  won?: boolean;
+}
