@@ -153,8 +153,14 @@ export const TheBlackBox: React.FC<TheBlackBoxProps> = ({ onComplete }) => {
 
   const handleSignUp = () => {
     if (riskProfile) {
-      // In production, this would trigger Google OAuth
-      // For now, we'll create a demo user
+      // TODO: Replace with actual Google OAuth or authentication system
+      // This is demo/placeholder code for development purposes
+      
+      // In production, this would trigger actual authentication:
+      // - Google OAuth sign-in
+      // - Create user in backend
+      // - Retrieve userId and userName from auth response
+      
       const userId = `user_${Date.now()}`;
       const userName = 'Demo User';
       

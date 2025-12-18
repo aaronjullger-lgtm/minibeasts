@@ -170,19 +170,25 @@ export function saveUserProfile(profile: UserProfile): void {
  * Check if ascension is available for the current season
  */
 export function isAscensionAvailable(season: number): boolean {
-  // In production, this would check if the NFL season has ended
-  // For demo purposes, we'll allow it manually
-  const seasonEndDate = new Date('2024-02-11'); // Super Bowl Sunday example
-  const now = new Date();
-  
-  // Allow manual override via localStorage for demo
+  // Check for manual override via localStorage for demo/testing
   const manualOverride = localStorage.getItem('ascension_available');
   if (manualOverride === 'true') {
     return true;
   }
   
-  return now >= seasonEndDate;
+  // In production, this would check if the NFL season has ended
+  // This should be replaced with actual season data from your backend
+  // Example: Check against a configurable season end date from API
+  // const seasonEndDate = getSeasonEndDate(season);
+  // return new Date() >= seasonEndDate;
+  
+  // For now, return false by default (requires manual override)
+  return false;
 }
+
+// Prestige Multiplier Configuration
+const PRESTIGE_BASE_MULTIPLIER = 1.1; // 10% bonus for first ascension
+const PRESTIGE_STACK_BONUS = 0.05; // 5% additional per ascension
 
 /**
  * Create an ascension offer for the user
@@ -190,15 +196,11 @@ export function isAscensionAvailable(season: number): boolean {
 export function createAscensionOffer(currentGrit: number, season: number): AscensionOffer {
   const isAvailable = isAscensionAvailable(season);
   
-  // Calculate multiplier based on prestige level
-  // Each ascension adds 0.05 (5%) to the multiplier, starting at 1.1 (10%)
-  const multiplier = 1.1;
-  
   return {
     currentGrit,
     season,
     badge: `Season ${season} Survivor`,
-    multiplier,
+    multiplier: PRESTIGE_BASE_MULTIPLIER,
     isAvailable
   };
 }
@@ -210,7 +212,7 @@ export function performAscension(profile: UserProfile, currentGrit: number, seas
   const newPrestigeLevel: PrestigeLevel = {
     season,
     badge: `Season ${season} Survivor`,
-    multiplier: 1.1 + (profile.prestigeLevels.length * 0.05), // Increases with each ascension
+    multiplier: PRESTIGE_BASE_MULTIPLIER + (profile.prestigeLevels.length * PRESTIGE_STACK_BONUS), // Increases with each ascension
     ascendedAt: Date.now()
   };
 

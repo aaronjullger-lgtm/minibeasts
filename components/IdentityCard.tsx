@@ -119,41 +119,6 @@ export const IdentityCard: React.FC<IdentityCardProps> = ({
           )}
         </div>
       </motion.div>
-
-      {/* Hover tooltip for risk profile */}
-      {riskProfile && (
-        <style jsx>{`
-          .risk-profile-tooltip {
-            visibility: hidden;
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: black;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            z-index: 1000;
-            margin-bottom: 8px;
-          }
-          
-          .risk-profile-tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: black;
-          }
-          
-          .identity-card-wrapper:hover .risk-profile-tooltip {
-            visibility: visible;
-          }
-        `}</style>
-      )}
     </div>
   );
 };
