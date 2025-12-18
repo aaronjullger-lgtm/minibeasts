@@ -185,6 +185,21 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
         }
     };
 
+    const handleExecuteTrade = (targetPlayerId: string, myItems: string[], theirItems: string[]) => {
+        // Mock P2P trade execution
+        // In a real implementation, this would use the multiItemTradeService
+        console.log('P2P Trade proposed:', {
+            from: player.id,
+            to: targetPlayerId,
+            giving: myItems,
+            receiving: theirItems
+        });
+        
+        // For now, just show a success message
+        alert(`Trade proposal sent to ${targetPlayerId}!\nYou're offering ${myItems.length} items for ${theirItems.length} items.`);
+        setCurrentView('main');
+    };
+
     const handlePlaceTribunalBet = (superlativeId: string, nomineeId: string, wager: number, odds: number) => {
         try {
             bettingService.placeTribunalBet(player, superlativeId, nomineeId, wager, odds);
@@ -560,10 +575,15 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
             {currentView === 'trading' && (
                 <TradingFloor
                     player={player}
-                    allOffers={tradeOffers}
-                    onListItem={handleListItem}
-                    onPurchaseItem={handlePurchaseItem}
-                    onCancelListing={handleCancelListing}
+                    allPlayers={[
+                        player,
+                        // Mock players for demo (in real implementation, these would be actual players)
+                        { ...player, id: 'wyatt', name: 'Wyatt', ownedItems: [] },
+                        { ...player, id: 'alex', name: 'Alex', ownedItems: [] },
+                        { ...player, id: 'colin', name: 'Colin', ownedItems: [] },
+                        { ...player, id: 'spencer', name: 'Spencer', ownedItems: [] }
+                    ]}
+                    onExecuteTrade={handleExecuteTrade}
                     onClose={() => setCurrentView('main')}
                 />
             )}
