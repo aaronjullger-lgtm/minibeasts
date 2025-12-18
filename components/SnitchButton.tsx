@@ -13,7 +13,7 @@ export const SnitchButton: React.FC<SnitchButtonProps> = ({ onSnitch, label = 'P
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('commish-snitch'));
       }
-      alert('📞 Alert sent to The Commish. Bet flagged for review.');
+      console.info('📞 Alert sent to The Commish. Bet flagged for review.');
     }
   };
 

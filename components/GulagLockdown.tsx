@@ -36,7 +36,10 @@ export const GulagLockdown: React.FC<GulagLockdownProps> = ({ player, onHailMary
   useEffect(() => {
     if (!isLocked || typeof window === 'undefined') return;
     try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const AudioCtor = (window.AudioContext ||
+        (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext);
+      if (!AudioCtor) return;
+      const ctx = new AudioCtor();
       const bufferSize = 2 * ctx.sampleRate;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
@@ -55,7 +58,7 @@ export const GulagLockdown: React.FC<GulagLockdownProps> = ({ player, onHailMary
         source.stop();
       };
     } catch {
-      // ignore audio failures in non-browser environments
+      // ignore audio failures in non-browser environments or when autoplay is blocked
     }
   }, [isLocked]);
 

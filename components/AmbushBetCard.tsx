@@ -74,7 +74,7 @@ export const AmbushBetCard: React.FC<AmbushBetCardProps> = ({
                 })
             );
         }
-        alert('📞 Snitch wire pinged The Commish.');
+        console.info('📞 Snitch wire pinged The Commish.');
     };
 
     // Render for TARGET user (redacted with Shadow Lock)

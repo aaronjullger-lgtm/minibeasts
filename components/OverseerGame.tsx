@@ -323,7 +323,7 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
     if (isLockdown) {
         return (
             <GulagLockdown player={player} onHailMary={handleHailMaryAttempt}>
-                <></>
+                {null}
             </GulagLockdown>
         );
     }
