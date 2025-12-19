@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ToastProvider } from "./components/ToastNotification";
 import { TheDossier } from "./components/TheDossier";
@@ -116,25 +116,33 @@ const AppContent: React.FC = () => {
   };
 
   // "007" Trigger - Long press on Grit Balance to open Black Ledger
-  const longPressHandlers = useLongPress(() => {
+  const handleOpenLedger = useCallback(() => {
     setIsLedgerOpen(true);
-  }, 800);
+  }, []);
+
+  const longPressHandlers = useLongPress(handleOpenLedger, 800);
+
+  // Keyboard handler for opening the ledger
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    // Prevent repeat fires if user holds down the key
+    if (e.repeat) return;
+    
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setIsLedgerOpen(true);
+    }
+  }, []);
 
   // Tactical header
   const header = (
     <div className="flex items-center justify-between h-full px-4">
       <Label className="text-muted-text">SEASON 1 • PHASE 3</Label>
       <div 
-        className="flex items-center gap-2 cursor-pointer select-none"
+        className="flex items-center gap-2 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-alert-orange focus:ring-opacity-50 rounded px-2 py-1"
         role="button"
         tabIndex={0}
         aria-label="Hold to access classified operations"
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            setIsLedgerOpen(true);
-          }
-        }}
+        onKeyDown={handleKeyDown}
         {...longPressHandlers}
       >
         <Label>GRIT</Label>
