@@ -69,7 +69,7 @@ export const AssetCard: React.FC<AssetCardProps> = ({
         className={`w-full border-t border-tactical-border py-3 px-4 text-center transition-colors ${
           disabled || !canAfford
             ? 'bg-tactical-panel text-muted-text cursor-not-allowed'
-            : 'bg-tactical-panel text-paper-white hover:bg-[#222] active:bg-[#2a2a2a] cursor-pointer'
+            : 'bg-tactical-panel text-paper-white hover:bg-tactical-panel-hover active:bg-tactical-panel-active cursor-pointer'
         }`}
       >
         <Label className={disabled || !canAfford ? 'text-muted-text' : 'text-paper-white'}>

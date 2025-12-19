@@ -137,7 +137,7 @@ export const LockerRoom: React.FC<LockerRoomProps> = ({ player, onPurchase, onCl
             <h1 className="font-sans font-bold text-xl text-paper-white uppercase tracking-wider">
                 SUPPLY CHAIN
             </h1>
-            <div className="w-16"></div> {/* Spacer for centering */}
+            <div className="w-16 flex-shrink-0"></div> {/* Spacer for centering */}
         </div>
     );
 

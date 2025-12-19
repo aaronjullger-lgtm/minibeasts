@@ -12,6 +12,8 @@ export default {
         // Tactical Luxury "Spectre" Palette - Matte Black & Gunmetal
         'tactical-dark': '#0A0A0A',    // Main Background - Matte Black
         'tactical-panel': '#171717',   // Card Backgrounds - Slightly lighter, no transparency
+        'tactical-panel-hover': '#222222',   // Card hover state - subtle lighten
+        'tactical-panel-active': '#2a2a2a',  // Card active state - more visible lighten
         'tactical-border': '#333333',  // Subtle dividers
         'paper-white': '#F5F5F5',      // Primary Text - Stark, high contrast
         'muted-text': '#A3A3A3',       // Secondary details
