@@ -208,3 +208,75 @@ export const useOnlineStatus = () => {
 
   return isOnline;
 };
+
+/**
+ * Hook for long press detection
+ */
+export const useLongPress = (
+  onLongPress: () => void,
+  onProgress?: (progress: number) => void,
+  duration: number = 3000
+) => {
+  const [isPressed, setIsPressed] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+
+  const start = useCallback(() => {
+    setIsPressed(true);
+    startTimeRef.current = Date.now();
+
+    // Progress tracking
+    if (onProgress) {
+      progressIntervalRef.current = setInterval(() => {
+        if (startTimeRef.current) {
+          const elapsed = Date.now() - startTimeRef.current;
+          const progress = Math.min((elapsed / duration) * 100, 100);
+          onProgress(progress);
+        }
+      }, 50);
+    }
+
+    // Long press timer
+    timerRef.current = setTimeout(() => {
+      onLongPress();
+      cancel();
+    }, duration);
+  }, [onLongPress, onProgress, duration]);
+
+  const cancel = useCallback(() => {
+    setIsPressed(false);
+    
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+    
+    startTimeRef.current = null;
+    
+    if (onProgress) {
+      onProgress(0);
+    }
+  }, [onProgress]);
+
+  useEffect(() => {
+    return () => {
+      cancel();
+    };
+  }, [cancel]);
+
+  return {
+    onMouseDown: start,
+    onMouseUp: cancel,
+    onMouseLeave: cancel,
+    onTouchStart: start,
+    onTouchEnd: cancel,
+    onTouchCancel: cancel,
+    isPressed,
+  };
+};

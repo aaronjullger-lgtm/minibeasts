@@ -1,21 +1,25 @@
 import React, { useState } from "react";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ToastProvider } from "./components/ToastNotification";
-import { OverseerGame } from "./components/OverseerGame";
 import { TheDossier } from "./components/TheDossier";
-import { OverseerPlayerState } from "./types";
+import { LockerRoom } from "./components/locker/LockerRoom";
+import { TacticalBoard } from "./components/views/TacticalBoard";
+import { OverseerPlayerState, AmbushBet } from "./types";
+import { OperationType } from "./services/ledgerService";
 import { characterData } from "./constants";
+import { ScreenShell } from "./components/layout/ScreenShell";
+import { Label, Mono } from "./components/ui/Typography";
+
+type TabType = 'board' | 'locker' | 'market' | 'intel';
 
 const AppContent: React.FC = () => {
-  // TODO: Replace with actual user authentication and character assignment
-  // For now, defaulting to 'eric' character
-  const assignedCharacterId = 'eric'; // This will be dynamically set based on logged-in user
+  // Initialize player state
+  const assignedCharacterId = 'eric';
   const assignedCharacter = characterData[assignedCharacterId];
 
-  // Initialize player state with assigned character
   const initialOverseerPlayer: OverseerPlayerState = {
     ...assignedCharacter,
-    grit: 100,
+    grit: 10000,
     loveLife: 50,
     fandom: 50,
     uniqueStatValue: 50,
@@ -30,7 +34,6 @@ const AppContent: React.FC = () => {
     commishPower: 50,
     clout: 50,
     unlockedAchievements: [],
-    // Overseer-specific properties
     ownedItems: [],
     equippedItems: [],
     activePowerUps: [],
@@ -49,112 +52,173 @@ const AppContent: React.FC = () => {
     }
   };
 
-  const [overseerPlayer] = useState<OverseerPlayerState>(initialOverseerPlayer);
-  const [playerSnapshot, setPlayerSnapshot] = useState<OverseerPlayerState>(initialOverseerPlayer);
-  const [isLockdown, setIsLockdown] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>('board');
+  const [player, setPlayer] = useState<OverseerPlayerState>(initialOverseerPlayer);
+  const [activeTab, setActiveTab] = useState<TabType>('board');
+  const [globalAmbushBets, setGlobalAmbushBets] = useState<AmbushBet[]>([]);
 
-  // No exit handler needed since we go straight to game
-  const handleExit = () => {
-    // TODO: Implement logout or navigate to profile/settings
-    console.log('Exit requested - implement logout');
+  // Mock players for demo
+  const allPlayers: OverseerPlayerState[] = [
+    player,
+    { ...player, id: 'wyatt', name: 'Wyatt' },
+    { ...player, id: 'alex', name: 'Alex' },
+    { ...player, id: 'colin', name: 'Colin' },
+  ];
+
+  // Handle operation execution from Black Ledger
+  const handleOperationExecuted = (operation: OperationType, cost: number) => {
+    setPlayer(prev => ({
+      ...prev,
+      grit: prev.grit - cost
+    }));
+  };
+
+  // Handle mystery box purchases
+  const handleMysteryBoxPurchase = (tierId: string, cost: number, pulledItem: any) => {
+    setPlayer(prev => ({
+      ...prev,
+      grit: prev.grit - cost,
+      ownedItems: [...prev.ownedItems, pulledItem]
+    }));
+  };
+
+  // Handle ambush bet placement
+  const handlePlaceAmbushBet = (
+    targetUserId: string,
+    targetUserName: string,
+    description: string,
+    category: 'social' | 'behavior' | 'prop',
+    odds: number,
+    wager: number
+  ) => {
+    const newBet: AmbushBet = {
+      id: `bet_${Date.now()}`,
+      bettorId: player.id,
+      bettorName: player.name,
+      targetUserId,
+      targetUserName,
+      description,
+      category,
+      odds,
+      wager,
+      potentialPayout: wager * ((odds + 100) / 100),
+      isResolved: false,
+      createdAt: Date.now()
+    };
+
+    setGlobalAmbushBets(prev => [...prev, newBet]);
+    setPlayer(prev => ({
+      ...prev,
+      grit: prev.grit - wager
+    }));
+  };
+
+  // Tactical header
+  const header = (
+    <div className="flex items-center justify-between h-full px-4">
+      <Label className="text-muted-text">SEASON 1 • PHASE 3</Label>
+      <div className="flex items-center gap-2">
+        <Label>GRIT</Label>
+        <Mono className="text-2xl text-alert-orange">{player.grit.toLocaleString()}</Mono>
+      </div>
+    </div>
+  );
+
+  // Bottom navigation
+  const footer = (
+    <nav className="flex items-center justify-around h-full px-2">
+      {[
+        { id: 'board' as TabType, label: 'Board', icon: '🎯' },
+        { id: 'locker' as TabType, label: 'Locker', icon: '🗄️' },
+        { id: 'market' as TabType, label: 'Market', icon: '💼' },
+        { id: 'intel' as TabType, label: 'Intel', icon: '📊' },
+      ].map((tab) => {
+        const isActive = activeTab === tab.id;
+        return (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className="flex flex-col items-center gap-1 min-w-[60px] py-2 transition-all duration-200"
+          >
+            <span 
+              className={`text-2xl transition-all duration-200 ${
+                isActive 
+                  ? 'text-alert-orange scale-110 filter drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]' 
+                  : 'text-paper-white opacity-60'
+              }`}
+            >
+              {tab.icon}
+            </span>
+            <Label 
+              className={isActive ? 'text-alert-orange' : 'text-muted-text'}
+            >
+              {tab.label}
+            </Label>
+          </button>
+        );
+      })}
+    </nav>
+  );
+
+  // Render content based on active tab
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'board':
+        return (
+          <TacticalBoard
+            player={player}
+            globalAmbushBets={globalAmbushBets}
+            onPlaceAmbushBet={handlePlaceAmbushBet}
+            allPlayers={allPlayers}
+          />
+        );
+      
+      case 'locker':
+        return (
+          <LockerRoom
+            player={player}
+            onPurchase={handleMysteryBoxPurchase}
+            onClose={() => setActiveTab('board')}
+            onOperationExecuted={handleOperationExecuted}
+          />
+        );
+      
+      case 'market':
+        return (
+          <div className="p-4 text-center">
+            <div className="text-4xl mb-4 opacity-30">💼</div>
+            <h2 className="text-paper-white text-xl font-bold mb-2">Market</h2>
+            <p className="text-muted-text">Trading floor coming soon...</p>
+          </div>
+        );
+      
+      case 'intel':
+        return (
+          <div className="p-4">
+            <TheDossier player={player} onClose={() => setActiveTab('board')} />
+          </div>
+        );
+      
+      default:
+        return null;
+    }
   };
 
   return (
-    <div style={isLockdown ? { filter: 'grayscale(100%)' } : undefined}>
-      {/* The HUD (Heads-Up Display) - Fixed at top */}
-      <div className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-4 py-3 backdrop-blur-xl bg-board-navy/80 border-b border-board-muted-blue">
-        {/* Left: Season/Phase */}
-        <div className="text-[10px] uppercase tracking-widest text-board-off-white/60 font-board-grit">
-          SEASON 1 • PHASE 3
-        </div>
-        
-        {/* Right: Grit Balance */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-board-off-white/60 uppercase tracking-wider">GRIT</span>
-          <span className="text-2xl font-board-grit font-bold text-board-red tracking-tight">
-            {overseerPlayer.grit.toLocaleString()}
-          </span>
-        </div>
-      </div>
-
-      {/* Main Content Area - with padding for HUD and bottom nav */}
-      <div className={`pt-16 ${isLockdown ? 'pb-4' : 'pb-24'} relative`}>
-        <OverseerGame 
-          initialPlayer={overseerPlayer} 
-          onExit={handleExit}
-          onPlayerUpdate={setPlayerSnapshot}
-          onLockdownChange={setIsLockdown}
-        />
-
-        {activeTab === 'profile' && (
-          <div className="fixed inset-0 z-40 bg-black/70 backdrop-blur-md overflow-y-auto p-4 md:p-8">
-            <TheDossier player={playerSnapshot} onClose={() => setActiveTab('board')} />
-          </div>
-        )}
-      </div>
-
-      {/* The Bottom Nav - Fixed at bottom */}
-      {!isLockdown && (
-        <nav className="fixed bottom-0 inset-x-0 z-50 h-20 bg-board-navy backdrop-blur-xl border-t border-board-muted-blue flex items-center justify-around px-2">
-          {[
-            { id: 'locker', label: 'Locker Room', icon: '🗄️' },
-            { id: 'board', label: 'The Board', icon: '🎯' },
-            { id: 'squad', label: 'My Squad', icon: '👥' },
-            { id: 'profile', label: 'Profile', icon: '👤' },
-          ].map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className="flex flex-col items-center gap-1 min-w-[60px] py-2 transition-all duration-200"
-              >
-                <div className="relative">
-                  <span 
-                    className={`text-2xl transition-all duration-200 ${
-                      isActive 
-                        ? 'text-board-red scale-110 filter drop-shadow-[0_0_8px_rgba(255,51,51,0.8)]' 
-                        : 'text-board-off-white opacity-60'
-                    }`}
-                  >
-                    {tab.icon}
-                  </span>
-                  {/* Active indicator dot */}
-                  {isActive && (
-                    <div 
-                      className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-board-red"
-                      style={{ boxShadow: '0 0 6px rgba(255, 51, 51, 0.8)' }}
-                    />
-                  )}
-                </div>
-                <span 
-                  className={`text-[10px] uppercase tracking-wider font-medium transition-all duration-200 ${
-                    isActive 
-                      ? 'text-board-red font-bold' 
-                      : 'text-board-off-white/60'
-                  }`}
-                >
-                  {tab.label}
-                </span>
-              </button>
-            );
-          })}
-        </nav>
-      )}
+    <div className="min-h-screen bg-tactical-dark carbon-pattern">
+      <ScreenShell header={header} footer={footer}>
+        {renderContent()}
+      </ScreenShell>
     </div>
   );
 };
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-board-navy">
-      <ErrorBoundary>
-        <ToastProvider>
-          <AppContent />
-        </ToastProvider>
-      </ErrorBoundary>
-    </div>
+    <ErrorBoundary>
+      <ToastProvider>
+        <AppContent />
+      </ToastProvider>
+    </ErrorBoundary>
   );
 };
 

@@ -16,7 +16,7 @@ import { BodegaShop } from './BodegaShop';
 import { LockerRoom } from './LockerRoom';
 import { TradingFloor } from './TradingFloor';
 import { TribunalPanel } from './TribunalPanel';
-import { TheBoard } from './TheBoard';
+import { TacticalBoard } from './views/TacticalBoard';
 import { PaydayScreen } from './PaydayScreen';
 import { BankruptScreen } from './BankruptScreen';
 import { GulagLockdown } from './GulagLockdown';
@@ -542,7 +542,7 @@ export const OverseerGame: React.FC<OverseerGameProps> = ({ initialPlayer, onExi
                                 💀 DEMO: Show Bankrupt (Bettor loses)
                             </button>
                         </div>
-                        <TheBoard
+                        <TacticalBoard
                             player={player}
                             onPlaceAmbushBet={handlePlaceAmbushBet}
                             allPlayers={[
