@@ -14,8 +14,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { LoreItem, OverseerPlayerState } from '../../types';
 import { mysteryBoxService } from '../../services/mysteryBoxService';
 import { CrateOpenAnimation } from '../CrateOpenAnimation';
-import { SyndicateTerminal } from '../SyndicateTerminal';
-import { CorruptionAction } from '../../services/corruptionService';
+import { BlackLedger } from '../corruption/BlackLedger';
+import { OperationType } from '../../services/ledgerService';
 import { ScreenShell } from '../layout/ScreenShell';
 import { AssetCard } from './AssetCard';
 import { Mono, Label } from '../ui/Typography';
@@ -24,7 +24,7 @@ interface LockerRoomProps {
     player: OverseerPlayerState;
     onPurchase: (tierId: string, cost: number, pulledItem: LoreItem) => void;
     onClose: () => void;
-    onSyndicateAction?: (action: CorruptionAction, cost: number) => void;
+    onOperationExecuted?: (operation: OperationType, cost: number) => void;
 }
 
 interface MysteryBoxTier {
@@ -34,10 +34,10 @@ interface MysteryBoxTier {
     cost: number;
 }
 
-export const LockerRoom: React.FC<LockerRoomProps> = ({ player, onPurchase, onClose, onSyndicateAction }) => {
+export const LockerRoom: React.FC<LockerRoomProps> = ({ player, onPurchase, onClose, onOperationExecuted }) => {
     const [pulledItem, setPulledItem] = useState<LoreItem | null>(null);
     const [isOpening, setIsOpening] = useState(false);
-    const [showSyndicate, setShowSyndicate] = useState(false);
+    const [showBlackLedger, setShowBlackLedger] = useState(false);
     
     // Hidden trigger state
     const [holdProgress, setHoldProgress] = useState(0);
@@ -102,7 +102,7 @@ export const LockerRoom: React.FC<LockerRoomProps> = ({ player, onPurchase, onCl
         }, 50);
 
         holdTimerRef.current = setTimeout(() => {
-            setShowSyndicate(true);
+            setShowBlackLedger(true);
             setHoldProgress(0);
         }, HOLD_DURATION);
     };
@@ -192,17 +192,17 @@ export const LockerRoom: React.FC<LockerRoomProps> = ({ player, onPurchase, onCl
                 />
             )}
 
-            {/* Syndicate Access Modal */}
-            {showSyndicate && (
-                <SyndicateTerminal
+            {/* Black Ledger - Operations Access */}
+            {showBlackLedger && (
+                <BlackLedger
                     player={player}
-                    onActionComplete={(action, cost) => {
-                        if (onSyndicateAction) {
-                            onSyndicateAction(action, cost);
+                    onOperationExecuted={(operation, cost) => {
+                        if (onOperationExecuted) {
+                            onOperationExecuted(operation, cost);
                         }
-                        setShowSyndicate(false);
+                        setShowBlackLedger(false);
                     }}
-                    onClose={() => setShowSyndicate(false)}
+                    onClose={() => setShowBlackLedger(false)}
                 />
             )}
         </>
