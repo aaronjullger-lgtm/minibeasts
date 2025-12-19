@@ -109,9 +109,6 @@ export const BlackLedger: React.FC<BlackLedgerProps> = ({
     }
   };
 
-  // Don't render if not open
-  if (!isOpen) return null;
-
   return (
     <AnimatePresence>
       {isOpen && <motion.div
@@ -204,7 +201,8 @@ export const BlackLedger: React.FC<BlackLedgerProps> = ({
             </div>
           </div>
         </motion.div>
-      </motion.div>}
+      </motion.div>
+      }
     </AnimatePresence>
   );
 };

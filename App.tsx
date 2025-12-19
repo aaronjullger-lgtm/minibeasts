@@ -126,6 +126,15 @@ const AppContent: React.FC = () => {
       <Label className="text-muted-text">SEASON 1 • PHASE 3</Label>
       <div 
         className="flex items-center gap-2 cursor-pointer select-none"
+        role="button"
+        tabIndex={0}
+        aria-label="Hold to access classified operations"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsLedgerOpen(true);
+          }
+        }}
         {...longPressHandlers}
       >
         <Label>GRIT</Label>
