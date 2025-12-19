@@ -1465,20 +1465,6 @@
     color: var(--bright-red);
   }
 
-  .board-red-glow {
-    box-shadow: 0 0 15px rgba(255, 51, 51, 0.4);
-  }
-
-  .font-board-header {
-    @apply skew-x-[-12deg];
-    display: inline-block;
-    letter-spacing: 0.2em;
-  }
-
-  .font-board-grit {
-    @apply font-bold tracking-tight;
-  }
-
   .locked-glitch:hover {
     animation: noir-glitch 0.5s steps(2, end) infinite;
   }
