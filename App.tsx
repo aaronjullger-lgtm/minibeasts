@@ -1,25 +1,25 @@
 import React, { useState } from "react";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ToastProvider } from "./components/ToastNotification";
-import { OverseerGame } from "./components/OverseerGame";
 import { TheDossier } from "./components/TheDossier";
 import { LockerRoom } from "./components/locker/LockerRoom";
-import { OverseerPlayerState } from "./types";
+import { TacticalBoard } from "./components/views/TacticalBoard";
+import { OverseerPlayerState, AmbushBet } from "./types";
 import { OperationType } from "./services/ledgerService";
 import { characterData } from "./constants";
 import { ScreenShell } from "./components/layout/ScreenShell";
 import { Label, Mono } from "./components/ui/Typography";
 
+type TabType = 'board' | 'locker' | 'market' | 'intel';
+
 const AppContent: React.FC = () => {
-  // TODO: Replace with actual user authentication and character assignment
-  // For now, defaulting to 'eric' character
-  const assignedCharacterId = 'eric'; // This will be dynamically set based on logged-in user
+  // Initialize player state
+  const assignedCharacterId = 'eric';
   const assignedCharacter = characterData[assignedCharacterId];
 
-  // Initialize player state with assigned character
   const initialOverseerPlayer: OverseerPlayerState = {
     ...assignedCharacter,
-    grit: 10000, // Starting with more grit for demo
+    grit: 10000,
     loveLife: 50,
     fandom: 50,
     uniqueStatValue: 50,
@@ -34,7 +34,6 @@ const AppContent: React.FC = () => {
     commishPower: 50,
     clout: 50,
     unlockedAchievements: [],
-    // Overseer-specific properties
     ownedItems: [],
     equippedItems: [],
     activePowerUps: [],
@@ -53,22 +52,21 @@ const AppContent: React.FC = () => {
     }
   };
 
-  const [overseerPlayer, setOverseerPlayer] = useState<OverseerPlayerState>(initialOverseerPlayer);
-  const [playerSnapshot, setPlayerSnapshot] = useState<OverseerPlayerState>(initialOverseerPlayer);
-  const [isLockdown, setIsLockdown] = useState(false);
-  const [activeTab, setActiveTab] = useState<'board' | 'locker' | 'profile'>('board');
-  const [showLockerRoom, setShowLockerRoom] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
+  const [player, setPlayer] = useState<OverseerPlayerState>(initialOverseerPlayer);
+  const [activeTab, setActiveTab] = useState<TabType>('board');
+  const [globalAmbushBets, setGlobalAmbushBets] = useState<AmbushBet[]>([]);
 
-  // Handle player updates from child components
-  const handlePlayerUpdate = (updatedPlayer: OverseerPlayerState) => {
-    setOverseerPlayer(updatedPlayer);
-    setPlayerSnapshot(updatedPlayer);
-  };
+  // Mock players for demo
+  const allPlayers: OverseerPlayerState[] = [
+    player,
+    { ...player, id: 'wyatt', name: 'Wyatt' },
+    { ...player, id: 'alex', name: 'Alex' },
+    { ...player, id: 'colin', name: 'Colin' },
+  ];
 
   // Handle operation execution from Black Ledger
   const handleOperationExecuted = (operation: OperationType, cost: number) => {
-    setOverseerPlayer(prev => ({
+    setPlayer(prev => ({
       ...prev,
       grit: prev.grit - cost
     }));
@@ -76,81 +74,82 @@ const AppContent: React.FC = () => {
 
   // Handle mystery box purchases
   const handleMysteryBoxPurchase = (tierId: string, cost: number, pulledItem: any) => {
-    setOverseerPlayer(prev => ({
+    setPlayer(prev => ({
       ...prev,
       grit: prev.grit - cost,
       ownedItems: [...prev.ownedItems, pulledItem]
     }));
   };
 
-  // No exit handler needed since we go straight to game
-  const handleExit = () => {
-    // TODO: Implement logout or navigate to profile/settings
-    console.log('Exit requested - implement logout');
+  // Handle ambush bet placement
+  const handlePlaceAmbushBet = (
+    targetUserId: string,
+    targetUserName: string,
+    description: string,
+    category: 'social' | 'behavior' | 'prop',
+    odds: number,
+    wager: number
+  ) => {
+    const newBet: AmbushBet = {
+      id: `bet_${Date.now()}`,
+      bettorId: player.id,
+      bettorName: player.name,
+      targetUserId,
+      targetUserName,
+      description,
+      category,
+      odds,
+      wager,
+      potentialPayout: wager * ((odds + 100) / 100),
+      isResolved: false,
+      createdAt: Date.now()
+    };
+
+    setGlobalAmbushBets(prev => [...prev, newBet]);
+    setPlayer(prev => ({
+      ...prev,
+      grit: prev.grit - wager
+    }));
   };
 
-  // Tactical header component
+  // Tactical header
   const header = (
     <div className="flex items-center justify-between h-full px-4">
-      <div className="flex items-center gap-4">
-        <Label className="text-muted-text">SEASON 1 • PHASE 3</Label>
-      </div>
-      
+      <Label className="text-muted-text">SEASON 1 • PHASE 3</Label>
       <div className="flex items-center gap-2">
         <Label>GRIT</Label>
-        <Mono className="text-2xl text-alert-orange">{overseerPlayer.grit.toLocaleString()}</Mono>
+        <Mono className="text-2xl text-alert-orange">{player.grit.toLocaleString()}</Mono>
       </div>
     </div>
   );
 
-  // Tactical bottom navigation
-  const footer = !isLockdown ? (
+  // Bottom navigation
+  const footer = (
     <nav className="flex items-center justify-around h-full px-2">
       {[
-        { id: 'board', label: 'Board', icon: '🎯' },
-        { id: 'locker', label: 'Locker', icon: '🗄️' },
-        { id: 'profile', label: 'Profile', icon: '👤' },
+        { id: 'board' as TabType, label: 'Board', icon: '🎯' },
+        { id: 'locker' as TabType, label: 'Locker', icon: '🗄️' },
+        { id: 'market' as TabType, label: 'Market', icon: '💼' },
+        { id: 'intel' as TabType, label: 'Intel', icon: '📊' },
       ].map((tab) => {
         const isActive = activeTab === tab.id;
         return (
           <button
             key={tab.id}
-            onClick={() => {
-              setActiveTab(tab.id as 'board' | 'locker' | 'profile');
-              if (tab.id === 'locker') {
-                setShowLockerRoom(true);
-              } else if (tab.id === 'profile') {
-                setShowProfile(true);
-              } else {
-                setShowLockerRoom(false);
-                setShowProfile(false);
-              }
-            }}
+            onClick={() => setActiveTab(tab.id)}
             className="flex flex-col items-center gap-1 min-w-[60px] py-2 transition-all duration-200"
           >
-            <div className="relative">
-              <span 
-                className={`text-2xl transition-all duration-200 ${
-                  isActive 
-                    ? 'text-alert-orange scale-110 filter drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]' 
-                    : 'text-paper-white opacity-60'
-                }`}
-              >
-                {tab.icon}
-              </span>
-              {isActive && (
-                <div 
-                  className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-alert-orange"
-                  style={{ boxShadow: '0 0 6px rgba(249, 115, 22, 0.8)' }}
-                />
-              )}
-            </div>
-            <Label 
-              className={`${
+            <span 
+              className={`text-2xl transition-all duration-200 ${
                 isActive 
-                  ? 'text-alert-orange' 
-                  : 'text-muted-text'
+                  ? 'text-alert-orange scale-110 filter drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]' 
+                  : 'text-paper-white opacity-60'
               }`}
+            >
+              {tab.icon}
+            </span>
+            <Label 
+              className={isActive ? 'text-alert-orange' : 'text-muted-text'}
             >
               {tab.label}
             </Label>
@@ -158,46 +157,57 @@ const AppContent: React.FC = () => {
         );
       })}
     </nav>
-  ) : null;
+  );
+
+  // Render content based on active tab
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'board':
+        return (
+          <TacticalBoard
+            player={player}
+            globalAmbushBets={globalAmbushBets}
+            onPlaceAmbushBet={handlePlaceAmbushBet}
+            allPlayers={allPlayers}
+          />
+        );
+      
+      case 'locker':
+        return (
+          <LockerRoom
+            player={player}
+            onPurchase={handleMysteryBoxPurchase}
+            onClose={() => setActiveTab('board')}
+            onOperationExecuted={handleOperationExecuted}
+          />
+        );
+      
+      case 'market':
+        return (
+          <div className="p-4 text-center">
+            <div className="text-4xl mb-4 opacity-30">💼</div>
+            <h2 className="text-paper-white text-xl font-bold mb-2">Market</h2>
+            <p className="text-muted-text">Trading floor coming soon...</p>
+          </div>
+        );
+      
+      case 'intel':
+        return (
+          <div className="p-4">
+            <TheDossier player={player} onClose={() => setActiveTab('board')} />
+          </div>
+        );
+      
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-tactical-dark">
-      {activeTab === 'board' && !showLockerRoom && !showProfile && (
-        <ScreenShell header={header} footer={footer}>
-          <OverseerGame 
-            initialPlayer={overseerPlayer} 
-            onExit={handleExit}
-            onPlayerUpdate={handlePlayerUpdate}
-            onLockdownChange={setIsLockdown}
-          />
-        </ScreenShell>
-      )}
-
-      {/* Locker Room Overlay */}
-      {showLockerRoom && (
-        <LockerRoom
-          player={overseerPlayer}
-          onPurchase={handleMysteryBoxPurchase}
-          onClose={() => {
-            setShowLockerRoom(false);
-            setActiveTab('board');
-          }}
-          onOperationExecuted={handleOperationExecuted}
-        />
-      )}
-
-      {/* Profile/Dossier Overlay */}
-      {showProfile && (
-        <div className="fixed inset-0 z-40 bg-black/70 backdrop-blur-md overflow-y-auto p-4 md:p-8">
-          <TheDossier 
-            player={playerSnapshot} 
-            onClose={() => {
-              setShowProfile(false);
-              setActiveTab('board');
-            }} 
-          />
-        </div>
-      )}
+    <div className="min-h-screen bg-tactical-dark carbon-pattern">
+      <ScreenShell header={header} footer={footer}>
+        {renderContent()}
+      </ScreenShell>
     </div>
   );
 };

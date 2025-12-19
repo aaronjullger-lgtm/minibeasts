@@ -1501,6 +1501,26 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.03);
   }
 
+  /* Carbon Pattern - Subtle Background Texture */
+  .carbon-pattern {
+    background-color: #0A0A0A;
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.03) 0px,
+        transparent 1px,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 3px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.03) 0px,
+        transparent 1px,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 3px
+      );
+  }
+
   /* Scanline Overlay - Terminal Feel */
   .scanline {
     position: relative;
