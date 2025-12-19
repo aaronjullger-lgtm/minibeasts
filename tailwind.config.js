@@ -19,16 +19,16 @@ export default {
         'muted-text': '#A3A3A3',       // Secondary details
         'alert-orange': '#F97316',     // Critical actions - Safety Orange (use sparingly)
         'gold-leaf': '#D4AF37',        // Winning states only - Metallic
-        // Legacy colors kept for compatibility
-        'board-navy': '#050A14',
-        'board-surface': '#0F172A',
-        'board-highlight': '#1E293B',
-        'board-text': '#E2E8F0',
-        'board-red': '#EF4444',
-        'board-gold': '#F59E0B',
-        'board-off-white': '#E1E7F5',
-        'board-muted-blue': '#1E293B',
-        'board-crimson': '#8a1c1c',
+        // Legacy aliases for compatibility (mapped to tactical palette)
+        'board-navy': '#0A0A0A',       // Alias for tactical-dark
+        'board-surface': '#171717',    // Alias for tactical-panel
+        'board-highlight': '#222222',  // Alias for tactical-panel-hover
+        'board-text': '#F5F5F5',       // Alias for paper-white
+        'board-red': '#F97316',        // Alias for alert-orange
+        'board-gold': '#D4AF37',       // Alias for gold-leaf
+        'board-off-white': '#F5F5F5',  // Alias for paper-white
+        'board-muted-blue': '#222222', // Alias for tactical-panel-hover
+        'board-crimson': '#F97316',    // Alias for alert-orange
       },
       fontFamily: {
         // Typography
