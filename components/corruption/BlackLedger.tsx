@@ -127,9 +127,8 @@ export const BlackLedger: React.FC<BlackLedgerProps> = ({
             stiffness: 300,
           }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-2xl rounded-t-lg overflow-hidden"
+          className="w-full max-w-2xl rounded-t-lg overflow-hidden bg-tactical-dark border-t border-alert-orange"
           style={{
-            backgroundColor: '#0A0A0A',
             backgroundImage: `repeating-linear-gradient(
               90deg,
               transparent,

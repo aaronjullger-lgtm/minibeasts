@@ -29,10 +29,10 @@ export const TacticalToggle: React.FC<TacticalToggleProps> = ({
         className={`
           relative inline-flex h-6 w-11 items-center rounded-full
           transition-colors duration-200 ease-in-out
+          bg-tactical-panel-hover
           ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
         `}
         style={{
-          backgroundColor: '#222',
           boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.6)',
         }}
       >
@@ -41,13 +41,10 @@ export const TacticalToggle: React.FC<TacticalToggleProps> = ({
           className={`
             inline-block h-4 w-4 transform rounded-full
             transition-transform duration-200 ease-in-out
-            ${checked ? 'translate-x-6' : 'translate-x-1'}
+            ${checked ? 'translate-x-6 bg-gradient-to-br from-gray-200 via-gray-400 to-gray-200' : 'translate-x-1 bg-paper-white'}
             ${disabled ? '' : 'active:scale-95'}
           `}
           style={{
-            background: checked
-              ? 'linear-gradient(135deg, #E5E5E5 0%, #B8B8B8 50%, #E5E5E5 100%)'
-              : '#F5F5F5',
             boxShadow: checked
               ? '0 1px 3px rgba(0, 0, 0, 0.5)'
               : '0 1px 2px rgba(0, 0, 0, 0.3)',
@@ -57,9 +54,8 @@ export const TacticalToggle: React.FC<TacticalToggleProps> = ({
         {/* LED Indicator - Shows when active */}
         {checked && (
           <span
-            className="absolute right-1 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full"
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-alert-orange"
             style={{
-              backgroundColor: '#F97316',
               boxShadow: '0 0 4px #F97316, 0 0 8px rgba(249, 115, 22, 0.5)',
             }}
           />
