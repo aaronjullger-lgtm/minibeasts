@@ -14,6 +14,7 @@ import { Header, Label, Mono } from '../ui/Typography';
 
 interface BlackLedgerProps {
   player: OverseerPlayerState;
+  isOpen?: boolean; // Optional - for conditional rendering
   onClose: () => void;
   onOperationExecuted?: (operation: OperationType, cost: number) => void;
   /** Optional target bet ID for Intercept operation */
@@ -24,6 +25,7 @@ interface BlackLedgerProps {
 
 export const BlackLedger: React.FC<BlackLedgerProps> = ({
   player,
+  isOpen = true, // Default to true for backward compatibility
   onClose,
   onOperationExecuted,
   targetBetId = 'demo_bet_001',
@@ -109,7 +111,7 @@ export const BlackLedger: React.FC<BlackLedgerProps> = ({
 
   return (
     <AnimatePresence>
-      <motion.div
+      {isOpen && <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -200,6 +202,7 @@ export const BlackLedger: React.FC<BlackLedgerProps> = ({
           </div>
         </motion.div>
       </motion.div>
+      }
     </AnimatePresence>
   );
 };

@@ -4,11 +4,13 @@ import { ToastProvider } from "./components/ToastNotification";
 import { TheDossier } from "./components/TheDossier";
 import { LockerRoom } from "./components/locker/LockerRoom";
 import { TacticalBoard } from "./components/views/TacticalBoard";
+import { BlackLedger } from "./components/corruption/BlackLedger";
 import { OverseerPlayerState, AmbushBet } from "./types";
 import { OperationType } from "./services/ledgerService";
 import { characterData } from "./constants";
 import { ScreenShell } from "./components/layout/ScreenShell";
 import { Label, Mono } from "./components/ui/Typography";
+import { useLongPress } from "./hooks/useLongPress";
 
 type TabType = 'board' | 'locker' | 'market' | 'intel';
 
@@ -55,6 +57,7 @@ const AppContent: React.FC = () => {
   const [player, setPlayer] = useState<OverseerPlayerState>(initialOverseerPlayer);
   const [activeTab, setActiveTab] = useState<TabType>('board');
   const [globalAmbushBets, setGlobalAmbushBets] = useState<AmbushBet[]>([]);
+  const [isLedgerOpen, setIsLedgerOpen] = useState(false);
 
   // Mock players for demo
   const allPlayers: OverseerPlayerState[] = [
@@ -112,11 +115,28 @@ const AppContent: React.FC = () => {
     }));
   };
 
+  // "007" Trigger - Long press on Grit Balance to open Black Ledger
+  const longPressHandlers = useLongPress(() => {
+    setIsLedgerOpen(true);
+  }, 800);
+
   // Tactical header
   const header = (
     <div className="flex items-center justify-between h-full px-4">
       <Label className="text-muted-text">SEASON 1 • PHASE 3</Label>
-      <div className="flex items-center gap-2">
+      <div 
+        className="flex items-center gap-2 cursor-pointer select-none"
+        role="button"
+        tabIndex={0}
+        aria-label="Hold to access classified operations"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsLedgerOpen(true);
+          }
+        }}
+        {...longPressHandlers}
+      >
         <Label>GRIT</Label>
         <Mono className="text-2xl text-alert-orange">{player.grit.toLocaleString()}</Mono>
       </div>
@@ -208,6 +228,14 @@ const AppContent: React.FC = () => {
       <ScreenShell header={header} footer={footer}>
         {renderContent()}
       </ScreenShell>
+      
+      {/* Black Ledger Overlay - The "007" Feature */}
+      <BlackLedger
+        player={player}
+        isOpen={isLedgerOpen}
+        onClose={() => setIsLedgerOpen(false)}
+        onOperationExecuted={handleOperationExecuted}
+      />
     </div>
   );
 };
