@@ -4,39 +4,44 @@
  * Returns handlers for mouse and touch events
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 
 export const useLongPress = (
   onLongPress: () => void,
   duration: number = 800
 ) => {
-  const [isPressed, setIsPressed] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const onLongPressRef = useRef(onLongPress);
+
+  // Keep the latest callback in a ref to avoid recreating handlers when it changes
+  useEffect(() => {
+    onLongPressRef.current = onLongPress;
+  }, [onLongPress]);
 
   const start = useCallback(() => {
-    setIsPressed(true);
-    
     // Long press timer
     timerRef.current = setTimeout(() => {
-      onLongPress();
+      onLongPressRef.current();
       cancel();
     }, duration);
-  }, [onLongPress, duration]);
+  }, [duration]);
 
   const cancel = useCallback(() => {
-    setIsPressed(false);
-    
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
   }, []);
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      cancel();
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
     };
-  }, [cancel]);
+  }, []);
 
   return {
     onMouseDown: start,
@@ -44,6 +49,5 @@ export const useLongPress = (
     onMouseLeave: cancel,
     onTouchStart: start,
     onTouchEnd: cancel,
-    isPressed,
   };
 };
